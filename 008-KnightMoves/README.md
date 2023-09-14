@@ -1,6 +1,6 @@
 # Knight Moves
 
-[Try it!](https://christernilsson.github.io/2023-008-KnightMoves/)
+[Try it!](https://christernilsson.github.io/2023/008-KnightMoves/)
 
 ![](exempel0.JPG)
 

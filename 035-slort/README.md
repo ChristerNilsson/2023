@@ -1,6 +1,6 @@
 # 2023-035-slort
 
-[Try it!](https://christernilsson.github.io/2023-035-slort)
+[Try it!](https://christernilsson.github.io/2023/035-slort)
 
 Pusslet går ut på att använda rätt operationer för att omvandla godtycklig permutation till 123456
 

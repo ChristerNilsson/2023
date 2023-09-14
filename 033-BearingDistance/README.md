@@ -1,6 +1,6 @@
 # 2023-033-BearingDistance
 
-[Try it!](https://christernilsson.github.io/2023-033-BearingDistance/)
+[Try it!](https://christernilsson.github.io/2023/033-BearingDistance/)
 
 ## Kolumnerna visar
 

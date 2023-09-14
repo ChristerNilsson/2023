@@ -1,6 +1,6 @@
 # Chess 2x
 
-[Try it!](https://christernilsson.github.io/2023-026-chessx2/)
+[Try it!](https://christernilsson.github.io/2023/026-chessx2/)
 
 Two persons will be able to play over-the-board chess with this app.
 

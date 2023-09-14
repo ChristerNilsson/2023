@@ -1,4 +1,4 @@
-[Try it!](https://christernilsson.github.io/2023-021-NYT-Digits-RPN)
+[Try it!](https://christernilsson.github.io/2023/021-NYT-Digits-RPN)
 
 https://www.nytimes.com/games/digits
 
