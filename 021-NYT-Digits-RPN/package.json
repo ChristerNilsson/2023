@@ -1,0 +1,19 @@
+{
+  "name": "2023-021-nyt-digits-rpn",
+  "version": "1.0.0",
+  "description": "[Try it!](https://christernilsson.github.io/2023-020-NYT-Digits)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ChristerNilsson/2023-020-NYT-Digits.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ChristerNilsson/2023-020-NYT-Digits/issues"
+  },
+  "homepage": "https://github.com/ChristerNilsson/2023-020-NYT-Digits#readme"
+}
