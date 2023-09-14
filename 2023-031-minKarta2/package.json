@@ -1,0 +1,27 @@
+{
+  "name": "2023-031-minkarta2",
+  "version": "1.0.0",
+  "description": "Använda minkarta för att \r * Visa var man är\r \t* Omvandla WGS84 till SWEREF med proj4\r * Hämta hem frimärken, 256 * 256, 512 * 512 osv. Lagras ej.\r * Mha hårkors kunna sätta target\r * Beräkna avstånd\r * Beräkna bäring, troligen via WGS84 och latlon-spherical.js\r * Fast zoomlägen\r * Spara brödsmulor, komprimerat, via 4 kvadranter och 8x8. En meters noggrannhet. Ett tecken per position.\r \t* Dessa spår mailas om de ska sparas. Kan läggas in manuellt och göras tillgängliga.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ChristerNilsson/2023-031-minKarta2.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ChristerNilsson/2023-031-minKarta2/issues"
+  },
+  "homepage": "https://github.com/ChristerNilsson/2023-031-minKarta2#readme",
+  "dependencies": {
+    "@types/lodash": "^4.14.195",
+    "@types/lodash-es": "^4.17.8",
+    "lodash-es": "^4.17.21"
+  }
+}
