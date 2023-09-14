@@ -1,0 +1,18 @@
+t:Rilton Cup|d:2022-12-27 2022-12-28 2022-12-29 2022-12-30 2023-01-01|i:https://wasask.se/Inbjudan_Rilton_Cup_svenska_2022_2023.pdf|r:https://chess-results.com/tnr661619.aspx?lan=6|a:SN
+t:Rilton 1800|d:2023-01-02 2023-01-03 2023-01-04 2023-01-05|r:https://chess-results.com/tnr661619.aspx?lan=6|a:SN
+t:Div Elit Lag-DM|d:2022-09-19 2022-10-17 2022-11-14 2022-12-12 2023-01-30|r:10508|a:SD
+t:Div 1 Lag-DM|d:2022-09-26 2022-10-24 2022-11-21 2022-12-19 2023-02-06|r:10509|a:SD
+t:Div 2 Lag-DM|d:2022-10-03 2022-10-31 2022-11-28 2023-01-16 2023-02-13|r:10510|a:SD
+t:Div 3 Lag-DM|d:2022-10-10 2022-11-07 2022-12-05 2023-01-23 2023-02-20|r:10511|a:SD
+t:Div 4 Lag-DM|d:2022-10-10 2022-11-07 2022-12-05 2023-01-23 2023-02-20|r:10512|a:SD
+t:Div 5 Lag-DM|d:2022-10-03 2022-10-31 2022-11-28 2023-01-16 2023-02-13|r:10513|a:SD
+t:Elitserien|d:2022-10-14 2022-10-15 2022-10-16 2023-01-20 2023-01-21 2023-01-22 2023-03-10 2023-03-11 2023-03-12|r:10421|a:SN
+t:Stockholmsserien|d:2022-10-23 2022-11-13 2022-12-04 2023-01-15 2023-02-05 2023-03-05 2023-03-19|r:10726|a:SD
+t:Blixt-SM Stockholm|d:2022-12-27 2022-12-28 2022-12-29 2022-12-30 2023-01-01|q:10838|r:10838|a:SN
+t:Wasa JGP|d:2023-04-29 2023-04-30|i:https://wasask.se/Inbjudan_Wasa_JGP_2023.pdf|r:11558|a:JD
+t:Wasa Tjejträning|d:2023-04-04 2023-04-18 2023-04-25|a:FK
+t:Wasa Juniorträning|d:2023-04-04 2023-04-06 2023-04-18 2023-04-20 2023-04-25 2023-04-27|a:JK
+t:Wasa Berger Rond 3|d:2023-04-06|a:SK
+t:Wasa Föredrag|d:2023-04-13|a:SK
+t:Wasa Genomgång av parti|d:2023-04-20|a:SK
+t:Wasa Avslutning med prisutdelning|d:2023-04-27|a:SK
