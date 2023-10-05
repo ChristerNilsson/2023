@@ -256,9 +256,42 @@ fakeBoard = ->
 	board =  readBoard "cA|hA|sA|dA|c4 dJ c6 h2 h3 sJ|hQ c8 s5 sT h8 h4|c7 s7 h6 s9 s2 dK|d8 sK cT h7 cK d3|cQ d2 c5 d5 cJ s4|d6 hK h5 dQ c2 hT|c3 c9 hJ d7 sQ d4|h9 d9 s3 dT s6 s8" # 452200020
 	print board
 
+done = {}
+
+recurse = (b,level=0) ->
+	#print 'recurse',level, _.map b, (pile) -> pile.length
+	key = dumpBoard b
+	if key of done then return
+	done[key] = true
+	if b[0].length + b[1].length + b[2].length + b[3].length == 52
+		print '52!', level, _.size done
+		return true
+	moves = findAllMoves b
+	for move in moves
+		[src,dst] = move
+		#print {src,dst}
+		if src in [0,1,2,3] then continue
+		if b[src].length==0 then continue
+		c = _.cloneDeep b
+		card = c[src].pop()
+		c[dst].push card
+		res = recurse c,level+1
+		if res then return true
+	false
+
 newGame = ->
 	general.start = millis()
 	general.hist = []
+	
+	fakeBoard()
+	print board
+	start = new Date()
+	recurse board
+	print new Date() - start
+
+	return
+
+
 	for i in range 1
 
 		fakeBoard()
