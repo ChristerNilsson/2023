@@ -68,7 +68,7 @@ alternativeDsts = []
 infoLines = []
 general = null
 
-released = true 
+released = true
 
 print = console.log
 range = _.range
@@ -259,9 +259,9 @@ fakeBoard = ->
 newGame = ->
 	general.start = millis()
 	general.hist = []
-	for i in range 100
+	for i in range 1
 
-		makeBoard()
+		fakeBoard()
 
 		general.hintsUsed = 0
 		originalBoard = _.cloneDeep board
@@ -287,12 +287,14 @@ newGame = ->
 				cands2 = cands2.concat increment
 			cands = cands2
 			cands.sort (a,b) -> b[0]-a[0] # if b[0]==a[0] then b[1]-a[1] else b[0]-a[0]
-			cands = cands.slice 0,20 # större ger längre körning och kortare lösning.
-			print 'candsx', cands.length
+			cands = cands.slice 0,2000 # större ger längre körning och kortare lösning.
+
 			if cands.length > 0
-				print _.map cands, (cand) -> cand[0]
-			# for cand in cands
-			# 	print JSON.stringify cands[0][0]
+				print 'candsx', level, cands.length,cands[0][0]
+
+			#for cand in cands
+			#	print JSON.stringify cand
+
 		if aceCards == N*4
 			print JSON.stringify dumpBoard originalBoard
 			board = cand[2]
@@ -598,18 +600,21 @@ mousePressed = ->
 
 findAllMoves = (b) ->
 	#print 'findAllMoves',{b}
-	srcs = HEAPS.concat [] #PANEL
+	srcs = HEAPS.concat []
 	dsts = ACES.concat HEAPS
 	res = []
 	for src in srcs
+		if b[src].length == 0 then continue
 		holeUsed = false
 		for dst in dsts
-			if src != dst
-				if legalMove b,src,dst
-					if b[dst].length==0
-						if holeUsed then continue
-						holeUsed=true
-					res.push [src,dst]
+			if src == dst then continue
+			if not legalMove b,src,dst then continue
+			if b[dst].length==0
+				if holeUsed then continue
+				holeUsed=true
+				res.push [src,dst]
+				continue
+			res.push [src,dst]
 	#print res
 	res
 
@@ -628,7 +633,7 @@ expand = ([aceCards,emptyPiles,b,path]) ->
 			newPath = path.concat [move]
 			hash[key] = [newPath, b]
 			res.push [countAceCards(b1), countEmptyPiles(b1), b1, path.concat([move])]
-	#print JSON.stringify res
+			#print {src,dst,position}
 	res
 
 hint = ->
