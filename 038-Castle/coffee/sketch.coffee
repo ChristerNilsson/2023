@@ -30,7 +30,7 @@ Med hjälp av dessa strängar kan man förhindra att man besöker redan besökta
 
 ###
 
-N = 9
+N = 13
 
 ACES  = [0,1,2,3]
 HEAPS = [4,5,6,7,8,9,10,11]
@@ -278,55 +278,83 @@ fakeBoard = ->
 	# board =  readBoard "cA|hA|sA|dA|h8 c8 s2 c4|d4 d8 s6 c2|c3 d9 h6 s5|s8 c6 c7 s7|h7 s4 d3 c5|s3 d6 h2 s9|d2 h3 h4 d5|d7 h5 h9 c9"
 	# vip = []
 
-	N = 7
-	board =  readBoard "cA|hA|sA|dA|s5 d2 d7|h7 c6 c4|h6 s2 c2|c7 d3 d5|d4 s6 s7|c3 s3 h3|c5 s4 h4|d6 h5 h2"
-	vip = []
+	# N = 9
+	# board =  readBoard "cA|hA|sA|dA|d6 s9 s4 c6|c8 s5 h7 c3|s2 d7 h4 s8|h6 h8 d3 s7|s3 d4 d2 h5|c9 c7 c2 h2|c5 c4 d9 d5|h9 d8 s6 h3"
+	# vip = []
+
+	# N = 7
+	# board =  readBoard "cA|hA|sA|dA|s5 d2 d7|h7 c6 c4|h6 s2 c2|c7 d3 d5|d4 s6 s7|c3 s3 h3|c5 s4 h4|d6 h5 h2"
+	# vip = []
 
 	# N = 5 # 104 drag. Dock manuellt 20 drag
 	# board =  readBoard "cA|hA|sA|dA|c3 c5|h5 h2|d5 d4|s4 d2|c4 c2|s2 s5|d3 s3|h3 h4"
 	# vip = []
 
+	# N = 10
+	# board =  readBoard "cA|hA|sA|dA|d2 d3 c7 s6 s9|s2 d5 c5 s8 d6|c4 h8 hT d9 h3|d4 sT s5 s4 d8|s3 cT h5 h7|h9 c6 c2 s7|dT c3 c8 h6|h2 d7 h4 c9"
+	# vip = []
+
+	N=11
+	board =  readBoard "cA|hA|sA|dA|d7 s5 sT h8 dT|cT c5 sJ h7 h9|h3 h4 dJ d2 cJ|h2 c9 c4 h6 d9|d8 s7 s9 c2 c8|s8 c3 c7 s3 d6|s2 s6 s4 d3 hJ|d5 h5 d4 c6 hT"
+	vip = []
+
 	prnt board
 
 done = []
 
-recurse = (b,level=0,done=[]) ->
-	#if level > 3000 then return false
+recurse = (b,target,level=10,done=[]) ->
+	if level == 0 then return false
+	if level> 10 then console.log level
 	key = dumpBoard b
 
 	# if key in done then return false
 	#done = done.concat key
 
 	#prnt 'recurse',level,done.length,  _.map b, (pile) -> pile.length
-	prnt key
-	if b[0].length + b[1].length + b[2].length + b[3].length == N*4
+	#prnt key
+	if b[0].length + b[1].length + b[2].length + b[3].length == target
 		solution = _.cloneDeep done
-		console.log 'Solved!', level, done.length
-		return true
+		console.log dumpBoard b
+		return _.cloneDeep b
 	moves = findAllMoves b,level
 	for [src,dst] in moves
-		prnt src,dst
+		#prnt src,dst
 		b[dst].push b[src].pop()
 		done.push key
 		if not done.includes dumpBoard b
-			res = recurse b, level+1, done
+			res = recurse b, target, level-1, done
 		done.pop()
 		b[src].push b[dst].pop()
-		if res then return true
+		if res then return res
 	false
 
 newGame = ->
 	general.start = millis()
 	general.hist = []
 
-	for i in range 1
-		done = []
-		makeBoard()
-		prnt dumpBoard board
-		start = new Date()
-		recurse board
-		console.log new Date() - start, 'ms'
+	done = []
+	makeBoard()
+	origBoard = _.cloneDeep board
+	prnt dumpBoard board
+	startTotal = new Date()
 
+	#return
+
+	for target in range 0,4*(N-1)
+		start = new Date()
+		depth = 0
+		res = false
+		while not res
+			depth++
+			res = recurse board,5+target,depth
+			if res != false
+				board = _.cloneDeep res
+				break
+		prnt target,new Date() - start
+		#prnt dumpBoard board
+
+	console.log 'N:',N,'Total time:',new Date() - startTotal, 'ms'
+	board = origBoard
 	return
 
 
@@ -507,7 +535,7 @@ showHeap = (board,heap,x,y,dy) -> # dy kan vara både pos och neg
 			image backs, x, y, w,h*1.1, OFFSETX+860,1092+622,225,H-1
 
 display = (board) ->
-	prnt 'display',board
+	#prnt 'display',board
 	background 0,128,0
 
 	generalen()
@@ -712,9 +740,9 @@ findAllMoves = (b,level) ->
 					prio.push [src,dst,b[src].length]
 
 	prio = prio.sort (a,b) -> b[2] - a[2]
-	prnt JSON.stringify prio
+	# prnt JSON.stringify prio
 	prio = _.map prio, (item) -> item.slice 0,2
-	prnt JSON.stringify prio
+	# prnt JSON.stringify prio
 	prio
 
 # findAllMoves = (b,level) ->
