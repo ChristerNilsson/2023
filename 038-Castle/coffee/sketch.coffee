@@ -29,6 +29,9 @@ Slutposition:
 Med hjälp av dessa strängar kan man förhindra att man besöker redan besökta noder.
 
 ###
+
+N = 9
+
 ACES  = [0,1,2,3]
 HEAPS = [4,5,6,7,8,9,10,11]
 #comeFrom = {}
@@ -59,9 +62,9 @@ aceCards = 4
 originalBoard = null
 
 startCompetition = null
-N = 13
 srcs = null
 dsts = null
+vip = []
 
 alternativeDsts = []
 
@@ -70,14 +73,15 @@ general = null
 
 released = true
 
-print = console.log
+prnt = console.log
+
 range = _.range
 Array.prototype.clear = -> @length = 0
 assert = (a, b, msg='Assert failure') ->
 	if not _.isEqual a,b
-		print msg
-		print "  ",a
-		print "  ",b
+		prnt msg
+		prnt "  ",a
+		prnt "  ",b
 
 getParameters = (h = window.location.href) -> 
 	h = decodeURI h
@@ -97,7 +101,7 @@ myShuffle = (array) ->
 	for i in range n
 		#j = myRandom i, n
 		j = _.random i, n-1, false
-		#print j
+		#prnt j
 		value = array[i]
 		array[i] = array[j]
 		array[j] = value
@@ -120,7 +124,7 @@ class BlackBox # Avgör om man lyckats eller ej. Man får tillgodogöra sig tidi
 		@total = [0,0,0] # [time,computer,human]
 		@count = 0
 		#@success = false 
-	show : -> # print 'BlackBox',@count,@total
+	show : -> # prnt 'BlackBox',@count,@total
 
 class General
 	constructor : ->
@@ -145,20 +149,20 @@ class General
 		true
 
 	getLocalStorage : ->
-		print 'direct',localStorage.Generalen
+		#prnt 'direct',localStorage.Generalen
 		if localStorage.Generalen? then hash = JSON.parse localStorage.Generalen else hash = {}
 		if 5 != _.size hash then hash = {slowSeed:1, fastSeed:1, total:[0,0,0], hintsUsed:0} 
-		print 'hash',JSON.stringify hash
+		#prnt 'hash',JSON.stringify hash
 		@slowSeed = hash.slowSeed
 		@fastSeed = hash.fastSeed
 		@blackBox.total = hash.total
 		@hintsUsed = hash.hintsUsed
-		print 'get', JSON.stringify hash
+		#prnt 'get', JSON.stringify hash
 
 	putLocalStorage : ->
 		s = JSON.stringify {slowSeed:@slowSeed, fastSeed:@fastSeed, total:@blackBox.total, hintsUsed:@hintsUsed} 
 		localStorage.Generalen = s 
-		print 'put',s
+		prnt 'put',s
 
 	clr : ->
 		@blackBox.clr()
@@ -179,7 +183,7 @@ class General
 				@timeUsed = timeUsed
 				@blackBox.show()
 			@putLocalStorage()
-			printManualSolution()
+			prntManualprnt()
 
 preload = -> 
 	faces = loadImage 'cards/Color_52_Faces_v.2.0.png'
@@ -191,7 +195,9 @@ assert 'dA', pack 3,0
 assert 'd2', pack 3,1
 assert 'hQ', pack 1,11
 assert 'hJ', pack 1,10
-#print 'pack ok'
+#prnt 'pack ok'
+
+packAll = (cards) -> _.map cards, (card) -> pack card[0],card[1]
 
 unpack = (n) -> 
 	suit = Suit.indexOf n[0]
@@ -201,7 +207,10 @@ assert [0,0], unpack 'cA'
 assert [3,0], unpack 'dA'
 assert [1,11], unpack 'hQ'
 assert [1,10], unpack 'hJ'
-#print 'unpack ok'
+#prnt 'unpack ok'
+
+unpackAll = (cards) -> _.map cards.split(' '), (card) -> unpack card
+assert [[0,0],[3,1]], unpackAll 'cA d2'
 
 compress = (board) ->
 	for heap in HEAPS
@@ -224,13 +233,13 @@ countEmptyPiles = (b) ->
 dumpBoard = (board) -> (heap.join ' ' for heap in board).join '|'
 
 makeBoard = ->
-	N = 13
+	#N = 13
 
 	cards = []
 	for suit in range 4
 		for rank in range 1,N # 2..K
 			cards.push pack suit,rank
-	#print cards
+	#prnt cards
 
 	#general.fastSeed++ # nödvändig?
 	myShuffle cards
@@ -246,55 +255,84 @@ makeBoard = ->
 		heap = 4+i%8
 		board[heap].push card
 
-	#print board
+	#prnt board
 	board
 
 readBoard = (b) -> (if heap=='' then [] else heap.split ' ') for heap in b.split '|'
 
 fakeBoard = ->
-	#board = readBoard "cA|hA|sA|dA|hT c3 s4 c4 h2 s2|c5 s9 hJ cT sQ|dQ h4 cK s8 c2 sJ|h6 cQ s3 d8 h5 s7|c6 d3 s5 h7 h3 d5|h9 d7 dK hQ d6 sK|h8 d9 c8 c9 c7 d4|cJ hK s6 dJ sT dT" # 111418466
-	board =  readBoard "cA|hA|sA|dA|c4 dJ c6 h2 h3 sJ|hQ c8 s5 sT h8 h4|c7 s7 h6 s9 s2 dK|d8 sK cT h7 cK d3|cQ d2 c5 d5 cJ s4|d6 hK h5 dQ c2 hT|c3 c9 hJ d7 sQ d4|h9 d9 s3 dT s6 s8" # 452200020
-	print board
+	board = readBoard   "cA|hA|sA|dA|hT c3 s4 c4 h2 s2|c5 s9 hJ cT sQ d2|dQ h4 cK s8 c2 sJ|h6 cQ s3 d8 h5 s7|c6 d3 s5 h7 h3 d5|h9 d7 dK hQ d6 sK|h8 d9 c8 c9 c7 d4|cJ hK s6 dJ sT dT" # 111418466
+	
+	#N = 13
+	#board =  readBoard "cA|hA|sA|dA|c4 dJ c6 h2 h3 sJ|hQ c8 s5 sT h8 h4|c7 s7 h6 s9 s2 dK|d8 sK cT h7 cK d3|cQ d2 c5 d5 cJ s4|d6 hK h5 dQ c2 hT|c3 c9 hJ d7 sQ d4|h9 d9 s3 dT s6 s8" # 452200020
+	#vip = '4 c6 4 h3 5 sT 6 s9 7 cK 8 d5 8 cJ 9 dQ 9 hT 10 c9 11 dT 11 s6 11 s8'
+	
+	#board =  readBoard "cA|hA|sA|dA|c2 c3|c4 c5|d2 d3|d4 d5|s2 s3|s4 s5|h2 h3|h4 h5" # ingen lösning
+	#board =  readBoard "cA|hA|sA|dA|c3 c2|c5 c4|d3 d2|d5 d4|s3 s2|s5 s4|h3 h2|h5 h4" # lösning direkt
 
-done = {}
+	# N = 5
+	# board =  readBoard "cA|hA|sA|dA|s4 c4|s3 d5|h5 c3|s5 c5|d4 d3|h4 d2|h2 h3|s2 c2" # ett VIP card
+	# vip = '10 h3'
 
-recurse = (b,level=0) ->
-	#print 'recurse',level, _.map b, (pile) -> pile.length
+	# N = 9
+	# board =  readBoard "cA|hA|sA|dA|h8 c8 s2 c4|d4 d8 s6 c2|c3 d9 h6 s5|s8 c6 c7 s7|h7 s4 d3 c5|s3 d6 h2 s9|d2 h3 h4 d5|d7 h5 h9 c9"
+	# vip = []
+
+	N = 7
+	board =  readBoard "cA|hA|sA|dA|s5 d2 d7|h7 c6 c4|h6 s2 c2|c7 d3 d5|d4 s6 s7|c3 s3 h3|c5 s4 h4|d6 h5 h2"
+	vip = []
+
+	# N = 5 # 104 drag. Dock manuellt 20 drag
+	# board =  readBoard "cA|hA|sA|dA|c3 c5|h5 h2|d5 d4|s4 d2|c4 c2|s2 s5|d3 s3|h3 h4"
+	# vip = []
+
+	prnt board
+
+done = []
+
+recurse = (b,level=0,done=[]) ->
+	#if level > 3000 then return false
 	key = dumpBoard b
-	if key of done then return
-	done[key] = true
-	if b[0].length + b[1].length + b[2].length + b[3].length == 52
-		print '52!', level, _.size done
+
+	# if key in done then return false
+	#done = done.concat key
+
+	#prnt 'recurse',level,done.length,  _.map b, (pile) -> pile.length
+	prnt key
+	if b[0].length + b[1].length + b[2].length + b[3].length == N*4
+		solution = _.cloneDeep done
+		console.log 'Solved!', level, done.length
 		return true
-	moves = findAllMoves b
-	for move in moves
-		[src,dst] = move
-		#print {src,dst}
-		if src in [0,1,2,3] then continue
-		if b[src].length==0 then continue
-		c = _.cloneDeep b
-		card = c[src].pop()
-		c[dst].push card
-		res = recurse c,level+1
+	moves = findAllMoves b,level
+	for [src,dst] in moves
+		prnt src,dst
+		b[dst].push b[src].pop()
+		done.push key
+		if not done.includes dumpBoard b
+			res = recurse b, level+1, done
+		done.pop()
+		b[src].push b[dst].pop()
 		if res then return true
 	false
 
 newGame = ->
 	general.start = millis()
 	general.hist = []
-	
-	fakeBoard()
-	print board
-	start = new Date()
-	recurse board
-	print new Date() - start
+
+	for i in range 1
+		done = []
+		makeBoard()
+		prnt dumpBoard board
+		start = new Date()
+		recurse board
+		console.log new Date() - start, 'ms'
 
 	return
 
 
 	for i in range 1
 
-		fakeBoard()
+		makeBoard()
 
 		general.hintsUsed = 0
 		originalBoard = _.cloneDeep board
@@ -306,7 +344,7 @@ newGame = ->
 		hash = {}
 		nr = 0
 		cand = null
-		print 'newGame',nr,LIMIT,cands.length,aceCards,N
+		prnt 'newGame',nr,LIMIT,cands.length,aceCards,N
 
 		level = 0
 		while aceCards != N*4 and cands.length > 0 and level < 200
@@ -323,18 +361,18 @@ newGame = ->
 			cands = cands.slice 0,2000 # större ger längre körning och kortare lösning.
 
 			if cands.length > 0
-				print 'candsx', level, cands.length,cands[0][0]
+				prnt 'candsx', level, cands.length,cands[0][0]
 
 			#for cand in cands
-			#	print JSON.stringify cand
+			#	prnt JSON.stringify cand
 
 		if aceCards == N*4
-			print JSON.stringify dumpBoard originalBoard
+			prnt JSON.stringify dumpBoard originalBoard
 			board = cand[2]
-			print makeLink()
-			printAutomaticSolution hash,board
+			prnt makeLink()
+			prntAutomaticprnt hash,board
 			board = _.cloneDeep originalBoard
-			print "#{int millis()-general.start} ms"
+			prnt "#{int millis()-general.start} ms"
 			general.start = millis()
 			general.maxMoves = int cand[1]
 			return
@@ -366,7 +404,7 @@ keyPressed = ->
 		board = "cA7|hA4|sA3|dA2||h6|s5 d6||h5 d5||s4 s6|d34||d7|s7|h7||||"
 		general.hist = [[12,0,1],[5,1,1],[8,3,1],[9,1,1],[11,1,1],[16,2,1],[17,0,1],[10,0,1],[9,0,1],[18,2,1],[19,0,1],[7,0,1]]		
 		board = readBoard board
-		print board
+		prnt board
 	display board
 
 # returnerar övre, vänstra koordinaten för översta kortet i högen som [x,y]
@@ -469,7 +507,7 @@ showHeap = (board,heap,x,y,dy) -> # dy kan vara både pos och neg
 			image backs, x, y, w,h*1.1, OFFSETX+860,1092+622,225,H-1
 
 display = (board) ->
-	print 'display',board
+	prnt 'display',board
 	background 0,128,0
 
 	generalen()
@@ -493,7 +531,7 @@ text3 = (a,b,c,y) ->
 
 showInfo = ->
 	fill 64
-	print 'textSize'
+	prnt 'textSize'
 	textSize 0.1*(w+h)
 
 	total = general.blackBox.total
@@ -631,28 +669,87 @@ mousePressed = ->
 
 ####### AI-section ########
 
-findAllMoves = (b) ->
-	#print 'findAllMoves',{b}
+calcVip = (cards) ->
+	highest = [0,0,0,0]
+	for [suit,rank] in cards
+		if highest[suit] != 0 and rank > highest[suit]
+			#prnt 'calcVip',packAll(cards),true
+			return true
+		highest[suit] = rank
+	#prnt 'calcVip',packAll(cards),false
+	false
+assert true,calcVip unpackAll 's5 d2 d7'
+assert false,calcVip unpackAll 's5 d6 s4'
+
+# Börja med längsta kön
+# Prioritera viphögar. Ex d7 blockar d2
+# beräkna vip on the fly
+# jämför med ässhögens översta kort
+
+findAllMoves = (b,level) ->
+	#prnt 'findAllMoves',{b}
 	srcs = HEAPS.concat []
 	dsts = ACES.concat HEAPS
-	res = []
+	#res = []
+
+	prio = []
+
 	for src in srcs
 		if b[src].length == 0 then continue
-		holeUsed = false
+		vip = calcVip b[src]
+		# prioCard = false # vip.includes src + ' ' + _.last(b[src])
+		#prnt prioCard, src + ' ' + _.last(b[src]), vip
 		for dst in dsts
 			if src == dst then continue
 			if not legalMove b,src,dst then continue
-			if b[dst].length==0
-				if holeUsed then continue
-				holeUsed=true
-				res.push [src,dst]
-				continue
-			res.push [src,dst]
-	#print res
-	res
+			if b[src].length==1 and b[dst].length==0 then continue
+			if dst in [0,1,2,3]
+				prio.push [src,dst,999]
+			else 
+				if vip
+					prio.push [src,dst,b[src].length * 10]
+				else
+					prio.push [src,dst,b[src].length]
+
+	prio = prio.sort (a,b) -> b[2] - a[2]
+	prnt JSON.stringify prio
+	prio = _.map prio, (item) -> item.slice 0,2
+	prnt JSON.stringify prio
+	prio
+
+# findAllMoves = (b,level) ->
+# 	# undertrycker inte flytt till ointressanta hål just nu.
+# 	# endast ett hål är intressant
+# 	#prnt 'findAllMoves',{b}
+# 	srcs = HEAPS.concat []
+# 	dsts = ACES.concat HEAPS
+# 	#res = []
+
+# 	prio = []
+
+# 	for src in srcs
+# 		if b[src].length == 0 then continue
+# 		prioCard = false # vip.includes src + ' ' + _.last(b[src])
+# 		#prnt prioCard, src + ' ' + _.last(b[src]), vip
+# 		for dst in dsts
+# 			if src == dst then continue
+# 			if not legalMove b,src,dst then continue
+# 			if dst in [0,1,2,3]
+# 				prio.push [src,dst,0]
+# 			else if b[dst].length > 0
+# 				if prioCard then prio.push [src,dst,1] else prio.push [src,dst,2]
+# 			else 
+# 				if prioCard then prio.push [src,dst,3] else prio.push [src,dst,4]
+
+# 	prio = prio.sort (a,b) -> a[2] - b[2]
+# 	#prnt JSON.stringify prio
+# 	prio = _.map prio, (item) -> item.slice 0,2
+# 	#prnt JSON.stringify prio
+# 	prio
+# 	#prnt 'res',level, JSON.stringify res
 
 expand = ([aceCards,emptyPiles,b,path]) ->
-	#print 'expand',{aceCards,b,path}
+	#prnt 'expand',{aceCards,b,path}
 	res = []
 	moves = findAllMoves b
 	#comeFrom = {}
@@ -666,7 +763,7 @@ expand = ([aceCards,emptyPiles,b,path]) ->
 			newPath = path.concat [move]
 			hash[key] = [newPath, b]
 			res.push [countAceCards(b1), countEmptyPiles(b1), b1, path.concat([move])]
-			#print {src,dst,position}
+			#prnt {src,dst,position}
 	res
 
 hint = ->
@@ -681,7 +778,7 @@ hint = ->
 	# Gick ej att gå framåt, gå bakåt
 	[src,dst,antal] = _.last general.hist
 	menu0 src,dst,'#f00'
-	print 'red',dialogues.length
+	prnt 'red',dialogues.length
 
 hintOne = -> 
 	hintTime = millis()
@@ -708,23 +805,23 @@ hintOne = ->
 			cands = cands.concat increment
 #			cands.sort (a,b) -> if a[0] == b[0] then b[1]-a[1] else a[0]-b[0]
 			#cands.sort (a,b) -> a[0]-b[0]
-		#print cands
-	#print N,nr,cands.length,aceCards
+		#prnt cands
+	#prnt N,nr,cands.length,aceCards
 
 	if aceCards == N*4
 		board = cand[2]
-		#printAutomaticSolution hash, board
+		#prntAutomaticprnt hash, board
 		path = cand[3]
 		board = origBoard
 		[src,dst] = path[0]
 		#makeMove board,src,dst,true
 		#dialogues.pop()
 		menu0 src,dst,'#0f0'
-		#print "hint: #{int millis()-hintTime} ms"
+		#prnt "hint: #{int millis()-hintTime} ms"
 		return true
 	else
-		print 'hint failed. Should never happen!'
-		#print N,nr,cands.length,aceCards,_.size hash
+		prnt 'hint failed. Should never happen!'
+		#prnt N,nr,cands.length,aceCards,_.size hash
 		board = origBoard
 		return false
 
@@ -752,9 +849,10 @@ assert "heart J", prettyCard pack 1,10
 assert "spade Q", prettyCard pack 2,11
 assert "diamond K", prettyCard pack 3,12
 assert "3", prettyCard pack(3,2),1
-#print 'prettyCard ok'
+#prnt 'prettyCard ok'
 
 prettyMove = (src,dst,b) ->
+	prnt 'prettyMove',src,dst,b
 	c1 = _.last b[src]
 	if b[dst].length > 0
 		c2 = _.last b[dst]
@@ -763,24 +861,24 @@ prettyMove = (src,dst,b) ->
 		if dst in HEAPS then "#{prettyCard c1} to hole"
 		else "#{prettyCard c1} to panel"
 
-printAutomaticSolution = (hash, b) ->
+prntAutomaticprnt = (hash, b) ->
 	key = dumpBoard b
-	solution = []
+	prnt = []
 	while key of hash
 		[path,b] = hash[key]
-		solution.push hash[key]
+		prnt.push hash[key]
 		key = dumpBoard b
-	solution.reverse()
-	s = 'Automatic Solution:'
-	for [path,b],index in solution
+	prnt.reverse()
+	s = 'Automatic prnt:'
+	for [path,b],index in prnt
 		[src,dst] = _.last path
 		s += "\n#{index}: #{prettyMove src,dst,b} (#{src} to #{dst})"
-	print s
+	prnt s
 
-printManualSolution = ->
+prntManualprnt = ->
 	b = _.cloneDeep originalBoard
-	s = 'Manual Solution:'
+	s = 'Manual prnt:'
 	for [src,dst,antal],index in general.hist
 		s += "\n#{index}: #{prettyMove src,dst,b}"
 		makeMove b,src,dst,false
-	print s
+	prnt s
