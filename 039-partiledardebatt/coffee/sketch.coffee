@@ -16,8 +16,7 @@ window.draw = ->
 	background 'white'
 	if active != '' then timings[active] += 1/frameRate()
 
-	for i in range buttons.length
-		button = buttons[i]
+	for button in buttons
 		textAlign CENTER,CENTER
 		button.draw()
 		fill 'black'
