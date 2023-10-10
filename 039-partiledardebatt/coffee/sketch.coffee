@@ -21,7 +21,10 @@ window.draw = ->
 		button.draw()
 		fill 'black'
 		textAlign RIGHT
-		text round(timings[button.prompt],1),200,12.5+button.y
+		push()
+		textSize 20
+		text timings[button.prompt].toFixed(1),200,12.5+button.y
+		pop()
 
 class Button
 	constructor : (@prompt) ->
