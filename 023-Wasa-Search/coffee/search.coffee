@@ -1,29 +1,54 @@
 import {r4r,div,a,button,input,br,table,tr,td,th,span} from '../js/utils.js'
 
+title0 = "Wasa SK"
+title1 = "Wordpress"
+title2 = "Google"
+URL0 = "https://www.wasask.se"
 URL1 = "https://www.wasask.se/aaawasa/wordpress/?s="
 URL2 = "https://www.google.com/search?q=site:wasask.se "
-URL3 = "https://stockholmsschack.se/?s="
-URL4 = "https://www.google.com/search?q=site:stockholmsschack.se "
-URL5 = "https://schack.se/?s="
-URL6 = "https://www.google.com/search?q=site:schack.se "
-URL7 = "https://bildbanken.schack.se/?query="
-URL8 = "https://storage.googleapis.com/bildbank2/index.html?query="
 
-URL9 = "https://www.google.com/search?q=site:https://www.svenskalag.se/wasask-seniorer "
-URL10 = "https://www.google.com/search?q=site:https://www.svenskalag.se/wasask-juniorer "
+title3 = "Stockholms SF"
+title4 = "Wordpress"
+title5 = "Google"
+URL3 = "https://stockholmsschack.se"
+URL4 = "https://stockholmsschack.se/?s="
+URL5 = "https://www.google.com/search?q=site:stockholmsschack.se "
+
+title6 = "Sveriges SF"
+title7 = "Wordpress"
+title8 = "Google"
+URL6 = "https://schack.se"
+URL7 = "https://schack.se/?s="
+URL8 = "https://www.google.com/search?q=site:schack.se "
+
+title9  = ""
+title10 = "Bildbanken 1"
+title11 = "Bildbanken 2"
+URL9 = ""
+URL10  = "https://bildbanken.schack.se/?query="
+URL11 = "https://storage.googleapis.com/bildbank2/index.html?query="
+
+#URL9 = "https://www.google.com/search?q=site:https://www.svenskalag.se/wasask-seniorer "
+#URL10 = "https://www.google.com/search?q=site:https://www.svenskalag.se/wasask-juniorer "
 
 N = ""
 J = "Ja"
 
 data = null
-click = (url) => window.location = url + data.value
-makeButtons = (urlw, urlg, text, g) => [
+click  = (url) => window.location = url + data.value
+click0 = (url) => window.location = url
+
+makeButtons = (url0, url1, url2, title0, title1, title2) => [
 	tr {},
-		#td {}, text
+		if url0 != '' and title0 != ''
+			td {},
+				button {style:"font-size:30px; text-align:center; width:270px", onclick: => click0 url0}, title0
+		else
+			td {}
 		td {},
-			button {style:"font-size:30px; text-align:center; width:270px", onclick: => click urlw}, text
+			button {style:"font-size:30px; text-align:center; width:270px", onclick: => click url1}, title1
 		td {},
-			button {style:"font-size:30px; text-align:center; width:270px", onclick: => click urlg}, g
+			button {style:"font-size:30px; text-align:center; width:270px", onclick: => click url2}, title2
 ]
 
 tds = {style:"border:1px solid black; text-align:left"}
@@ -42,6 +67,16 @@ rad = (a,b,c,d="") =>
 		td tdt, c
 		td tds, d
 
+queryString = window.location.search
+urlParams = new URLSearchParams queryString
+if urlParams.size == 6
+	title0 = urlParams.get 'title0'
+	title1 = urlParams.get 'title1'
+	title2 = urlParams.get 'title2'
+	URL0 = urlParams.get 'URL0'
+	URL1 = urlParams.get 'URL1'
+	URL2 = urlParams.get 'URL2'
+
 r4r =>
 	div {style:"font-size:30px; text-align:center"},
 		br {}
@@ -49,11 +84,11 @@ r4r =>
 		br {}
 		br {}
 		table {style:"border:1px solid black; margin:auto; border-collapse: collapse;"},
-			makeButtons URL1, URL2, "Wasa SK Classic","Google"
-			makeButtons URL3, URL4, "Stockholms SF","Google"
-			makeButtons URL5, URL6, "Sveriges SF","Google"
-			makeButtons URL7, URL8, "Bildbanken 1","Bildbanken 2"
-			makeButtons URL9, URL10, "Svenska Lag Sr","Svenska Lag Jr"
+			makeButtons URL0, URL1, URL2, title0,title1,title2
+			makeButtons URL3, URL4, URL5, title3,title4,title5
+			makeButtons URL6, URL7, URL8, title6,title7,title8
+			makeButtons URL9, URL10, URL11, title9,title10,title11
+#			makeButtons URL9, URL10, "Svenska Lag Sr","Svenska Lag Jr"
 		br {}
 		table {style:"font-size:24px; border:1px solid black; margin:auto; border-collapse: collapse;"},
 			rubrik "Feature", "BB1", "BB2"
