@@ -1,7 +1,4 @@
-Exempel:
-```
-http://127.0.0.1:5500/searchGeneral.html?URL0=https://wasask.se&URL1=https://www.wasask.se/aaawasa/wordpress/?s=&URL2=https://www.google.com/search?q=site:wasask.se%20&title0=Wasa%20SK&title1=Wordpress&title2=Google
-```
+[Try it!](https://christernilsson.github.io/2023-023-Wasa-Search/searchGeneral.html?URL0=https://wasask.se&URL1=https://www.wasask.se/aaawasa/wordpress/?s=&URL2=https://www.google.com/search?q=site:wasask.se%20&title0=Wasa%20SK&title1=Wordpress&title2=Google)
 
 * Syftet med detta projekt är att kunna visa webbsidorna på mobiler.
 
