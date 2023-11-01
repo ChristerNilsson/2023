@@ -42,6 +42,12 @@ SUIT = "club heart spade diamond".split ' '
 RANK = "A23456789TJQK" 
 LONG = " Ace Two Three Four Five Six Seven Eight Nine Ten Jack Queen King".split ' '
 
+done = []
+
+RED = 'RED' # timeout
+YELLOW = 'YELLOW' # in process
+GREEN = 'GREEN' # solution found
+
 # Konstanter för cards.png
 OFFSETX = 468
 W = 263.25
@@ -50,7 +56,7 @@ H = 352
 w = null
 h = null
 LIMIT = 1000 # Maximum steps considered before giving up. 1000 is too low, hint fails sometimes.
-
+searchStart=null
 faces = null
 backs = null
 
@@ -294,17 +300,28 @@ fakeBoard = ->
 	# board =  readBoard "cA|hA|sA|dA|d2 d3 c7 s6 s9|s2 d5 c5 s8 d6|c4 h8 hT d9 h3|d4 sT s5 s4 d8|s3 cT h5 h7|h9 c6 c2 s7|dT c3 c8 h6|h2 d7 h4 c9"
 	# vip = []
 
-	N=11
-	board =  readBoard "cA|hA|sA|dA|d7 s5 sT h8 dT|cT c5 sJ h7 h9|h3 h4 dJ d2 cJ|h2 c9 c4 h6 d9|d8 s7 s9 c2 c8|s8 c3 c7 s3 d6|s2 s6 s4 d3 hJ|d5 h5 d4 c6 hT"
+	# N=11
+	# board =  readBoard "cA|hA|sA|dA|d7 s5 sT h8 dT|cT c5 sJ h7 h9|h3 h4 dJ d2 cJ|h2 c9 c4 h6 d9|d8 s7 s9 c2 c8|s8 c3 c7 s3 d6|s2 s6 s4 d3 hJ|d5 h5 d4 c6 hT"
+	# vip = []
+
+	# N=13 # lösbar
+	# board =  readBoard "cA|hA|sA|dA|h7 c5 d4 d8 c8 h6|h3 h2 c3 h8 s2 cT|h4 sJ h9 d6 cK c7|dJ d5 sQ c6 s4 d9|hQ d7 sK d3 h5 dQ|c4 dT cQ s7 hT cJ|c2 s5 s8 sT s6 d2|s9 hJ s3 hK dK c9"
+	# vip = []
+
+	N=13
+	board =  readBoard "cA|hA|sA s2|dA d2 d3 d4||h3 h2 c3 h8 c7 h6 c5|h4 sJ h9 d6 cK|dJ d5 sQ c6 s4 d9 c8 h7|hQ d7 sK dQ|c4 dT cQ s7 hT cJ cT|c2 s5 s8 sT s6 h5|s9 hJ s3 hK dK c9 d8"
 	vip = []
 
 	prnt board
 
-done = []
-
 recurse = (b,target,level=10,done=[]) ->
-	if level == 0 then return false
-	if level> 10 then console.log level
+	console.log 'recurse',target,level,dumpBoard b
+	dt = new Date() - searchStart
+	if dt > 1000
+		console.log 'timeout',dt
+		return RED
+	if level == 0 then return YELLOW
+	#if level > 10 then console.log level
 	key = dumpBoard b
 
 	# if key in done then return false
@@ -314,8 +331,10 @@ recurse = (b,target,level=10,done=[]) ->
 	#prnt key
 	if b[0].length + b[1].length + b[2].length + b[3].length == target
 		solution = _.cloneDeep done
-		console.log dumpBoard b
-		return _.cloneDeep b
+		#console.log dumpBoard b
+		res = _.cloneDeep b
+		#console.log 'xxx',res
+		return res
 	moves = findAllMoves b,level
 	for [src,dst] in moves
 		#prnt src,dst
@@ -325,29 +344,45 @@ recurse = (b,target,level=10,done=[]) ->
 			res = recurse b, target, level-1, done
 		done.pop()
 		b[src].push b[dst].pop()
-		if res then return res
-	false
+		#console.log 'yyy',res
+		if res == RED then return res
+		if res != YELLOW and res != undefined
+			console.log 'GREEN',dt
+			return res
+	#console.log YELLOW
+	YELLOW
 
 newGame = ->
 	general.start = millis()
 	general.hist = []
 
 	done = []
-	makeBoard()
+	fakeBoard()
 	origBoard = _.cloneDeep board
 	prnt dumpBoard board
 	startTotal = new Date()
 
 	#return
 
-	for target in range 0,4*(N-1)
+	aceCards = countAceCards(board) - 4
+
+	for target in range aceCards+0,4*(N-1)
 		start = new Date()
 		depth = 0
-		res = false
-		while not res
+		res = YELLOW
+		while res == YELLOW
+			#console.log res
 			depth++
+			searchStart = new Date()
 			res = recurse board,5+target,depth
-			if res != false
+			#console.log 'newGame',res
+			if res== RED or depth > 100
+				console.log 'uppgivet',res,depth
+				console.log board
+				board = origBoard
+				return
+			if res != RED and res != YELLOW
+				#console.log 'res',res
 				board = _.cloneDeep res
 				break
 		prnt target,new Date() - start
@@ -360,7 +395,7 @@ newGame = ->
 
 	for i in range 1
 
-		makeBoard()
+		fakeBoard()
 
 		general.hintsUsed = 0
 		originalBoard = _.cloneDeep board
