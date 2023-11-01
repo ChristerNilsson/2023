@@ -1,0 +1,159 @@
+
+Normal functions:
+<abs expr[,decimals]>  
+<append $varname,str[,delimeter]>  
+<atcleanup str>  
+<bitsClear>  
+<bitscount>  
+<btoh str>  
+<c statename[,par1[,par2 ...]]>  
+<c_lateevaluation statename[,par1[,par2 ...]]>  
+<calc expr[,decimals]>  
+<calc expr1,expr2[,decimals]>  
+<case control,[test1,res1[,test2,res2,...]][,,elseres]>  
+<cd path>  
+<char int>  
+<cleanup>  
+<clear>   Clear the X window.
+<close filename>  
+<command command[,timeoutms][,timeoutaction]>  
+<connected domain:portnr>  
+<date>  
+<debug>  
+<debuginfo str>  
+<def name,...,[,minargs[,maxargs]]>  
+<delete filename>  
+<directoryexists dirname>  
+<dllBuffer nr[,value]>  
+<dllBufferClear>  
+<dllcall library,function[,parametertype[,parameter]...],ret-type>  
+<do str>  
+<dos doscommand>  
+<dtoh str>  
+<empty str>, <empty str,str,str...>  
+<enterfromfile filename>  
+<eq str1,str2>  
+<examples funcname>  
+<excel open,filename[,yes]>  
+<exec str>  
+<fileexists fname>  
+<fileisopen fname>  
+<flag ch>  
+<foreach name,values,action[,delimiter]>  
+<formcaption[ string]>  
+<formmove x,y,xsize,ysize>  
+<function name,...,[,minargs[,maxargs]]>  
+<functions[ funcnam]>  
+<help funcname>  
+<htob str[,nbits]>  
+<htod str>  
+<htos str>  
+<if cond1,thenstr1,cond2,thenstr2[,cond3,thenstr3...][,elsestr]>  
+<if condition,thenstr[,elsestr]>  
+<ifempty str,thenstr[,elsestr]>  
+<ifeq str1,str2,thenstr,elsestr>  
+<ifflag ch,thenstr[,elsestr]>  
+<ifgt str1,str2,thenstr,elsestr>  
+<ifis str,thenstr[,elsestr]>  
+<in filename>  
+<indexes $name[,delim]>  
+<info filename[:port]>  
+<inpos>  
+<inputbox caption,prompt[,default]>  
+<interface name1 name2 ...>  
+<is str>, <is str,str,str...>  
+<j statename>  
+<linenr>  
+<load xfilename>  
+<loadFile xfilenamepart1[,filenamepart2...]>  
+<loadfrom groupname,xfilename>  
+<loadlevel>  
+<localio script>  
+<logto[ [,filename][,thread]]>  
+<makebits n,str>  
+<makebitsclear>  
+<makebitscount n>  
+<messageBox str>  
+<messageDialog msg,buttons>  
+<msWord open,filename>  
+<nameas str>  
+<openfiles>  
+<out filename>  
+<outpos>  
+<pack $str,delim,value1,value2, ...>  
+<paramstr n>  
+<persistentIO>  
+<pfail n,str>  
+<play filename>  
+<pop name,divchar>  
+<prelDef name,...,[,minargs[,maxargs]]>  
+<progtest fs/io/x>  
+<r [str]>  
+<range n1,n2[,delim]>  
+<read ln>  
+<rename filename,filename>  
+<replacewith str>  
+<resetflag ch>  
+<run exefilename parameters>  
+<scripterror str>  
+<select file1,action1[,file2,action2[,...]],timeoutms,defaultaction>  
+<set $varname,str>  
+<setflag ch>  
+<settings option[,value]>  
+<shiftbits>  
+<sleep n>  
+<sort $table[,numerical/combi/combiDescending]>  
+<sp n>  
+<sql function,parameters ...>  
+<sqrt expr[,decimals]>  
+<startProgram exefilename parameters>  
+<stoh str>  
+<strlen str>  
+<strLowercase str>  
+<struppercase str>  
+<tempFileName>   Obsolete name for <uniqueFileName>. Use <uniquefilename> instead.
+<terminate>  
+<thread evalstr>  
+<time>  
+<uniqueFileName>  
+<unless condition,thenstr>  
+<unpack str,delim,$var1,$var2, ...>  
+<unread str>  
+<update $name,str[,decimals][,initvalue]>, <update $name[$index],str[,decimals][,initvalue]>  
+<usage str[,name1|name2|...]>  
+<var $varname[,initvalue][...]>  
+<wcons str[,str[,str...]]>  
+<while condition,dostr[,timeout][,timeoutaction]>  
+<win32 function[,parameters...]>  
+<windowclear>  
+<windowFormat x,y,xsize,ysize>  
+<write str>  
+<x name>  
+<xdefaultdir>  
+<xp n>  
+
+Input functions:
+<afilename>  
+<alt alt1,alt2,...>  
+<anything>  
+<bits n[,str]>  
+<bitsdec n[,str]>  
+<decimal [d1[,d2]]>  
+<eof>  
+<eofr>  
+<eoln>  
+<filename>  
+<followedby str1[,str2[,...]]>  
+<format xxx...>  
+<id>  
+<integer [i1[,i2]]>  
+<lwsp>  
+<notfollowedby str1,str2,...>  
+<opt alt1,alt2,...>  
+<to str1,str2,...>  
+<to_wholeword str1,str2,...>  
+<to_withinLine str1,str2,...>  
+<towholeword str1,str2,...>  
+<towithinLine str1,str2,...>  
+<towl str1,str2,...>  
+<word>  

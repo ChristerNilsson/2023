@@ -1,0 +1,1340 @@
+
+---------------------------------------------------------------------------------
+<abs expr[,decimals]>:
+
+Calculate expr and return the absolute value of the result.
+
+Examples:
+
+<if <abs $speedKmph>'>10,...>
+
+Do something (...) if the speed ($speedKmph) is > 10 km/h, regardless if the speed has a positive or negative sign (negative = reversing).
+
+..........
+
+<if <abs $balisepos-$oldbalisepos>'>5,<set $balisedata,>>
+
+Balise data ($balisdata) is erased if it was more than 5 meters since last balise was passed, regardless of if the vehicle is travelling in positive direction ($balisepos>=$oldbalisepos) or negative ($balisepos<$oldbalisepos).
+
+..........
+
+<set $speed,<abs $signedSpeedKmph/3.6,2>
+
+Calculates unsigned speed in m/s from signed speed in km/h, with 2 decimals.
+
+---------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------
+<alt ...>:
+Accept any of the listed alternative patterns. First match is chosen.
+
+Examples:
+
+?"DMI Language = <alt English,Norwegian,Finnish,Swedish>
+"?
+!"<wcons <p 1>>!"
+
+The input line matches four different languages. If there is a match, then output part (<wcons ...>) is performed.
+
+..........
+
+<function cabcode,<alt None,Turnout opposite,Turnout,Stop,Caution,Clear>>
+
+A function <cabcode> is defined that can be used to recognize any of the words in the alt-list. This function can be used where strings are matched: In ?"..."? and in calls to <ifeq ...>, <case...> and <eq ...>.
+
+A tip: If one alternative string (e.g. "turnout") is also the leading part of a longer string (e.g. "turnout opposite"), then the longer string shall be tested first (like in the example). Otherwise, the longer string will not be found because the shorter string is found first.
+
+..........
+
+<preldef list><function list,<alt $1$2<list $1,$2>,$1>>
+
+The function <list ...> is a very convenient string matching tool, that
+is created with the following code. It can be used to
+regognize lists like for example chapter numbers (1.2.3, 16.3.9, etcetera)
+or other lists where a certain format (e.g. <integer>) can be repeated
+any number of times, separated by a separation character, for example ','.
+The <alt ...> expression has two alternatives. The first is the format to
+be repeated (e.g. <integer>) followed by the separator (e.g. ".") followed
+by the same kind of list. The other is a the format alone (e.g. <integer>).
+The last item in the list will always match the second alternative, because
+it has no separator (e.g. ".") after it.
+
+..........
+
+?"Pos. <alt <integer>m,->"?
+!"...!"
+
+The following alternative, in a state, matches "Pos. " followed by either
+a distance in meters (e.g. "1000m") or by "-" (position unknown or irrelevant).
+
+..........
+
+The following <alt ...> expression matches a distance (e.g. 1000m), 
+optionally followed by a gradient (e.g. "1000m" or "1000m -3.5%")
+or by a dash "-" (no distance specified). The <alt ...> expression
+uses the predefined pattern <gradient>.
+
+<function gradient,<integer><opt '.<integer>>%>
+
+...
+
+-<alt <integer>m<opt ',<gradient>>,->
+
+..........
+
+The function posnegint below, defines a string matching pattern 
+consisting of an integer optionally preceded by plus or minus sign,
+e.g. +1, -1000, 5444. This pattern can be used as a part in other
+more complex string matching patterns.
+
+<function posnegint,<alt +,-,><integer>>
+
+..........
+
+The function pattern "balise" below, consists either of three integers, H followed
+by three double digit hexadecimal numbers, or the letter "Q".
+
+<function balise,<alt <integer> <integer> <integer>,H <format hh> <format hh> <format hh>,Q>>
+
+..........
+
+The following pattern for reading and recognizing binary data, consists of 8 bits, 
+having either of the hexadeximal values "25", "52", "61" or "0D". 
+
+<bits 8,<alt 25,52,61,0D>>
+
+<alt ...> can cause unexpected behaviour if one of the alternatives is the
+same as the beginning of another alternative, later in the list. The later
+alternative will then never be recognized, because <alt ...> will stop 
+searching when it finds the beginning of it.
+
+..........
+
+<ifeq 10,<alt 1,5,10,15>,Yes,No> => No
+
+because the alt will match "1" and then see "end of file" when trying to 
+compare "0". 
+
+Therefore, alternatives which is the beginning of a longer 
+alternative, need to be placed after the longer alternative, so that the 
+longer alternative is tested first, even though it is a little awkward:
+
+<ifeq 10,<alt 10,1,5,15>,Yes,No> => Yes
+---------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------
+<anything>:
+Accept anything. This function will read and accept all characters until the 
+end of the file or the string.
+
+Examples:
+
+The following can be used as a default alternative at the end of a list of alternatives, 
+if the input is of limited length (for example <in ...,string>).
+
+?"<anything>"?
+...
+
+The following pattern can be used to sort out a certain kind of data, which can later
+be further analysed in a called state:
+?"<opt ETCS Balise:><anything>"?
+!"<if <is <p 1>,<c etcsbalise,<p 2>>,{else}<c balise,<p 2>>"!
+...
+
+The following example is inside a function definition, where $1 is argument 1.
+To remove the path from a filename: 
+<set $fname,<ifeq $1,<to \,/><anything>,<xp 2>,$1>
+...
+
+To cut out the filename without extension (this can be useful when creating an output
+file with the same name as the input file but with another extension).
+The "<to .<to .,<eof>>" will find the last "." in the filename (if there is any), and once
+it has found it, the remainder (<anything>) is not needed but must be read for the
+$1 to be equal to the pattern:
+<function lessExtension,<case $1,<to .<to .,<eof>><eof>><anything>,<xp 1>,,$1>>
+...
+
+
+The following example distiguishes between an integer value without colour (e.g. 12) and one with a colour
+(e.g. 12/yellow)
+<ifeq $value,<integer>/<anything>,
+-<set $actualvalue,<xp 1>><set $actualcolour,<xp 2>>
+-,{else}<set $actualvalue,$value><set $actualcolour,>>
+->
+...
+
+The following example regognizes a chapter header number that starts with 
+numbers separated by periods, for example "5.4.1 Help examples for X".
+The <list ...> function is not predefined, so it has to be defined before.
+<ifeq <p 1>,<list <integer>,.> <anything>,
+-<set $chapnumber,<xp 1>>,<set $chaptext,<xp 2>>
+->
+...
+
+The following example checks if the word "manual" exists in a string, and then
+sets $optm to "M"., otherwise to the empty string.
+<set $optm,<ifeq <sp 1>,<to manual><anything>,M,>>
+...
+
+The following example adds a default extension (.x) to a filename.
+<ifeq $fname,<to .><anything>,,<append $fname,.x>>
+...
+
+The following example, which is inside a function, where $1 is a parameter
+(a filename), sets $fname to $1, defaulting the extension to ".txt".
+<var $fname,<ifeq $1,<to .><anything>,$1,$1.mox>>
+---------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------
+<append $varname,str[,delimeter]>:
+Append a string to a variable, optionally with delimeters between appended
+   strings.
+
+Examples:
+
+?"<format hh>"?
+!"<update $bytecnt,+1><append $errorbuf,<p 1>>"!
+(Append unexpected data to errorBuf for later error message)
+...
+<append $result,<c itemRead,<htod <p 1>>>, >
+(Add items, read with itemRead, to result, separated by blanks)
+---------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------
+<atcleanup ...>:
+Cleaning up when x-window is closed.
+
+Examples:
+
+(* Stop test if the user closes the window. *)
+<atcleanup <ifeq $stoppingChapter,no,<stop User closed the window><sleep 2000>>>
+---------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------
+<bits n[,str]>: 
+
+Read specified number of bits, optionally check contents. <p n> returns hex code.
+Normally used to read binary input, but can also be used to read
+text input containing hexadecimal data.
+
+Examples:
+
+(* Nominal position. *)
+?"<bits 8,10>
+-<bits 8>(* p2: Macro cycle 0..239 *)
+-<bits 8>(* p3: Direction positive(1)/Negative(255)/Unknown(0). *)
+-<bits 1>(* p4: Nominal position, sign bit. *)
+-<bits 31>(* p5: Nominal position, value. *)
+-"?
+
+..........
+
+(* Read away trailing fill bits (nbits). *)
+?"<bits $nbits>"?
+!"<set $nbits,0><r>"!
+
+..........
+
+-<bits <if $baseline3,0,8>>(* <p 1> = NID_STM, STM identity *)
+
+..........
+
+-<bits 13,001D>
+Important: A check string (001D in this case) must be long enough
+to represent the number of bits (13 in this case).
+
+..........
+
+<ifeq $res,<bits 192>,<readplug $res>,(* (else:) *)-
+<wcons *** Data was expected to be 24 bytes but appears to be different.>>
+
+..........
+
+-<bits 1>(* <p 6>: Nominal position, sign bit. *)
+-<bits 31>(* <p 7>: Nominal position, value in cm. *)
+
+..........
+
+-<bits 8,7<alt 0,3,4,5,6,7,8,9>>(* p1 *)
+
+..........
+
+?"<bits <calc $nbytes*8>>"?
+
+..........
+
+?"<if $acceptslave,,this string will not match any data><bits 8,AA><bits 8,00><bits 8><bits 8>"?
+(Bit reading made conditional by inserting a string which can never match because it is not hexadecimal)
+
+..........
+
+?"<bits 8,99><bits 8><bits 7><bits 1,1><bits <calc (<htod <p 2>>-3)*8>>"?
+(Referring to bits, <p 2>, in the string just being read)
+
+..........
+
+-<bits 4>(* p2: GA1 version number. *)
+-<ifeq <sp 1>,KLMR,<bits 8>>(* p3: reserved (but only for KLMR) *)
+-<bits 8>(* p4: Nominal wheel diameter *)
+(conditional bits, p3)
+
+
+..........
+
+When matching hexadecimal values in a call to <bits ...>,the length must agree 
+with the number of bits, because the matching is done by comparing hexadecimal 
+strings (not integers). For example, eight bits requires 2 characters, because 
+it is represented by two nibbles. Nine bits requires three characters because 
+it needs three nibbles to represent it. If a value (arg 2) is supplied in the 
+call to bits, then its length must be the same as the number of nibbles required 
+to represent the bits, even if it means including leading zeroes. 
+
+<bits 9,00A> = 9 bits containing the value 0xA.
+
+---------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------
+<bitsclear>:
+
+Make sure that next <bits ...> or <decbits ...> will start at an even nibble.
+
+Examples:
+
+decodeJruMess.x
+---------------
+!"<in <sp 1>,string,local><bitsclear>"!
+(* Decode JRU message. *)
+?"<bits 32><bits 8>"?
+!"
+T_JRU = <htod <p 1>> ms '(Time stamp')', N_LITER = <htod <p 2>> '(Number of data bytes')'.
+-(* Rest of decoding in state mdata. *)
+-<j mdata>
+-"!
+(This state starts the decoding of a JRU message, received as a parameter to the
+   state (<sp 1>). Before starting to read, it clears the bits state by calling
+   bitsClear.)
+---------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------
+<bitscount>: 
+
+Return the total number of bits represented by the <bits ...> 
+fields of previous pattern (?"..."?).
+
+Examples:   
+
+?"<bits 8>(* p1: nid_stm *)
+-<bits 8>(* p2: nid_button *)
+-<bits 1>(* p3: q_button *)
+-<bits 32>(* p4: event timestamp. *)"?
+!"-<update $nbits,-<bitscount>>..."!
+(Update counter, nbits, of remaining bits in a packet)
+Note: All bits represented by <bits ...> in the pattern are
+counted, but not bits represented other way. After ?"AE<bits 8><bits 8>"?, 
+bitscount will for example become 16 (8+8) allthough the total length of 
+the pattern is 24 (8+8+8).
+---------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------
+<bitsdec n[,str]>:
+
+Like <bits ...> but it automatically decoded the read bits to decimal format.
+This is done both when the bits are accessed with <p n> and when str is used
+to compare the bits with a value, before accepting them.
+
+Note that the read data is always in hexadecimal format, although
+converted to decimal when comparing with pattern and when accessing with <p n>.
+
+Examples:
+
+The following code snippet reads a train category in a "static speed
+profile" of an  ETCS balise telegram, and prints the fields nc_diff and v_diff, 
+which are decimal numbers. Note that <p 1> and <p 2> can be used directly to 
+retrieve the decimal values, although the input data is in hex.
+Earlier (when only <bits ...> was available), <htod ...> had to be used to
+convert hexadecimal data to decimal values:
+
+   (* <NC_DIFF><V_DIFF> *)
+   ?"<bitsDec 4><bitsDec 7>"?
+   !"<set $tcnt,<calc $tcnt+1>>
+   -<set $nbits,<calc $nbits-<bitscount>>>
+   -<wcons  NC_DIFF=<p 1>', V_DIFF=<p 2>.>
+   -<if $tniter'>$tcnt,,<r>>
+   -"!
+
+..........
+
+<bitsdec ...> is also possible to use in <case ...>:
+
+   <case 99BBDD,<bits 7><bits 7><bits 7><bits 3>,<xp 1>-<xp 2>-<xp 3>-<xp 4>> 
+   => "4C-6E-7B-5"
+   
+   <case 99BBDD,<bitsdec 7><bitsdec 7><bitsdec 7><bitsdec 3>,<xp 1>-<xp 2>-<xp 3>-<xp 4>> 
+   => "76-110-123-5"
+
+---------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------
+<btoh str>: 
+
+Converts a binary number to hexadecimal.
+
+Examples:
+<makebits 9,<btoh 000000001>>(* m_ind_attrib(1): normal flash, fixed, black, black *)
+
+..........
+The following state xor32, returns bitwise xor of arg 1 (<sp 1>) and arg 2 (<sp 2>),
+in hexadecimal format. 
+
+<sp 1> and <sp 2> are first converted to two files of 1's and 0's (p1 and p2).
+The two files are compared, bit by bit. For each bit-pair a new bit is
+appended to the result ($res). The appended bit is '0' if the compared bits
+were the same and '1' if they were different:
+
+   xor32
+   -----
+   
+   <var $res>
+   
+   !"<localio 
+   --<out p1,0><write <htob <makebits 32,<sp 1>>>>
+   --<out p2,0><write <htob <makebits 32,<sp 2>>>>
+   --<in p2,0>
+   -->
+   -<in p1,0,local>
+   -<set $res,>"!
+   
+   ?"<alt 1,0>"?
+   !"<set $res,$res<if <p 1>=<localio <in p2><read 1>>,0,1>>"!
+   
+   ?"<eof>"?
+   !"<r <makebits 32,<btoh $res>>>"!
+
+---------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------
+<c state[,sp1[,sp2[,...]]]>:
+
+Call a state. A state is mainly a list of input patterns, which are used 
+to read the current input (<in>), and perform different actions depending
+on which pattern that matches the input. The state is returned from by calling
+<r>. 
+
+The word "state" comes from the "state machine" model, where the system
+consists of a set if different states, with arrows between them. The system
+acts differently depending on in which state is is in. The arrows are in
+x represented by jumps (<j ...> commands). To execute a state, a call is
+first done to the "entry" state, and then it is possible to jump between
+different states, until returning from the state machine (with <r>).
+
+One state (the called entry state) is however often enough to perform 
+specific function, for example the decoding of an input string.
+
+A state has an optional preaction, which is performed when entering 
+the state, and an optional postaction, which is performed when leaving it
+(with <r>).
+
+A call to a state can have parameters, which are referenced as <sp 1> (state
+parameter 1), etcetera. These are evaluated directly at the call, unlike
+function parameters ($n), which are evaluated when used. Late evaluation
+(when used) is however possible with <c_lateevaluation ...>.
+
+Parameters sp1, sp2,… are available in the new state as <sp 1>,
+<sp 2> etcetera. <c ...> returns the argument to <r str> if the state is exited 
+by this statement, or the output string if <out ,string> was used, otherwise nothing. 
+
+A called state can return a string, either by using <r ...> to leave it,
+or by using <out ,string> in the preaction.
+
+Examples:
+
+the following function callse the state "expand10", to expand 
+a message that uses DC0 (10 hexadecimal) as escape character, before
+sending it to a serial port.
+
+<function sendToTe2,
+-<var $tgm,1002<c expand10,$1>1003>
+-<ifeq <out $port,baud=115200 parity=n data=8 stop=1,binary>,,
+--<wcons Sending $tgm.>
+--<write $tgm>
+--<close $port>
+-->
+->
+
+
+expand10.x
+----------
+
+(* Replace 10 with 1010. *)
+!"<in <sp 1>,string><out ,string>"!
+
+?"10"?
+!"1010"!
+
+?"<format hh>"?
+!"<p 1>"!
+
+?"<eof>"?
+!"<r>"!
+
+
+..........
+
+The following function calls to a state which removes the parenthesis around 
+a parenthesized string.
+
+<function rempar,<c rempar,$1>>
+
+rempar.x
+--------
+
+(* Usage:
+   <rempar (100)>   returns: "100"
+   *)
+!"<in <sp 1>,string>"!
+
+?"<opt  >(<to ),
+>)<eof>"?
+!"<r <p 1>>"!
+
+?"<to <eof>>"?
+!"<r ?>"!
+
+
+..........
+
+The following function calls the state "command".
+
+The state "command" reads commands from current input (<in>), prints a log line to
+current output (<out>), convert each command to another format, and
+finally sends the converted command to a test device ("Simtrak"). 
+
+The state has two local functions: "printpos" to provide current position and speed, 
+and "sendSimtrakCommand", to handle sending a command to a port.
+
+The state in this example (command), is a reduced version of a state which in reality
+is much larger.
+
+<function runcommands,
+-<c commands,$1>
+->
+
+commands.x
+----------
+
+<function printpos,
+-$localpos (<sp 1> km/h)
+->
+
+<function sendsimtrakcommand,
+-<if <connected $simtrakport>,
+--<out $simtrakport>
+--<write $1
+>
+-->
+->
+
+?"C: Start simulation
+"?
+!"<printpos> Start simulation
+<sendsimtrakcommand STARTSIM>"!
+
+?"C: Set Vehicle SB Deceleration <alt <integer>.<integer>,<integer>> m/s/s
+"?
+!"<printpos> Set Vehicle SB Deceleration <p 1> m/s/s
+<sendsimtrakcommand SSBDEC <p 1>>"!
+
+?"C: Set Vehicle SB Delay Time <alt <integer>.<integer>,<integer>> s
+"?
+!"<printpos> Set Vehicle SB Delay Time <p 1> s
+<sendsimtrakcommand SSBDEL <p 1>>"!
+
+?"C: Set Direction Forward
+"?
+!"
+-<printpos> Set Direction Forward<cr>
+-<sendsimtrakcommand C0B 00>
+-"!
+
+?"C: Set Direction Reverse
+"?
+!"
+-<printpos> Set Direction Reverse<cr>
+-<sendsimtrakcommand C0D 00>
+-"!
+
+?"C: Set Direction Neutral
+"?
+!"<printpos> Set Direction Neutral
+<sendsimtrakcommand C09 00>"!
+
+
+?"C: Accelerate to <integer> km/h
+"?
+!"
+-<printpos> Accelerate to <p 1> km/h<cr>
+-<sendsimtrakcommand A00000 <if <p 1>'<100,0><if <p 1>'<10,0><p 1> +000>
+-"!
+
+?"C: Brake to <integer> km/h
+"?
+!"<printpos> Brake to <p 1> km/h
+-<sendsimtrakcommand A00000 <if <p 1>'<100,0><if <p 1>'<10,0><p 1> -000>
+-"!
+
+?"C: Stop simulation
+"?
+!"<printpos> Stop simulation
+<sendsimtrakcommand STOPSIM>"!
+
+?"C: Stop
+"?
+!"<printpos> Stop
+<set $stoprequested,yes>
+-<log.logevent End of test>
+-<r>"!
+
+---------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------
+<c_lateevaluation statename,[par 1[,par 2[,…]]]>:
+
+Like <c ...> except that parameters are evaluated first when they are used.
+This makes it possible to have patterns in the arguments to the state.
+
+Examples:
+
+The following function searches a binary (Object-Ada) project file, 
+for Ada file names (ada, adb or ads). 
+
+The important aspect of this example is that a string pattern 
+("<format l>:...") can be used as argument when calling state find,
+thanks to late evaluation:
+
+   <settings suppressbadcharmessage,yes>(* This command is needed when reading
+      binary files as text, to avoid error messages when reading characters
+      which have a special meaning in X. *)
+   
+   <preldef list>
+   <def list,<alt $1$2<list $1,$2>,$1>>
+   
+   <function findAdaFilenames,
+   -<c_lateevaluation find,$1,<format l>:\<list <id>,\>.<alt ada,adb,ads>>
+   ->
+   
+   find.x
+   ------
+   (* Search a binary file for a string pattern (<sp 2>).
+   
+      <sp 1> = File to look in.
+      <sp 2> = Pattern to look for.
+      
+      Usage example:
+      <c_lateevaluation STM_Simulation_SW.PRJ,<format l>\<list <id>,\>.<alt ada,adb,ads>>
+      (to search for filenames looking like this example: 
+         C:\Working\Generic_Product\Pc_Sim\Pc_Util\Private\api_interface.adb)
+   *)
+   
+   !"<in <sp 1>>"!
+   
+   ?"<sp 2>"?
+   !"<wcons <p 1>>"!
+      
+   ?"<to <sp 2>,<eof>>"?
+   !""!
+   
+   ?"<eof>"?
+   !"<r>"!
+
+Clarifications:
+
+The example above uses a pattern in the second argument to the state "find", 
+to define what an ada filename is: 
+
+   <format l>:\<list <id>,\>.<alt ada,adb,ads>.
+
+The pattern is evaluated first when <sp 2> is used in the called state, because
+of late evaluation. 
+
+The distinction between early and late evaluation is available for states but 
+not for functions. Functions have always late evaluation.
+
+Note also that in the above example, "def" is used to define a list, and "function"
+is used to define the function "find". Technically, there is however no difference
+between <def ...> and <function ...>. The reason why two different names are 
+available having exactly the same technical functionality, is that it can be used 
+to improve comprehension of the script. 
+  
+---------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------
+<calc expression[,decimals]>:
+
+Calculate the result of an arithmetic expression (arg 1) using floating 
+point arithmetic. The result is returned, rounded to (arg 2) decimals, or
+to a whole number (arg 2 not specified).
+
+Allowed operators are: + - / * % < = > != >= <= & |. (% = rest.) 
+
+Any number of parentheses is also allowed.
+
+Examples:
+
+The following code snipped converts a value in km/h (returned by a a call
+to state "readSpeedKmph") to the unit cm/s.
+
+<set $targetSpeedCmps,<calc <c readSpeedkmph>*100/3.6>>
+
+..........
+
+The following function calculates the speed that an accelerating
+vehicle will have at future position, provided current position $1 (m),
+current speed $2 (m/s), acceleration $3 (m/s/s) and future position $4 (m). 
+Sqrt is a predefined function which calculates the square root of its argument.
+
+<function calcSpeed,<calc <sqrt $2*$2 + 2*$3*($4-$1)>>>
+
+..........
+
+The following alternative reads away $nbytes from a binary 
+input file, or other input source, and then returns from the 
+state where it is defined:
+
+?"<bits <calc $nbytes*8>>"?
+!"<r>"!
+
+..........
+
+The following code snippet converts a value which is  scaled in cm 
+($distcm), to another value which is scaled in m truncated ($distm). 
+
+Since <calc ...> always rounds the result to the requested number 
+of decimals (in this case none), 49.5 is subtracted to get truncated 
+instead of rounded value. (Try it on 199 and 200 to find that the 
+result will be 1 and 2 respectively.)
+
+-<set $distm,<calc ($distcm-49.5)/100>>
+
+..........
+
+The following code snippet calculates deceleration, in m/s/s with 2 decimals,
+from old speed ($oldSpeed), new speed ($newSpeed) and elapsed time in
+units of 0.25s ($speedTimeMc).
+   -<set $deceleration,<calc ($oldspeed-$newspeed)/($speedTimeMc/4),2>>
+
+Calc checks that str is a valid expression. If not, it prints an error message
+and stops the script. The most common error is that one of the variables
+in the expression is uninitialized (empty).
+
+---------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------
+<case str,alt1,res1[,alt2,res2[,...]] [,,others]>:
+
+Case evaluates str and then compare it with alt1, alt2 etc until an equal alternative 
+is found. Then evaluate and return the corresponding res. During evaluation
+of resn, variable parts of the alternative (e.g. <integer>) can be
+inserted as <xp n> where n is the ordinal number of the <...>
+expression in the alternative.
+
+A default alternative id expressed as an empty alt at the
+end of the case statement. If a real empty alternative (meaning that
+the str is empty) is needed, then it must therefore not be placed at
+the end.
+
+If no matching alternative was found, and no default alternative was specified, 
+then an error message is printed and the script stops. If the possible
+strings are known, then it is recommended not do specify any default alternative,
+because the case statement will then automatically check that the str 
+conforms to the expected format.
+
+For larger case statements, which extende over several lines, it is recommended
+to place the commas around the alt-strings. It will then be easier
+to add and remove alts or result lines, while preserving the order between 
+alt- and result- strings:
+
+<case str
+-,alt1,res1
+-,alt2,res2
+-...
+->
+
+or 
+
+<case str
+-,alt1,
+-res1
+-,alt2,
+-res2
+-...
+->
+
+
+Examples:
+
+The following script snippet converts a brake pressure reduction - 0-150 kPa
+($1) to a brake level (0.000-1.000), where braking start first when
+the pressure reduction has reached 20 kPa.
+
+-<set $brakeLevel,<case $2,<integer><opt  >kpa,<calc (<xp 1>-20)/130,3>>>
+
+<xp 1> returns the string that matched the 1st <...> in the alternative (<integer>).
+
+The same calculation could also have been done with <ifeq ...>, but <case ...> was
+chosen in order to check that the str conforms to the expected format.
+
+..........
+
+The following script snippet sets language to Swedish if the variant 
+($config.variant) is Sweden, to Finnish if it is Finland, and otherwise to English.
+
+-<set $language,<case $config.variant,Sweden,Swedish,Finland,Finnish,,English>>
+
+..........
+
+The following function converts button name ($1) to a button code,
+to be used in a script for automatic pushing of buttons
+
+   are around the alt's and on the same line. This not mandatory
+   but it is recommended, because it makes it significantly easier 
+   to keep the commas in order.)
+
+<function bnametostmidfunid,
+-<case $1
+--,AVBRYT,16/01
+--,UTFÖR,16/02
+--,UTFØR,16/02
+--,VÄXLING,16/03
+--...
+--,,
+-->
+->
+
+..........
+
+The following code snippet, from the output part of an alternative in a state, 
+creates a command with a variant part (1-3) depending on surface condition ($3). 
+Surface condition = "Keli" in Finnish.
+
+!"C: Enter STM choice <case $3,Keli 1,0,Keli 2,1,Keli 3,2>(* Surface Condition Coefficient *)
+"! 
+
+..........
+The following code snippet looks at two variables ($testenvironment and $stmState)
+when deciding what action to take. The same separation character ("/") is used
+in the string ($testenvironment/$stmstate) and in the alternatives (e.g. "<alt TE1,TE2,TE3>/CO").
+Any separation character could be used, as long as it the same in the alternatives
+as in the input string.
+
+-<case $testenvironment/$stmstate
+--,<alt TE1,TE2,TE3>/CO,
+--(* Do nothing here. Language will be selected when command "Set ETCS Train Data" is handled. *) 
+--,<alt TE1,TE2,TE3>/<alt NP,PO>,(* Do nothing *)
+--...
+-->
+
+..........
+
+The following code snippet uses a case statement to select different
+button code conversion functions, depending on the tested system
+($config.system) and variant ($config.variant). 
+Like in example 5, the same separation character is used both in the
+str-part and in the alt-parts of the case statement. In this example, a 
+space was used to separate the system and the variant. In the third
+alternative (Rio Tinto), the variant is empty, but the space that was
+used in the str-part, still has to be included. The snippet apparantly
+belongs to the output part of an alternative in a state, since name of
+the button is retrieved with <p n>. Note that the positioning of
+comma-characters follows the recommendation given above.
+
+!"
+-<set $buttonId,
+--<case $config.system $config.variant
+---,STM finland,
+---<buttonNameToButtonId2 <p 2>>
+---,STM Sweden,
+---<buttonNameToButtonId <p 2>>
+---,Rio Tinto ,
+---<if <buttonNameOkRioTinto <p 2>>,<p 2>>
+--->
+-->
+-"!
+
+..........
+
+The function grToDec uses a case statement to convert a gradient into a decimal number, 
+according to a predefined conversion table. If no gradient is specified ("-" or "") then the 
+default value (6) is returned. If an unexpected gradient is specified, then a small error
+message - "grtodec:"$1'"?" - is returned. Note that single quotes are necessary to prevent
+the commas in the gradients to be interpreted as argument separators in the case statement
+(e.g. "1,6%" is written as "1',6%"). To save space, all the alternatives in the case statements
+are squeezed into two lines, rather that using 1 or 2 lines for each alternative.
+
+<function grToDec,<case $1,-,6,,6,-1',8%,1,-1',5%,2,-1',3%,3,-1',0%,4,-1%,4,-0',8%,5,-0',5%,6
+-,-0',3%,7,0%,8,0',2%,9,0',5%,10,-2',2%,11,-2',7%,12,1%,12,-3',3%,13,-4%,14,,grtodec:"$1'"?>
+->
+
+
+..........
+
+In the following code snippet, a case statement is used to set a bit in a 
+balise telegram, which tells if the balise is intended for the up (1) or 
+down (0) direction of the track. It depends both on the direction of the 
+trackfile ($trackfiledir), and if the balise group is in itself opposite 
+to the track file direction ($opposite).
+
+-<makebits 1,<case $trackfiledir,up,<if $opposite,1,0>,down,<if $opposite,0,1>>>
+
+..........
+
+The following function uses a case statement to convert a time value expressed
+in hours and minutes (e.g. "3'59"), into a time value purely expressed in minutes
+(e.g. "239"). Note that the single quote in the "hours'minutes" value had to be 
+quoted itself (<integer>''<integer>), to prevent it from quoting the next character 
+("<" in "<integer>").
+
+(* Example <totalMinutes 3'59> => 239 *)
+<function totalMinutes,<calc <case $1,<integer>''<integer>,<calc <xp 1>*60+<xp 2>>>>
+
+---------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------
+<cd[ ,path]>:
+
+Tell or change the path to the current working directory.
+
+Examples:
+
+The following function first uses <cd> to save the the current working directory,
+then <cd $1> to change the working directory to function parameter 1 ($1), 
+and finally (<cd $savecd>) to restore the working directory.
+(The main purpose of the function is to call function <test ...>
+for all files with extension $2 in directory $1.)
+
+<function testall,
+-<var $a>
+-<var $savecd,<cd>>
+-<cd $1>
+-<foreach $a,<command dir /B *.$2>,
+--<test $a>,
+>(* File names are separated by newline characters. *)
+-<cd $savecd>
+->
+---------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------
+<char int>
+
+Return a character with a certain code (code table latin-1).
+
+Examples: 
+<char 48> => "0"
+<char 250> => "ú"
+<char 253> => (Error message: Char(253)..char(255) are reserved for technical
+purposes in X.)
+---------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------
+<cleanup>
+
+Erases all opened input files (from memory, not from disk), closes all output 
+files (writes them to disk and deletes them from memory) and erases all states 
+(loaded X-files). 
+Sets current input and output to console. 
+
+Examples:
+
+Mainly used to manually reset x during script development.
+---------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------
+<clear>
+
+Clear X result window.
+Clear is normally used to clear the X output window, as a preparation to
+printing a script introduction in it.
+
+Examples:
+
+The following code, which is located at the end of script crfilename.x,
+prints an introduction on how to use the script. <clear> is used to erase
+the X output window before printing the introduction. 
+The X output window is only erased and the introduction only printed
+if the script is used separately, not loaded from another
+script that is (<loadlevel>=1). 
+
+<if <loadlevel>=1,<clear><wcons 
+Createfilename
+'--------------
+Fill in the missing peaces. Examples:
+
+   '<createfilename svs_3.1.6.4_e4s1.ida',ida'> ='> ida Files\svs_3.1.6.4_e4s1.ida
+   '<createfilename svs_3.1.6.4_e4s1.trk',ida'> ='> ida Files\svs_3.1.6.4_e4s1.ida
+   '<createfilename svs_3.1.6.4_e4s1,ida'> ='> ida Files\svs_3.1.6.4_e4s1.ida
+   '<createfilename 3.1.6.4,ida'> ='> ida files\svs_3.1.6.4_e4s1.ida
+   '<createfilename msvs_3.7.14.6,ida'> ='> ida files\msvs_3.1.6.4.ida
+-->
+->
+---------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------
+<close filename[,asfilename]>, <close *>:
+
+Closes a file (input or output). If current input or output is closed, then current 
+input or output will become cons  instead of the closed file. Cons cannot be closed. 
+An output file is written to disk when it is closed.
+<close filename> returns an error number if it fails and nothing if it succeeds.
+
+The optional parameter asfilename, gives the possibility to save an output file 
+under another filename or in another catalog. 
+
+<close *> closes all open files input or output, including tcp/ip or other
+sources or connections which can be opened by <in ...> or <out ...>.
+It can for example be used save output files, and cleanup, during debugging,
+or to close all files, if there is any uncertainty about which files
+are opened.
+
+Examples:
+
+The function convertTrkFile converts a track file ($1) to another format.
+and stores the resulting file under filename $2.
+It first checks that opening the input file (<in $1,0>) does not return any
+error code, and then opens the output file, calls the file converter state
+(convert.x) and finally closes the input and output files ($1 and $2).
+
+<function convertTrkFile,
+-<ifeq <in $1,0>,,
+--<out $2>
+--<c convert>
+--<close $1><close $2>
+-->
+->
+
+..........
+
+The following code snippets show how to close a file, saving it under another 
+name:
+
+   <close pc_simulator.log,log_files\pc_simulator.log>
+   <close pc_simulator.log,C:\working\simulators\logfiles\pc<date>.log>
+   
+..........
+
+<close *>   
+---------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------
+<command command[,timeoutms]>:
+
+Executes a command with the windows cmd program. It corresponds to enteringt a commmand
+at the Windows command prompt, available under the start button->All programs->Accessories.
+
+The function returns first after the command is completed. If it is not completed within
+the timeout time (parameter 2), it is assumed to be erroneous and is then aborted with
+an error message. The default timeout time is 1 second.
+
+<command ...> returns the standard output from the command, unless there was an error output, in which case it
+returns the error output instead.
+
+<command ...> uses ShellExecuteEx with cmd.exe and option /C, and then uses WaitForSingleObject to 
+wait for completion.
+
+Examples:
+
+The following code lists all file names with extension exe,
+in the current working directory:
+
+<command dir /B *.exe>
+
+..........
+
+The following function "scanFiles" visits directory $1 and calls "test" 
+for all files with extension $2 in this directory. 
+
+<function scan,
+-<var $a>
+-<var $savecd,<cd>>
+-<cd $1>(* Go to directory $1 *)
+-<foreach $a,<command dir /B *.$2>,
+--<test $a>,
+>(* File names separated by new lines. *)
+-<cd $savecd>(* Restore directory *)
+->
+
+..........
+
+The following script deletes certain files matching a certain pattern 
+("svs_e*s*.trk") in a directory ("trk files"), and ignores
+any error messages. Error messages are ignored because the command
+"del" otherwise would returns the error message "The system cannot 
+find the file specified.", when there are no files to delete.
+Function return is deleted by putting the call in the one of the
+condition arguments of <ifeq ...>.
+
+<ifeq <command del /Q trk files\svs_e*s*.trk>,,>
+
+..........
+
+The following function "movefile" moves a file ($1) from the current working
+directory to another directory ($2), and creates this directory if necessary.
+If $3 is specified, it stores the file under a different name name ($3).
+
+<function movefile,
+-<if <fileexists $1>,
+--(* Create directory if not exists already. *)
+--<if !<directoryexists $2>,<command md "$2">>
+--(* Move file without prompt for overwrite. *)
+--<command move /Y "$1" "$2\<if <is $3>,$3,$1>",2000>,
+--<wcons movefile: File $1 was not found.>
+-->
+-,2,3
+->
+
+---------------------------------------------------------------------------------
+
+
+---------------------------------------------------------------------------------
+
+<connected domain:portnr> 
+
+Returns yes if argument is a connected socket.
+
+Examples:
+
+The following function sends a command ($1) to a tcp/ip-port ($simktrakport)
+but only if it is connected.
+
+<function sendsimtrakcommand,
+-<if <connected $simtrakport>,
+--<out $simtrakport>
+--<write $1
+>
+->
+
+..........
+
+The following code snippet tries to connect as a client to a tcp/ip-port
+($config.msgtcpipport), but abort the attempt if having not succeeded within
+15 seconds:
+
+-<out $config.msgtcpipport,client>
+-<sleep 1000>
+-<while !<connected <out>>,
+--<sleep 1000>
+--<wcons Not yet connected (<out>)...>
+--,15000,>
+-<if !<connected <out>>,
+--<wcons *** showMessage: Unable to connect.>
+-->(*if*)
+
+---------------------------------------------------------------------------------
+
+
+---------------------------------------------------------------------------------
+<date>
+
+Returns current date on format yyyy-mm-dd. 
+
+Examples: 
+
+<date>
+2007-04-16
+---------------------------------------------------------------------------------
+
+
+---------------------------------------------------------------------------------
+<debuginfo[ readrescnt/lockcnt/serialbuffer]>
+
+Intended for debugging of X-compiler
+
+Examples: 
+
+   <debuginfo> - Show current file, state, substate and function (if any).
+           
+   <debuginfo readrescnt> Returns the read reservation counter for the current
+      input file. Meaningful only for console, socket, serialport and circularbuffer.
+      It is used to prevent <p n> from being overwritten when called 
+      states read from the same file. 
+      >0: Do not advance the read pointer for the current input file. This will 
+      prevent new input data from overwriting earlier received data which can 
+      still be accessed with <p n>.
+      
+      0: Ok to advance the read pointer for the current input file. This releases
+      space in the (circular) input buffer, for new incoming data.
+      
+      >1 => ioinReserveReadpos will not advance readpos.
+   
+   <debuginfo lockcnt> - Returns the variable lockcount which shows that the Critical
+      section X is locked. 
+      -1 = Critical section X is free
+      0 = Critical section X is locked
+      (>0 = Error - critical section X locked more than once)
+      
+      The entire X interpreter is a critical section, except
+      at places where it alls an external function (for example sleep), which
+      can take some time to complete. This means that switching between threads
+      (or between the main thread and a created thread) can only occurr when the
+      script is in a function which involves waiting of some kind. Examples
+      of such functions are:
+         - Trying to connecto to an internet server port
+         - Picking up a connection request from a client port.
+         - Receiving data from an internet connection
+         - Receiving data from a serial port
+         - Testing for input from an internet connection with <select ...>
+         - Waiting for data from a circular buffer
+         - Checking for availability of data on an internet connection
+         - Waiting a certain number of milliseconds, with <sleep ...>
+         - Executing another program with <win32 shellexecute,...> or
+           <win32 shellexecute,...>
+
+   <debuginfo serialbuffer> - Returns various information from (the first found)
+      serial port, if any. Example:
+      
+         enter:<debuginfo serialbuffer>
+         ++ ioserialbufferinfo: Found no serial port.
+         
+         enter:<out com1:,baud=115200>
+         
+         enter:<debuginfo serialbuffer>
+         ++ ioserialBufferInfo: 
+            filename=com1:
+            cinp=2035528
+            filebufp=2037608
+            filebufend=2038626
+            inpsave=2037608
+            readpos=2037608
+            outp=2172728
+            outpsave=2172728
+            usedforoutput=1
+            buffer="
+            (254)(255)(0)(0),'!(0)(0)(0)(0)(0)(0)(0)(0)(0)(0) ... (253)(0)h(23)(31)(0)
+            "
+---------------------------------------------------------------------------------
+
+
+---------------------------------------------------------------------------------
+<bitsdec n,>
+
+Examples:
+
+---------------------------------------------------------------------------------
+
+
+---------------------------------------------------------------------------------
+<dllcall (libraryname),(functionname)[,int/str/,0,str,Do you want to save the file?,str,Save file,int,4,int>
+
+Examples:
+
+   <dlloutparclear>
+   <dlloutpar 1,88>
+   <dlloutpar 4,All<char 0>*.*<char 0>Text<char 0>*.TXT,str>
+   <dlloutpar 7,1>
+   <dlloutpar 8,,str>
+   <dlloutpar 9,2000>
+   <dlloutpar 10,<calc <htod 1000>+<htod 800>>>
+   <set $res,<dllcall Comdlg32,GetOpenFileNameA,out*22,int>>
+   <if $res,<set $fName,<dlloutpar 8>>>
+   
+
+
+---------------------------------------------------------------------------------
+
+
+---------------------------------------------------------------------------------
+<ifeq str1,str2,thenstr,elsestr>
+
+Evaluate and return thenstr if str1=str2, else evaluate and return elsestr. Comparison between str1 and str2 is case-insensitive. Input checking functions are allowed in str2. Parts of the matched string can be retrieved
+with the <xp n> function.
+Examples:
+
+<var a,abc>
+<var b,ABC>
+<ifeq <a>,<b>,yes,no>
+yes
+
+<ifeq <a>,<format lll>,yes,no>
+yes
+
+<ifeq <a>,<format ddd>,yes,no>
+no
+
+<ifeq <a>,<b>,
+-<set a,AAA>
+-,<set a,BBB>
+->
+<a>
+AAA
+
+<ifeq 2009-11-21  11:10,<format dddd-dd-dd> <format dd:dd>,time=<xp 2>>
+time=11:10
+
+In the following example, output from function call <command ...> is
+removed by putting the call in one of the condition argumetns of <ifeq ...>
+
+The following script deletes certain files matching a certain pattern 
+("svs_e*s*.trk") in a directory ("trk files"), and ignores
+any error messages. Error messages are ignored because the command
+"del" otherwise would returns the error message "The system cannot 
+find the file specified.", when there are no files to delete.
+Function return is deleted by putting the call in the one of the
+condition arguments of <ifeq ...>.
+
+<ifeq <command del /Q trk files\svs_e*s*.trk>,,>
+
+---------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------
+<update $name,str>
+
+Update a variable using <calc ...>.
+Does the same as "<set $name,<calc $name str>>".
+The most common usage is to add 1 to a counter variable (like name++ in C).
+
+Examples:
+
+<update $count,+1> = <set $count,<calc $count+1>>
+<update $value,*2> = <set $value,<calc $value*2>>
+
+..........
+
+The following function divides a time expressed in seconds, 
+into days, hours, minutes and seconds.
+
+<function divideInDaysHoursMinutesSeconds,
+-<var $temp,$1>(* (in seconds) *)
+-<set $seconds,$temp%60>
+-<update $temp,/60>(* (in minutes) *)
+-<set $minutes,$temp%60>
+-<update $temp,/60>(* (in hours) *)
+-<set $hours,$temp%60>
+-<update $temp,/24>(* (in days) *)
+-<set $days,$temp>
+->
+
+---------------------------------------------------------------------------------
+
+---------------------------------------------------------------------------------
+<usage str[,name,...]>, <usage>
+
+Define text to be shown after loading of script, if loadlevel=1.
+Optionally, define which function and variables are available to use from other
+scripts.
+Note that special characters in str need to be quoted, unless they are
+intended to be evaluated.
+
+Example:
+<usage -
+compileSwe.x: Compile trackfile script
+======================================
+Example usage (from file to screen): '<comp trackfile.txt'>
+   or (from file to file): '<comp trackfile.txt',trackfile.trk'>
+   or (from screen to screen): '<compile Si 270/40''', 1000m'>
+Example input file:
+   1 100 Si 270/40', 1000m
+   2 200 Si 270/40', 1000m 10-superv.
+   3 300 Si 270/40', 1000m P-extended 1000m 10-superv.
+For detailed documentation of symbolic format', see:
+   N:\STM-N\U - System Verification and Validation\FAT\Test Environment_Requirements\SVS_STM1_Compile_ATC2 Balises_ETCS balises.doc>>
+-,comp|compile>
+
+---------------------------------------------------------------------------------
