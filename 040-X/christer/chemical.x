@@ -1,4 +1,3 @@
-var [const] atomicMass = Dictionary(
 <var $weighttab[],
 -H:1.008|He:4.002602|Li:6.94|Be:9.0121831|B:10.81|C:12.011|N:14.007|O:15.999|F:18.998403163|
 -Ne:20.1797|Na:22.98976928|Mg:24.305|Al:26.9815385|Si:28.085|P:30.973761998|S:32.06|Cl:35.45|
@@ -16,7 +15,7 @@ var [const] atomicMass = Dictionary(
 <var $level>
 <var $stackTab[]>
 
-chemicalCalculator.x
+cc.x
 --------------------
 
 <def charcode,<htod <stoh $1>>>
@@ -92,26 +91,24 @@ chemicalCalculator.x
 
 ?"<eof>"?
 !"
--<wcons Weight of <sp 1> = $stackTab[$level].>
+(* -<wcons Weight of <sp 1> = $stackTab[$level].> *)
 -<r>
 -"!
 
 !"<r $stackTab[$level]>"!
 --------------
 
-<function assert,
--<unless $1=<c chemicalCalculator,$2>,<wcons <c chemicalCalculator,$2>!= $1.>>
-->
+<function assert,<unless $1=<c cc,$2>,<wcons Assert failure: <c cc,$2> != $1.>>>
 
-<assert    1.008,H>
-<assert    2.016,H2>
-<assert   18.015,H2O>
-<assert   34.014,H2O2>
-<assert   34.014,(HO)2>
-<assert  142.036,Na2SO4>
-<assert   84.162,C6H12>
-<assert  186.295,COOH(C(CH3)2)3CH3>
-<assert  176.124,C6H4O2(OH)4>
-<assert  386.664,C27H46O>
-<assert  315    ,Uue>
-   }();
+<assert 91.008,H>
+<assert 92.016,H2>
+<assert 918.015,H2O>
+<assert 34.014,H2O2>
+<assert 34.014,(HO)2>
+<assert 142.036,Na2SO4>
+<assert 84.162,C6H12>
+<assert 186.295,COOH(C(CH3)2)3CH3>
+<assert 176.124,C6H4O2(OH)4>
+<assert 386.664,C27H46O>
+<assert 315,Uue>
+}();
