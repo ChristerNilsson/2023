@@ -1,0 +1,1051 @@
+<(name) a1,...>:
+   A user defined function (or definition).
+
+   Evaluate function name as a macro and return the resulting string.
+
+   Arguments appear in the following way in the string:
+
+   $n is converted to argument n.
+   $n&&& is converted to argument n followed by spaces until it occupies
+      at least) 5 columns.
+   &&&$n is as $n&&& but the argument will be rightadjusted.
+
+   User defined functions can also be used in strings that are used for
+   comparison (patterns), for example in ?"..."?, <ifeq str,...> and
+   <case instr,compstr1,resultstr2,compstr2,resultstr2,...>
+<abs expr[,decimals]>:
+   Like <calc ...> except it negates the result if it
+   is negative, to make it positive.
+<afilename>:
+   Accepts a file name (max length 1000 chars).
+   A filenames consists of all (writable) characters except ", *,
+      , <, >, ?, and |.
+   space is allowed.
+   /, : and \ are allowed to enable paths.
+<alt alt1,alt2,...>:
+   Alternative can contain patterns (<...>).
+   Can also be empty.
+<anything>:
+   Matches anything, to the end of the string or file.
+<append $varname,str[,delimeter]>:
+   Add str to the end of variable $varname.
+   If delimiter is specified, insert it between the
+      existing contents and str, but not if the existing contents
+      is empty.
+
+   <append $varname[index],str[,delimeter]>:
+   Same function but for a table entry.
+<atcleanup str>:
+   Define action (str) to be done before cleanup including when form is closed).
+   Used by the X application to clean up, when the user closes the X window,
+   and when reinitialising the script (<load...>).
+<bits n[,str]>:
+   Read n bits. Optionally compare with str.
+   Start at bit bitpos.
+   Save bitpos for 1st and last char's.
+   Input assumed to be hexadecimal.
+<bitsClear>:
+   Resets the bit position memory of the <bits ...> function,
+   so that next use of <bits ...> shall start to read from the first bit of
+   the first (hexadecimal) character.
+<bitscount>:
+   Return number of bits that was read in the current input pattern ?"..."?
+   (or from pattern in <ifeq ...> or <case ...>. Useful when counting the
+   number of consumed bits in a binary message or package.
+<bitsdec n[,str]>:
+   Read and accept n bits. Optionally compare with str.
+   When referenced with <p n> or <xp n>, or when compared with str,
+   the bits will first be converted to a decimal value.
+   <bitsdec ...> is a variant of the more basic <bits m[,str]>.
+   It can be used for fields which represent decimal values. The decimal
+   can then be referenced directly, with <p n> or <xp n> (or str), without
+   having to decode it with <htod ...>.
+
+   How it is implemented:
+   Start at saved bitpos.
+   Save bitpos for 1st and last char's.
+   Update saved bitpos.
+   Input assumed to be hexadecimal.
+<btoh str>:
+   Converts a binary number to hexadecimal.
+<c statename[,par1[,par2 ...]]>:
+   Call a state or a substate.
+   The parameters are evaluated before running the state, and can be
+   be referenced as <sp 1>, <sp 2> in it.
+
+   A state consists of an underscored* name and three sections:
+   A preaction:
+   !"..."!
+   Alternatives:
+   ?"..."?
+   !"..."!
+   ...
+   A postaction:
+   !"..."!
+
+   The three sections (preaction, alternatives and postaction) are all optional.
+   Preaction is executed when entering the state, and postaction when returning from it.
+   The alternatives are used to decode and interpret the current input
+   (everything that can be opened with <in ...>).
+   The alternatives are tested one by one, starting with the first, until one is
+   found which has matching input part (?"..."?). When an alternative is found,
+   its output part !"..."! is executed. After executing the output part, the state
+   will continue to read and decode input data, unless the output part contained
+   the return statement (<r> or <r ...>), in which case it will return after first having
+   executed the postaction.
+
+   When an output part !"..."! is executed, its evaluated contents, if any, will
+   be written to the current output file (specified by <out ...>).
+
+   * Underscored by dashes "-" or dors ".". Dots are used for substates.
+<c_lateevaluation statename[,par1[,par2 ...]]>:
+   Like <c ...> except that evaluation of parameters is deferred until they
+   are used (as in functions).
+<calc expr1,expr2[,decimals]>:
+   Evaluate an algebraic expressions expr1 and expr2 and return the
+   highest.
+   Example:
+   <set $a,1.9>
+   <max $a-2.3,0,1> => 0
+   <max $a-1.3,0,1> => 0.6
+<calc expr[,decimals]>:
+   Evaluate an algebraic expression.
+<case control,[test1,res1[,test2,res2,...]][,,elseres]>:
+   control: input string
+   testn: pattern string n (can contain <...>)
+   resn: evaluate and return if testn is matched by control.
+<cd path>:
+   Change default directory to path. Typical use:
+   <ifeq <cd \öresund\analysprog>,,,Invalid directory!>
+   ( cd returns an error code if it fails )
+   Cd to internet address (\\...) works but is not supported by
+   command. Later call to <command ...> will instead use c:\windows as
+   current directory.
+<char int>:
+   return a character with a certain ascii code
+   Example: <char 48> returns "0".
+<cleanup>:
+   Run the X-code specified by <atcleanup>
+   Seldom used function.
+   Probably not safe to call when there are threads running!!
+<clear>: Clear the X window.
+   Renamed to <windowClear>.
+   Temporarily supported for backwards compatibility.
+<close filename>:
+   <close domain:portnr>
+   <close *>
+   <close filename,asfilename> (Save output file under other name)
+<command command[,timeoutms][,timeoutaction]>:
+   Execute a command like in the the Win32 command interpreter.
+   Default timeout is 10s (10000ms). Empty timeout = no timeout
+   (goes on forever if necessary).
+   Default timeoutaction is script error and error message.
+   Typical use:
+      <command sort temp1.tmp temp2.tmp>
+      <command del /Q *.log>
+   Uses shellexecute and cmd.exe (windows command interpreter)
+<connected domain:portnr>:
+   Returns yes if arg[1] is a connected socket.
+<date>:
+   Returns date in format "2018-06-07"
+<debug>:
+   - Currently not in order -
+<debuginfo str>:
+   - For internal X development use -
+   Return value of a variable (only readrescnt, lockcnt and serialbuffer
+      are available).
+<decimal [d1[,d2]]>:
+   Matches a decimal, optionally limited by d1 and d2.
+   d1 and d2 currently only accepting integer numbers.
+<def name,...,[,minargs[,maxargs]]>:
+   Another name for <function name,...,[,minargs[,maxargs]]>.
+
+   The implementation is exaclty same as <function ...>.
+   The reason for allowing an alternate name is to be able to express that the
+   code is more of a definition than an executable function.
+<delete filename>:
+   <delete domain:portnr>
+<directoryexists dirname>:
+   Return "yes" if pargs.arg[1] is the name of an
+   existing directory on the disk.
+<dllBuffer nr[,value]>:
+   Handle reference parameters and structs for dllcalls.
+   Example 1:
+   <dllcall mylib,myfunc,int,1234,refInt,>
+   <set $handle,<dllBuffer 1>>
+
+   Example 2:
+   <dllBuffer 1,0>
+   <dllBuffer 2,0>
+   <dllcall user32,ClientToScreen,int,$1,refInt*2,int>
+   <set $origox,<dllBuffer 1>>
+   <set $origoy,<dllBuffer 2>>
+
+   Example 3:
+   ( *
+   ofn.lStructSize = sizeof ( ofn ); (1)
+   ofn.lpstrFilter = "All\0*.*\0Text\0*.TXT\0"; (4)
+   ofn.nFilterIndex =1; (7)
+   ofn.lpstrFile = szFile ; (8)
+   ofn.lpstrFile[0] = '\0';
+   ofn.nMaxFile = sizeof( szFile ); (9)
+   ofn.Flags = OFN_PATHMUSTEXIST|OFN_FILEMUSTEXIST ; (14)
+   GetOpenFileName( &ofn );
+   MessageBox ( NULL , ofn.lpstrFile , "File Name" , MB_OK);
+   * )
+   <dllBufferclear>
+   <dllBuffer 1,88>
+   <dllBuffer 4,All<char 0>*.*<char 0>Text<char 0>*.TXT,str>
+   <dllBuffer 7,1>
+   <dllBuffer 8,,str>
+   <dllBuffer 9,2000>
+   <dllBuffer 10,<calc <htod 1000>+<htod 800>>>
+   <dllcall Comdlg32,GetOpenFileNameA,out*22,int>
+   <wcons filename=<dllBuffer 8>>
+<dllBufferClear>:
+   Clear dllBuffer table and reset dllbufLast.
+<dllcall library,function[,parametertype[,parameter]...],ret-type>:
+   Call dll function
+   Examples:
+   <dllCall user32,MessageBoxA,int,0,str,Do you want to save the file?,str,Save file,int,4,int>
+   <dllCall user32,MessageBoxA,int,0,str,It was not possible to
+      save the file under the filename xxx.yyy,str,Filename error,int,0,>
+
+   171017:
+   parameter types
+   ---------------
+   int: A 32 bit integer is directly pushed to the stack as argument.
+
+   str: The string is copied to a free entry in a string table (stab).
+      The address to the string is pushed to the stack as argument.
+
+   refint: A pointer to the next free entry in dllBuffer is pushed to the stack
+      as argument. The entry is a 32 bit integer. It can be accessed before
+      and after the call with <dllbuffer n,...>.
+
+   refint*n: A pointer to a free block of n entries is pushed to the stack
+      as argument. Each entry contains a 32 bit integer. The entries can be
+      accessed before and after the dllcall with <dllbuffer ...>.
+
+   refstr: The next free entry in dllBuffer is allocated. It contains the pointer
+      to a buffer of size 2000 bytes. The same pointer is also pushed to the
+      stack as argument. The entry can be accessed as string before and after
+      the dllcall. The difference between type refstr and type str is that the
+      dll-function is allowed to write to the string when refstr is used.
+      The str type is intended to be used for strings which are only read by the
+      dll function.
+      Refstr differs from refint, by pushing the pointer to the string as argument
+      (same as str), while as refint pushes a pointer to an entry in dllbuffer.
+
+   ref: A pointer to the next free entry in dllBuffer is pushed to the stack
+      as argument. The entry can either be a 32 bit integer or a pointer to a
+      2000 byte string buffer. This shall be determined before the call, using
+      argument 3 (type str or int) of <dllbuffer ...>. The entry can be accessed
+      before and after the dllcall.
+
+   ref*n: A pointer to a free block of n entries is pushed to the stack
+      as argument. Each entry can either be a 32 bit integer or a pointer to a
+      2000 byte string buffer. This shall be determined before the call, using
+      argument 3 (type str or int) of <dllbuffer ...>. The entries can be accessed
+      before and after the dllcall.
+<do str>:
+   Evaluate str without returning its output.
+   Equivalent to the ugglier <ifeq str,,>.
+<dos doscommand>:
+   - Rarely used - normally replaced by <command ...> -
+   Execute a dos command Typical use:
+      <dos sort temp1.tmp temp2.tmp>
+<dtoh str>:
+   Converts a decimal number to hexadecimal.
+<empty str>, <empty str,str,str...>:
+   Return yes if all str are empty.
+   Examples: <empty 1> => No, <is 1,> => No, <empty ,,> => Yes.
+<enterfromfile filename>:
+   Read file filename and enter each line into the x-window as if the user had
+   entered them.
+   Example: <enterFromFile testAll.log>
+   Where testAll.log is:
+   <play test1a>
+   <play test1b>
+   <plaY test2>
+   ...
+<eof>:
+   Accept if input pointer stands and the end of the input file.
+<eofr>:
+   Accept only if input pointer is past the last available character
+   in a file that can receive more characters (for example
+   tcp/ip ports, serial ports, and circular buffers)
+<eoln>:
+   returns char(13).
+   Used in places like:
+   ?"...<to <eoln>>
+   "?
+   to avoid extra line in the x- file.
+<eq str1,str2>:
+   Compare str1 and str2 in the same way as <ifeq ...>.
+   <...> can be used in str2, for example <integer> or <alt ...>.
+   Normally used for string comparison in algebraic conditions.
+   Example:
+   <if $a=1 & <eq $s,abc> & $b=2,...>
+<examples funcname>:
+   Funcname is the name of a function.
+   Open file examples.txt (in the same directory as x.exe) and lookup
+   examples for the chosen function and return them.
+   Examples:
+   <examples select> => (Usage examples for <select ...>)
+   <examples alt> => (Usage examples for <alt ...>)
+
+   Example of example in examples.txt:
+
+   ---------------------------------------------------------------------------------
+   <append $varname,str[,delimeter]>:
+   Append a string to a variable, optionally with delimeters between appended
+      strings.
+   ...
+   ?"<format hh>"?
+   !"<update $bytecnt,+1><append $errorbuf,<p 1>>"!
+   (Append unexpected data to errorBuf for later error message)
+   ...
+   <append $result,<c itemRead,<htod <p 1>>>, >
+   (Add items, read with itemRead, to result, separated by blanks)
+   ---------------------------------------------------------------------------------
+<excel open,filename[,yes]>:
+      Start excel and open excel file filename (add ",yes" to make it visible)
+   <excel select,sheetname> - Select sheet sheetname as active sheed
+   <excel get,row,column> - Get value from table using row and column indexes
+   <excel set,row,column> - Set value in table using row and column indexes
+   <excel save> - File/save
+   <excel saveAs,filename[,filetype]> - File/saveAs
+   <excel close> - File/close
+
+   Example of table with row and column indexes:
+   employee  name  address salary
+   2          Hans  Visby   10000
+   5         Diana  Sunne   12000
+   11        Sigvard Norsborg 9000
+
+   <excel get,5,address> returns "Sunne"
+<exec str>:
+   Compile and execute a string.
+<fileexists fname>:
+   Return "yes" if pargs.arg[1] is the name of an
+   existing file on the disk.
+   Example:
+   <if <fileexist logfile.txt><command del logfile.txt>>
+<fileisopen fname>:
+   Return "yes" if pargs.arg[1] is the name of an
+   existing file.
+   Example:
+   <if <fileisopen localhost:3000>,<close localhost:3000>>
+<filename>:
+   Renamed to <afilename>.
+   Temporarily supported for backwards compatibility.
+<flag ch>:
+   Returns "1" if set, else "0".
+   Example: <wcons Flag a = <flag a>.>
+<followedby str1[,str2[,...]]>:
+   Accept if input is followed by any of the argument strings str1, str2, .. .
+<foreach name,values,action[,delimiter]>:
+   Execute a for loop over all values in variable name,
+   separated by delimiter (default "|").
+<format xxx...>:
+   where x = d shall be digit
+             l          letter
+             x          any character (not ctrl-char)
+<formcaption[ string]>:
+   <formcaption string>:
+   Change X window caption, but only when some x program is running.
+   <formcaption>:
+   Return current X window caption
+<formmove x,y,xsize,ysize>:
+   Renamed to <windowFormat ...>.
+   Temporarily supported for backwards compatibility.
+<function name,...,[,minargs[,maxargs]]>:
+   Create a function that can be called as <name ...>
+
+   The number of arguments is either automatic (= highest $n reference used in
+   the code (...), or specified with minargs and maxargs.
+
+   The code (...) consists of text, <...>-expressions and $n references
+   (n is an argument number).
+
+   During evaluation, $n in the code will be replaced by the corresponding
+   argument in the call, without evaluation.
+   This means that an X function works similar to a macro.
+
+   For example. <function do123,$1<sleep 1000>$1<sleep 1000>$1>> when
+   called as <do123 <time>>, will be converted to
+      "<time><sleep 1000><time><sleep 1000><time>" before being evaluated.
+<functions[ funcnam]>:
+   Return names of all predefined functions (no funcnam)
+   or a description of function funcnam.
+<help funcname>:
+   Funcname is the name of a function.
+   Examples:
+   <help select> => (Help text for <select ...>)
+   <help alt> => (Help text for <alt ...>)
+<htob str[,nbits]>:
+   Converts a hexadecimal number to binary.
+   Limit to last nbits if specified.
+<htod str>:
+   Converts hexadecimal number to decimal.
+<htos str>:
+   Converts hexadecimal string to textstring.
+   Example: "4142" => "AB"
+   Converts CRLF (0D0A) to CR (0D).
+<id>:
+   Identifier, like in for example Pascal, including non-american letters
+   (latin-1 extension) except special characters in x (FD-FF):
+
+   ['A'..'Z','_','-','0'..'9',char($C0)..char($FB)]
+<if cond1,thenstr1,cond2,thenstr2[,cond3,thenstr3...][,elsestr]>:
+   An <if ...> statement can be extended to an if ... elseif ... then ...
+   elseif ... then ..., just by adding new conditions and new then strings
+   An optional conditionsless else string can be added at the end.
+<if condition,thenstr[,elsestr]>:
+   Condition contains an algebraic expression.
+   Remember that < and > must be quoted not to be interpreted as
+   start and end of function call
+
+   Example:
+   <if $a'>$b & $c=$d,<wcons a'>b and c=d.>,<wcons Other values.>>
+<ifempty str,thenstr[,elsestr]>:
+   Shorter and more readable version of <ifeq str,,thenstr[,elsestr]>
+<ifeq str1,str2,thenstr,elsestr>:
+   Compares two strings.
+   str2 can contain patterns (<...>).
+   thenstr can contain <xp n> (part of str1 according to '<...'> in str2).
+   Example:
+   <ifeq <p 1>,<integer> <integer>,<wcons i1 = <xp 1>', i2 = <xp 2>>
+<ifflag ch,thenstr[,elsestr]>:
+   where x is a flag identified by one character a-z.
+   Example:
+   <setflag a>
+   ...
+   <ifflag a,...,...>
+<ifgt str1,str2,thenstr,elsestr>:
+   = if str1 > str2 then thenstr else elsestr
+   primarily numerical comparison.
+<ifis str,thenstr[,elsestr]>:
+   Shorter and faster version of <if <is str>,thenstr[,elsestr]>
+<in filename>:
+   <in filename,pos> <in filename,option>
+   <in filename,pos,option> <in ,pos>
+   <in domain:portnr> <in domain:portnr,option> <in>
+      option can be "binary"
+   <in ...,string> ... is a string (not a file name). Input will be taken
+      from this string, until leaving the current state.
+   <in com1:,baud=19200 parity=n data=8 stop=1> - To open a serial port
+   <in com14:baud=115200,createretries=2> - To open bluetooth serial port using
+      max 2 create retries (instead of 10) to prevent unnecessary delay if
+      the connection is not available.
+   <in filename,option1,option2> where option1=string and option2=local -
+      Use str as input file in the current state. Input is automatically
+      restored after returning from the state (or statemachine).
+   Available options are: binary, string, local (obsolete), persistent,
+      circularbuffer, client, server, eofaccept, clean (obsolete).
+   <in name,circularbuffer> - If name is used for the first time, create a
+      circular buffer, which works like a file, except read data may be overwritten
+      with new write so that total length is limited to one buffer.
+      Name shall a valid filename, and option binary is not implemented for this
+      kind of file.
+   <in ,eofAccept>(* Acknowledge eof from tcp/ip socket. If connection is
+      restored again, it will then again be possible to read data.
+   <in> - Return name of current input file.
+<indexes $name[,delim]>:
+   Return a list of all indexes in a table.
+   Example:
+   <var $tab[]>
+   <set $tab[book],2>
+   <set $tab[magazine],15>
+   <indexes $tab> => "2|15"
+   <set $tab[magazine],>
+   <indexes $tab> => "2"
+
+   Normally used in in combination with <foreach ...> to process all entries
+   in a table. Example:
+   <wcons Contents of tab is:
+   -<foreach $ix,<indexes $tab>, tab[$ix] = $tab[$ix]>.
+   ->
+<info filename[:port]>:
+   Return information about a file or a socket.
+<inpos>:
+   Returns current position in file or console buffer.
+   First position = 0. All other positions are memory addresses.
+<inputbox caption,prompt[,default]>:
+   Get a field of data from the user with an input box.
+<integer [i1[,i2]]>:
+   Matches an integer, optionally limited by i1 and i2.
+<interface name1 name2 ...>:
+   Specifies the names of functions and variables that shall be visible from the
+   outside of the X source file. If not used, all names are visible
+   (except local variables in functions).
+
+   Example (only <comp ...> and <compile ...> shall be visible outside the x-file:
+   <interface comp compile>
+<is str>, <is str,str,str...>:
+   Return yes if all str are non-empty.
+   Examples: <is 1> => Yes, <is 1,> => No, <is 1,2,3> => Yes.
+<j statename>:
+   Jump to state statename.
+   If the current state is a jumped to state, then its postaction
+   will be carried out.
+   The preaction of the new state will be carried out.
+   If the current state is a called state, then its postaction will
+   not be carried out (it is saved for the reterning with <r ...>).
+<linenr>:
+   Returns current line in the current input file.
+   First line = 1.
+<load xfilename>:
+   Typical use: To load an x-file before it is called, in order
+   to define an output macro so references to it can be compiled.
+
+   <load>
+   Cleanup and reload the X-file which was first loaded after last cleanup.
+
+   Typical use:
+   <load compile>
+   ...
+   (do tests)
+   (change compile.x)
+   ...
+   <load>
+   ...
+   When calling x through xdll (<load ...> returns a number if it fails):
+   if <load filename>="" ...
+<loadFile xfilenamepart1[,filenamepart2...]>:
+   Typical use: To use in association of X-files with the x-program
+   Since file name may contain commas, these will be interpreted
+   as different parameters when the <loadFile ...> command is
+   compiled. Therefore, make them one again.
+
+   Example:
+   <loadfile N:\STM\Pos 6, Development of STM\Software Development Files\Common\Demo 060130\decode.x>
+   Changes to:
+   <load N:\STM\Pos 6', Development of STM\Software Development Files\Common\Demo 060130\decode.x>
+
+   Typical usage (in file association):
+   "...x.exe" "<loadfile %1>"
+<loadfrom groupname,xfilename>:
+   Unknown, and appartently unused, function.
+   Possible functionality: To load an X-script starting from the path
+   groupname (remains to be verified).
+<loadlevel>:
+   Returns the current level of loading X-files.
+   The first X-file loaded from the X window has level 1. If this file
+   loads another file, then in that file, <loadlevel> will return 2, and
+   so on.
+   <loadlevel> used to show an introduction only if an X-script is loaded
+   directly from the X window (<if <loadlevel>=1, ...>) but this is not needed
+   anymore, since the <usage ...> was implemented, which does this automatically.
+   Therefore, the function <loadlevel> is seldom or never used.
+<localio script>:
+   Save id of input and output file, run script, then restore input and output files.
+<logto[ [,filename][,thread]]>:
+   <logto filename> - Send data from output window also to a logfile.
+                      Default extension = .log
+   <logto filename,thread> - Same as <logto filename>, but writes to
+      the log file in a separate thread, to avoid blocking.
+   <logto > - Stop sending data from output window to logfile, and
+      close log file.
+   <logto> - Current name of logfile.
+<lwsp>:
+   Linear white space = any number of space or htab.
+<makebits n,str>:
+   Make n bits from str. Add saved bits to front. Return
+   all bits except trailing odd bits (if total number of bits
+   is not a multiple of 4).
+   Save trailing odd bits, to be added at next call to almakebits.
+   Input assumed to be hexadecimal.
+<makebitsclear>:
+   Reset makebits bit counter.
+<makebitscount n>:
+   Sets makebitscount. <makebitscount> returns makebitscount.
+<messageBox str>:
+   Show modal message and wait for OK from user.
+   Example:
+   <messagebox Please push button B.>
+<messageDialog msg,buttons>:
+   Show modal message and wait for answer from user.
+   Example:
+   <messageDialog Do you want to start Wlana?,yes/no>
+<msWord open,filename>:
+    - Start Word and open Word file filename
+   <msWord save> - File/save
+   <msWord saveAs,filename[,filetype]> - File/saveAs
+   <msWord close> - File/close
+<nameas str>:
+   Give an x-file group a different name than its file name.
+   E.g. an x file is named util-1.x but functions in it shall be adressed
+   (from other x-files) as "<util.func ...>". This can be done
+   by inserting the command <nameAs util> on top level in the file util-1.x.
+<notfollowedby str1,str2,...>:
+   Accept only if input differs from all argument strings.
+<openfiles>:
+   Returns a list of currently open files in X.
+   Can for example used from X-window to see if there is are open files after a
+   script error. Then one can close these output files to write them to disk.
+<opt alt1,alt2,...>:
+   alt 1, alt 2, ... or nothing
+<out filename>:
+   <out filename,pos> <out filename,option>
+   <out filename,option,pos> <out ,pos>
+   <out domain:portnr> <out domain:portnr,option>
+   <out name,circularbuffer>
+   <out ,string>
+   <out>
+<outpos>:
+   Returns current position in output file or console buffer.
+   First position = 0. All other positions are memory addresses
+<pack $str,delim,value1,value2, ...>:
+   Pack a number of values into a single variable.
+   Example:
+   <pack $tab[2], ,$var1,$var2,$var3,$var4,$var5> =
+   <set $tab[2],$var1 $var2 $var3 $var4 $var5>
+
+   Can be used to save context data before switching to another context
+   that uses the same script.
+<paramstr n>:
+   Return command line parameter, where n = 0..number of command line
+      parameters to x.
+   Examples:
+   <paramstr 0> => C:\Users\David\Desktop\Program files (x86)\x\x.exe
+   <paramstr 1> => "<load decodelog>"'
+<persistentIO>:
+   (Disables restore of IO after return from function or state.
+<pfail n,str>:
+   Return <p n> but insert str at the position after which
+   comparison of previous alternatives (?"..."?) failed.
+   Useful to detect causes of when a state does not regognize a
+   string.
+   This is how it is normally used, at the end of a state, when
+   all other alternatives have failed. � will then be inserted before the
+   first character that could not be matched to any of the alternatives
+   in the state.
+
+   ?"<to
+   >
+   "?
+   !"<wcons *** Unable to match <pfail 1,�>.>"!
+<play filename>:
+   Play a file that was recorded using <logto ...>
+   Example: <play logtest1a.log>
+   enter: = X command
+   in: = console input
+   The new input and output are saved in a file called playlog.txt.
+<pop name,divchar>:
+   Pop from a stack. Typical use:
+   <set stack,<stack>|<pos>>
+   ...
+   <in ,<pop stack,|>>
+<prelDef name,...,[,minargs[,maxargs]]>:
+   Preliminary definition of a function name. It can be redefined later.
+   <preldef ...> is often used to create recursive functions. If a function
+   name is preliminary defined, it can be used to call it self in the real
+   definition further down.
+
+   Example:
+   The following function is very convenient when you want to define a pattern
+   that is a list of another pattern:
+
+   <preldef list>
+   <def list,<alt $1$2<list $1,$2>,$1>>
+
+   In X, a function name must always be defined before it is used.
+   Preldef allows the name "list" to be preliminary defined, so that the function
+   <list ...> can call itself.
+<progtest fs/io/x>:
+   - (only for internal X development work) -
+   Call a test procedure.
+<r [str]>:
+   Return from a state (after completing current action),
+   optionally with a return string (to <c state>).
+<range n1,n2[,delim]>:
+   Returns a list of numbers, from n1 to n2, delimited by delim (default: "|").
+   Normally used in <foreach ...> statements, to process something that is
+   numbered from n1 to n2.
+   Example: <foreeach $n,1,5,<case $tab[$n],...>>
+
+   Equivalent to (except that delimiter is fixed):
+   <function range,
+   -<var $n,$1>
+   -<if $2'>=$1,
+   --$1
+   --<while $n'<$2,
+   ---<update $n,+1>
+   ---|$n
+   --->
+   -->
+   ->
+<read ln>:
+    - Read and return a line from input. CR not included.
+   <read n>  - Read and return n characters from input.
+   <read *>  - Read and return the rest of the input file.
+<rename filename,filename>:
+   <rename domain:portnr,filename>
+<replacewith str>:
+   Replace last ?"..."? in input file with str. This can be used
+   to convert a file at the same time as it is being read.
+<resetflag ch>:
+   Reset a simple flag variable, defined by a character.
+   See functions <setflag ch>, <flag ch> and <ifflag ch>.
+   Example:
+   <setflag a>
+   ...
+   <ifflag a,...>
+   ...
+   <resetflag a>
+   ...
+   <ifflag a,...>
+<run exefilename parameters>:
+   - rarely used - normally replaced by <command ...> -
+   Run a program, possibly with parameters.
+   Usage example:
+      <run N:\STM-N\U - System Verification and Validation\FAT\X-scripts\x.exe
+      - "'<load N:\STM-N\U - System Verification and Validation\FAT\X-scripts\decodelog'>
+      <run "N:\STM-N\U - System Verification and Validation\FAT\X-scripts\x.exe",
+      -"'<load N:\STM-N\U - System Verification and Validation\FAT\X-scripts\decodelog'>>
+      -'<test pc_simulator.log',pc_simulator.txt'>">
+   Uses shellexecute with open.
+<scripterror str>:
+   Print error message str and abort script.
+<select file1,action1[,file2,action2[,...]],timeoutms,defaultaction>:
+   waits until file 1..n has readable data available.
+   It then opens that file and executes the corresponding action.
+   Default timeout is no timeout. Empty timeout is also no timeout.
+   Defaultaction is performed if no input is received and
+   timeoutms milliseconds has passed.
+   File can be a file, a socket, a serial port or empty. If file is empty,
+   then it is not used for waiting. This can be used to dynamically select
+   which files to wait for.
+<set $varname,str>:
+   evaluate str, then set variable to that.
+
+   <set $varname[index],str>:
+   Evaluate index and str, then set table[index] to str.
+   $varname must be a table (created with <var $varname[]...>).
+
+   Index cannot contain the character '='. This is an inherent
+   characteristic of TStrings.values in Free Pascal.
+<setflag ch>:
+   Simple flag variable defined by a character.
+   Exammple:
+   <setflag a>
+   ...
+   <ifflag a,...>
+<settings option[,value]>:
+   Set up X option.
+   <settings allowBlanksBeforeCommentToEoln,[yes/no]> (x-file local)
+   <settings allowFunctionCallsAfterPreact[,yes/no]> (x-file local)
+   <settings AllowJumpsBetweenNormalStates[,yes/no]>
+   <settings AllowNewlineInBinaryInput[,yes/no]>
+   <settings casewarning[,yes/no]>
+   <settings checkvar[,yes/no]> (x-file local)
+   <settings compileAlts[,yes/no]> (x-file local)
+   <settings dllCallLogTo[,filename]>
+   <settings filechangewarning[,yes/no]>
+   <settings formvisible[,yes/no]>
+   <settings msgboxtooutputwindow[,yes/no]>
+   <settings prelDefWithNarg[,yes/no]>
+   <settings regardcommentasblank[,Ada/Pascal/C/;/no]>
+   <settings regardCrAsBlank[,yes/no]>
+   <settings restoreioaftermacro[,yes/no]>
+   <settings SameParentRequiredForJump[,yes/no]>
+   <settings skipcomment[,Ada/Pascal/C/;/no]>
+   <settings statesInGroupsVisible[,yes/no]> (old - apparently not in use)
+   <settings suppressbadcharmessage[,yes/no]>
+   <settings tracecallsto[,xfilename-w/o-.x]>
+   <settings unractive[,yes/no]>
+   <settings useasoutput[,handle]>
+   <settings usedefforfunction[,yes]>
+   <settings useindentation[,yes/no]> (x-file local)
+
+   x-file local means settings is valid only in the x-file where the
+   <setting ...> call is used. In all other x-files default values are
+   used.
+<shiftbits>:
+   Return number of already consumed bits in next char in input stream.
+   Can be useful for debugging.
+<sleep n>:
+   Sleep for n milliseconds.
+   Allow possible other threads during sleep.
+<sort $table[,numerical/combi/combiDescending]>:
+   Sort table according to its indexes.
+   The sorting method "combi" (or combiDescending) is recommended.
+   It combines alphabetical sorting with numerical. When there are numbers,
+   longer numbers are sorted as larger than shorter numbers.
+
+   Example:
+   <var $tab[]>
+   <set $tab[],5:a|4:b|3:c>
+   <sort $tab,combi> => $tab = "3:c|4:b|5:a"
+   <sort $tab,combiDescending> => $tab = "5:a|4:b|3:c"
+
+   How "combi" works:
+   "abc1234" > "abc124"
+
+   Example:
+   <set $tab,abc124:1|abc1234:2>
+   <sort $tab>
+   => $tab = abc1234:2|abc124:1
+   <sort $tab,combi>
+   => $tab = abc124:1|abc1234:2
+<sp n>:
+   Returns state parameter n.
+<sql function,parameters ...>:
+   Calls to ODBC:
+   <sql connect,servername,username,password>
+   Example:
+   <sql connect,My Database,root,1234>
+   <sql query,show databases;>
+   ...
+   <sql disconnect>
+<sqrt expr[,decimals]>:
+   Evaluate expr and return its square root.
+<startProgram exefilename parameters>:
+   Start a program, possibly with parameters, without waiting for it to end.
+   Usage example:
+      <startProgram N:\STM-N\U - System Verification and Validation\FAT\X-scripts\x.exe
+      - "'<load N:\STM-N\U - System Verification and Validation\FAT\X-scripts\decodelog'>
+      <startProgram "N:\STM-N\U - System Verification and Validation\FAT\X-scripts\x.exe",
+      -"'<load N:\STM-N\U - System Verification and Validation\FAT\X-scripts\decodelog'>>
+      -'<test pc_simulator.log',pc_simulator.txt'>">
+   Uses shellexecute with open.
+<stoh str>:
+   Converts text string to hexadecimal string.
+   Example: "AB" => "4142"
+   Convert new line (CR) to CRLF.
+   The reason to this is (i think) that the hexadecimal
+   notation is used externally (for binary files), where
+   CRLF is a common way to represent newline, while as the
+   string is for internal use in X, where CR is used to represent
+   newline.
+<strLowercase str>:
+   Return str in Lower case.
+<strlen str>:
+   Return length of str.
+<struppercase str>:
+   Return str in upper case (capitals).
+<tempFileName>: Obsolete name for <uniqueFileName>. Use <uniquefilename> instead.
+   This function has been renamed to <uniqueFilename> which better
+   describes what it does.
+   The old name is only to be supported for a limited period of time.
+<terminate>:
+   Terminates the X program.
+<thread evalstr>:
+   Typical use: To run an x statemachine which waits for input without
+   locking up the program, but enabling other tasks to be performed
+   simultaneously.
+   <thread <c stmsimulator>>( * Simulator which runs until stopstm=yes. * )
+   ...<set stopstm,yes>
+
+   To get id of current thread (or 0 if not in one): <thread>
+<time>:
+   Returns current time in format "15:35:42"
+<to str1,str2,...>:
+   Accept all input to but not including any of strings str1, str2,...
+<to_wholeword str1,str2,...>:
+   Renamed to <toWholeword str1,str2,...>.
+   Temporarily supported for backwards compatibility.
+<to_withinLine str1,str2,...>:
+   Renamed to <toWithinline str1,str2,...>.
+   Temporarily supported for backwards compatibility.
+<towholeword str1,str2,...>:
+   - like <to ...> except that it only accepts a whole word - the string
+   must not have a letter or digit before or after it.
+<towithinLine str1,str2,...>:
+   - Like <to ...> except that it only looks within the current line,
+   which ends either at a line delimiter or eof.
+<towl str1,str2,...>:
+   New shorter name for <towithinline ...>.
+<uniqueFileName>:
+   (Creates and returns a file name, intended for temporary usage, that is
+   guaranteed different from other file names. Also, it is not saved on disk
+   unless explicitly by <close ...>.
+   Names are on format "tf#n", where n is a number.
+<unless condition,thenstr>:
+   Condition contains an algebraic expression.
+   Remember that < and > must be quoted not to be interpreted as
+   start and end of function call
+
+   Example:
+   <unless $timepassed=0,<set $speed,<calc $distance/$timepassed>>
+<unpack str,delim,$var1,$var2, ...>:
+   Unpack a string to a series of variables. Example:
+   <unpack abc 123 44 5.0 blabla, ,$var1,$var1,$var1,$var1,$var1> =
+   <set $var1,abc>
+   <set $var2,123>
+   <set $var3,44>
+   <set $var4,5.0>
+   <set $var5,blabla>
+   Can be used to switch "environment" for code that shall work
+   in parallell with several contexts.
+<unread str>:
+   Unread a string to an unread buffer
+   <unread> - go back to previous position (before ?"..."?)
+
+   <unread str> and <unread> are implemented quite differently.
+   <unread str> puts str in an unread buffer and
+   moves the input pointer to the beginning of this string (which
+   is connected to the regular input file so it is like
+   inserting a string in the regular input file.
+   <unread> only moves the input pointer to where it were before
+   reading the last ?"..."?.
+<update $name,str[,decimals][,initvalue]>, <update $name[$index],str[,decimals][,initvalue]>:
+   Modify a value with <calc ...>.
+   Examples:
+   <update $i,+1> = <set $i,<calc $i+1>>
+   <update $tab[$n],+1> = <set $tab[$n],<calc $tab[$n]+1>>
+   <update $r,*0.5,2> = <set $r,<calc $r*0.5,2>>
+   <update $tab[$i],+1,,0> =
+      <ifempty $tab[$i],<set $tab[$i],<calc 0+1>>
+      -,{else]<set $tab[$i],<calc $tab[$i]+1>>
+
+   It is adviceable to put brackets around the variable name if it can
+   contain an expression, to avoid unexpected results.
+   Example:
+   <set $a,2 + 3>
+   <update $a,*2> => 2 + 3*2 = 8
+   <update ($a),*2> => (2+3)*2 = 10
+<usage str[,name1|name2|...]>:
+   Define text to be shown after loading of script, if loadlevel=1.
+   Optionally, define a list of function and variable names that are visible
+   outside the file (no list = all are visible).
+   Note that special characters in str need to be quoted, unless they are
+   intended to be evaluated.
+   If a function call example is marked with an asterisk ( * ) then it will
+   also be inserted in the history list so it can be entered with the up/down
+   buttons.
+
+   Example:
+   <usage -
+   compileSwe.x: Compile trackfile script
+   ======================================
+   Example usage (from file to screen): '<comp trackfile.txt'>
+      or (from file to file): '<comp trackfile.txt',trackfile.trk'>*
+      or (from screen to screen): '<compile Si 270/40''', 1000m'>
+   Example input file:
+      1 100 Si 270/40', 1000m
+      2 200 Si 270/40', 1000m 10-superv.
+      3 300 Si 270/40', 1000m P-extended 1000m 10-superv.
+   For detailed documentation of symbolic format', see:
+      N:\STM-N\U - System Verification and Validation\FAT\Test Environment_Requirements\SVS_STM1_Compile_ATC2 Balises_ETCS balises.doc>>
+   -,comp compile>
+<var $varname[,initvalue][...]>:
+   Define a variable or a table.
+
+   <var $varname[,initvalue]...>
+   Variables can be defined at top level in an x-file, but also
+   locally in functions and states.
+
+   Local variables.
+   Local variables in functions are created dynamically and lose their values
+   after return. If a function calls itself,the local variables will be created
+   as a new set that is independent of the first call (local variables can be
+   used for recursive function calls).
+   Local variables in states are resident. They are only created once and
+   never deleted (local variables in states cannot be used for recursive calls
+   between states). Local variables in states, being resident, can be accessesd
+   from outside the states with dot-notation ($statename.variablename).
+
+   Tables.
+   <var $varname[][,initvalue][,delim1][,delim2]>:
+   Define a table that can be indexed with any string. Example:
+   <var $tab1[]>
+   <set $tab1[abc],def>
+   <set $tab1[123],456>
+   <wcons $tab1[abc], $tab1[123]> - Prints "def, 456".
+
+   A table can be accessed by index but also as a whole. Example.
+   <wcons $tab1> - Prints the whole table as "abc:def|123:456"
+   <set $tab1,aaa:bbb|yyy:zzz> - Sets a whole table.
+
+   When accessing a table as a whole, a delimeter ":"is inserted between index
+   and value, and an "|" between the value and the next index. Other separators
+   can be chosen as arg3 and arg4 when the table is created. Example:
+   <var $tab2,,/,
+   >
+   <set $tab2[111],222>
+   <set $tab2[222],333>
+   <wcons $tab2> - Prints the table as
+   "111/222
+   222/333"
+<wcons str[,str[,str...]]>:
+   Write str to console (terminal).
+<while condition,dostr[,timeout][,timeoutaction]>:
+   Evaluate dostr until condition is >0 or yes or timeout.
+   Default timeout = 10000 ms (10 s)
+   Empty timeout = No timeout (go on forever)
+<win32 function[,parameters...]>:
+   <win32 clearCommError,port>
+   <win32 createprocess,commandstr>
+   <win32 createwindow>
+   <win32 createwindowex>
+   <win32 createwindowex,button[,...]>
+   <win32 createwindowex,edit[,...]> => nr
+   <win32 destroywindows>
+   <win32 dialogmessageloop[,handle]>
+   <win32 gettickcount>
+   <win32 getEnvironmentVariable,name>
+   <win32 getHandle,nr>
+   <win32 getlasterror>
+   <win32 happlication>
+   <win32 hinstance>
+   <win32 hmainwindow>
+   <win32 hresultarea>
+   <win32 minimize>
+   <win32 restore>
+   <win32 setwindowtext,...>
+   <win32 shellexecute,showcmd,filename[,arguments[,defaultdir]]>
+   <win32 shellexecuteex,showcmd,filename[,arguments[,defaultdir]]>
+         (showcmd = sw_shownormal, sw_showhide, ...)
+   <win32 style,...>
+   <win32 terminate>
+   <win32 terminateprocess,...>
+   <win32 updateform> - Force update of form
+   <win32 waitforsingleobject,...>
+
+   ShellexecuteEx is like Shellexecute, except that it waits for
+   completion.
+<windowFormat x,y,xsize,ysize>:
+   Moves, or changes the size of, the X interpreter window.
+<windowclear>:
+   Clear the X window
+<word>:
+   One or more of letters, digits and uncerscores
+<write str>:
+   Write a string to the current output.
+<x name>:
+   Return value of an X variable.
+   <x scriptdir>: The current default script directory, or the current
+      working directory (if no script is loaded or being loaded)
+   <x exedir>: The directory of x.exe
+   <x startdir>: The the current directory when <load script> was started.
+   <x varname,$name>: Return the name of variable $name.
+   <x ManuallyResized>: Yes if user has manually changed size of window.
+      Used in <usage ...> to keep manually window size if it has been
+      manually resized.
+<xdefaultdir>:
+   Returns the default directory for reading
+   x files. E.g.
+   <load C:\Documents and Settings\Bertil Friman\Skrivbord\X-scripts\dmi.x>
+   => <xdefaultdir> = "C:\Documents and Settings\Bertil Friman\Skrivbord\X-scripts"
+   inside dmi.x.
+   Outside dmi.x it will also be the same if dmi.x is the top x file.
+<xp n>:
+   Returns a string corresponding to a <...>-call in pattern n, in a <case ...>
+   or <ifeq ...> statement.
+
+   Example:
+   <case abc123def!
+   -,<to <integer>><integer><anything>,
+   -...
+   ->
+
+   Under the pattern "<to <integer>><integer><anything>":
+   <xp 1> will return the string corresponding to "<to <integer>>", which is "abc".
+   <xp 2> will return the string corresponding to "<integer>", which is "123".
+   <xp 3> will return the string corresponding to "<anything>", which is "def!"
+
+   If variable names like "$xxx" appear on top level, then these will also count as
+   a <...>-calls. This is however an unwanted side effect of how X is implemented.

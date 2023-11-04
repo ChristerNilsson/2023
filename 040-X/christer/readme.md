@@ -5,10 +5,27 @@
 ### Frågor till Bertil
 * Hur få bort fönstret och visa resultat i terminalen?
 * Hur visa assert på tre rader? (ny rad i wcons)
-* Hur hanteras vanliga arrayer?
+* Hur hanteras vanliga arrayer? 
+* Hur avläsa tecken 3 i "christer"?
+* finns eval ? exec
+* är a==A ? YES
+* linenr, vad är det? enbart datafil
+* <makebits 8,5> 00000101
+* sort
+* strlowercase, struppercase, kan ej jämföras
+* <is > => No
+* <is 12> => Yes
+* Profiling behövs. -gv eller -pg
 
+### Jämförelse mellan Pascal, Coffeescript, Python, Clojure och X
 
-### Jämförelse mellan Coffeescript, Python och X
+Pascal:
+```python
+function fib(n:int32):int32;
+begin
+	if n<2 then fib := 1 else fib := fib(n-1) + fib(n-2)
+end;
+```
 
 Coffeescript:
 ```coffee
@@ -38,6 +55,7 @@ X:
 
 ```
 Exekveringstider av fib(25) == 121393:
+Free Pascal:   1 ms
 Coffeescript: 11 ms
 Python:       37 ms
 Clojure:      45 ms

@@ -2294,7 +2294,7 @@ iofentercallcnt:= iofentercallcnt+1;
 xform[pi].ResAreaLength:= -1;
 
 // Put "enter:" before <...> commands.
-if level=0 then entertext:= 'enter:'+ioUni2Iso(ptext)
+if level=0 then entertext:= 'enter:' + christer + ' ' + ioUni2Iso(ptext)
 else entertext:= ptext;
 
 ResultAreaAddLines(pi,entertext);

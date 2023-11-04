@@ -104,6 +104,9 @@ alint32= longint;
 threadvar alThreadNr: alint16;
 
 var
+
+christer : string = '';
+
 althreadcount: alint16 = 0; (* Running thread counter. Used by iocleanup
    while waiting for all threads to end. And by updateformcaption to show number
    of extra threads in caption. Also used in enterstring to avoid deleting
@@ -5284,7 +5287,7 @@ for i:= 1 to length(ps) do case ps[i] of
    char($FF)(*'ÿ'*): ps[i]:= ' '; //
    char($86)(*'†'*): ps[i]:= char($E5); // 'å'
    char($84)(*'„'*): ps[i]:= char($E4); // 'ä'
-   char($94)(*'�?'*): ps[i]:= char($F6); // 'ö'
+   char($94)(*'�?'*): ps[i]:= char($F6); // 'ö'
    char($8F)(* (undef) *): ps[i]:= char($C5); // 'Å'
    char($8E)(*'Ž'*): ps[i]:= char($C4); // 'Ä'
    char($99)(*'™'*): ps[i]:= char($D6); // 'Ö'
@@ -8064,7 +8067,7 @@ procedure alxp( var pargs: xargblock;
 *)
 
 
-(* L�gg inneh�llet i par(xp n) till slutet av pfuncret. *);
+(* L�gg inneh�llet i par(xp n) till slutet av pfuncret. *);
 
 var inp: ioinptr;
 n,ix: alint16;
@@ -8329,14 +8332,14 @@ procedure alpfail( var pargs: xargblock;
    Useful to detect causes of when a state does not regognize a
    string.
    This is how it is normally used, at the end of a state, when
-   all other alternatives have failed. � will then be inserted before the
+   all other alternatives have failed. � will then be inserted before the
    first character that could not be matched to any of the alternatives
    in the state.
 
    ?"<to
    >
    "?
-   !"<wcons *** Unable to match <pfail 1,�>.>"!
+   !"<wcons *** Unable to match <pfail 1,�>.>"!
 *)
 (*
    (see xfailpos and ioinlastpos).
@@ -10505,6 +10508,8 @@ stringconsumed:= true;
 parlevel:= 0;
 gettoken;
 r:= 0.0;
+
+christer := christer + ' ' + FloatToStr(numbervalue);
 
 if currtok = 'F' then
    (* Error already reported. *)
