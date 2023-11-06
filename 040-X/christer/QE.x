@@ -21,8 +21,7 @@ cc
 ?"8"? !"8"!
 ?"9"? !"9"!
 
-?"<eof>"?
-!""!
+?"<eof>"? !"<r>"!
 
 ---
 
@@ -30,5 +29,7 @@ cc
 <ass 1,2>
 <ass A,A>
 <ass A,B>
+
+<wcons <c cc,ABC123XXYY>>
 
 <ass LLL123yyyyZZ,<c cc,ABC123XXYY>>
