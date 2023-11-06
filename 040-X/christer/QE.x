@@ -1,4 +1,4 @@
-<def ass,<unless <eq $1,$2>,<wcons Ass failure: $1 != $2>>>
+<def ass,<ifeq $1,$2,<wcons $1 == $2>,<wcons $1 != $2>>>
 
 cc
 ---
@@ -22,7 +22,7 @@ cc
 ?"9"? !"9"!
 
 ?"<eof>"?
-!"<r>"!
+!""!
 
 ---
 
@@ -30,7 +30,5 @@ cc
 <ass 1,2>
 <ass A,A>
 <ass A,B>
-
-<wcons <c cc,ABC123XXYY>>
 
 <ass LLL123yyyyZZ,<c cc,ABC123XXYY>>
