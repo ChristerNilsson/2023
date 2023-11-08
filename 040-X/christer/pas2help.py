@@ -1,18 +1,45 @@
-with open("../xal.pas", "r") as f:
-    lines = f.read().split("\n")
+import re
+import time
 
-starting = []
-ending = []
-indexes = []
+def fetchText(filename):
+	with open(filename) as f:
+		return f.read()
 
-for i in range(len(lines)):
-    # print(line)
-    line = lines[i]
-    state = 2
-    if line.startswith('(* <'): indexes.append(i+1)
-    if line.endswith('*)'): indexes.append(-i-1)
-    # if line.startswith('(*'): starting.append(i)
-    # if line.endswith('*)'): ending.append(i)
+def writeLines(filename,lines):
+	with open(filename,'w') as g:
+		g.write('\n'.join(lines))
 
-print(indexes)
+def doit():
 
+	text = fetchText('../xal.pas')
+
+	r = re.compile(r"""
+	\n\(\*[ ]
+		(<([^:]+)>[*]?:) # name, asterix kan förekomma
+		([^*]*)          # body, får innehålla alla tecken utom asterix
+	""",re.VERBOSE)
+
+	lista = r.findall(text)
+
+	inputNames = []
+	normalNames = []
+	names = {}
+	for name,_,body in lista:
+		if '*' in name:
+			name = name.replace('*','')
+			inputNames.append(name)
+		else:
+			normalNames.append(name)
+		names[name] = body
+
+	normalNames = sorted(normalNames)
+	inputNames = sorted(inputNames)
+	both = normalNames + inputNames
+
+	writeLines('xal_names.txt',['Normal functions:'] + normalNames + ['\nInput functions:'] + inputNames)
+	helpTexts = [name + names[name] for name in both]
+	writeLines('xal_help.txt',helpTexts)
+
+start = time.time_ns()
+doit()
+print(int((time.time_ns() - start)/10**6), 'ms')
