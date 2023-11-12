@@ -21,10 +21,10 @@ URL6 = "https://schack.se"
 URL7 = "https://schack.se/?s="
 URL8 = "https://www.google.com/search?q=site:schack.se "
 
-title9  = ""
+title9  = "Berger"
 title10 = "Bildbanken 1"
 title11 = "Bildbanken 2"
-URL9 = ""
+URL9 = "https://christernilsson.github.io/2022/008-Berger/"
 URL10  = "https://bildbanken.schack.se/?query="
 URL11 = "https://storage.googleapis.com/bildbank2/index.html?query="
 
