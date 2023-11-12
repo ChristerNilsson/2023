@@ -84,11 +84,11 @@ jj // bitsdec
 kk // to
 ---
 !"<in <sp 1>,string><out ,string>"!
-?"<to ab,b,c>"? !"*"!
+?"<to ab,b,c>"? !"(<p 1>)"!
 ?"<format l>"? !"<p 1>"!
 ?"<eof>"? !"<r>"!
 ---
-<ass **c**b*a*beXXYY,<c kk,ZZcafebabeXXYY>>
+<ass (ZZ)()c(afe)()b()a()beXXYY,<c kk,ZZcafebabeXXYY>>
 
 ll // id
 ---
@@ -100,3 +100,28 @@ ll // id
 ?"<eof>"? !"<r>"!
 ---
 <ass (a)*6(b)*(c)*7*(Da_8),<c ll,a 6b c 7 Da_8>>
+
+mm // towholeword ??? vad är eofs?
+---
+!"<in <sp 1>,string><out ,string>"!
+?"<towholeword bertil>"? !"(<p 1>)"!
+?"<format l>"? !"l"!
+?"<format d>"? !"<p 1>"!
+?" "? !"*"!
+//?"<eoln>"? !"crlf"!
+?"<eof>"? !"<r>"!
+---
+//<ass (a)*6(b)*(c)*7*(Da_8),<c mm,adam bertil cesar david>>
+
+nn // eoln ??? Hur få in eoln i strängen?
+---
+!"<in <sp 1>,string><out ,string>"!
+?"<to '<eoln>"? !"(<p 1>)"!
+?"<format l>"? !"l"!
+?"<format d>"? !"<p 1>"!
+?" "? !"*"!
+?"<eof>"? !"<r>"!
+---
+//<ass (a)*6(b)*(c)*7*(Da_8),<c nn,adam bertil \n cesar david>>
+
+

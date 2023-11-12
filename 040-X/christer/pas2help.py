@@ -13,18 +13,27 @@ def doit():
 
 	text = fetchText('../xal.pas')
 
-	r = re.compile(r"""
-	\n\(\*[ ]
-		(<([^:]+)>[*]?:) # name, asterix kan förekomma
-		([^*]*)          # body, får innehålla alla tecken utom asterix
-	""",re.VERBOSE)
+	regex = re.compile(r"""
+		\(\*[ ]
+			(<[.]+?>[*]*:)
+			([.]+?)
+		\n\*\)
+	""", re.VERBOSE)
 
-	lista = r.findall(text)
+	# regex = re.compile(r"""
+	# \n\(\*[ ]
+	# 	(<([^:]+)>*?:) # name, asterix kan förekomma
+	# 	([^*]*)          # body, får innehålla alla tecken utom asterix
+	# \n\*\)
+	# """,re.VERBOSE)
+
+	lista = re.findall(regex,text)
 
 	inputNames = []
 	normalNames = []
 	names = {}
 	for name,_,body in lista:
+		print(name)
 		if '*' in name:
 			name = name.replace('*','')
 			inputNames.append(name)
@@ -39,6 +48,7 @@ def doit():
 	writeLines('xal_names.txt',['Normal functions:'] + normalNames + ['\nInput functions:'] + inputNames)
 	helpTexts = [name + names[name] for name in both]
 	writeLines('xal_help.txt',helpTexts)
+	print(len(lista),'funktioner hittades.')
 
 start = time.time_ns()
 doit()

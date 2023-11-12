@@ -1,8 +1,21 @@
 import re
 
-# Workaround: Byte av *) mot ååå sker för att kunna tillåta * i texten. Bokstaven å får icke förekomma i texten!
+#regex = r"\n\(\*[ ](<([^:]+)>:)(.+?)\n\*\)"
 
-regex = r"\n\(\*[ ](<([^:]+)>:)([^å]*)\nååå"
+# [ ]
+# ( # group 1
+# <([^:]+)>:
+# )
+# ( group 2
+# [^å]+?
+# )
+
+
+regex = re.compile(r"""
+	(\(\*
+	.+?
+	\*\))
+""",re.VERBOSE)
 
 
 test_str = """
@@ -32,16 +45,14 @@ test_str = """
 *)
 """
 
-test_str = test_str.replace('*)','ååå')
+matches = re.findall(regex, test_str)
 
-matches = re.finditer(regex, test_str)
-
-for m, match in enumerate(matches, start=1):
+for match in matches:
 	#fs = "Match {m} was found at {start}-{end}: {match}"
 	#print(fs.format(m=m, start=match.start(),end=match.end(), match=match.group()))
 	print("MATCH")
-	print(match.group(1))
-	print(match.group(3))
+	print(match)
+	#print(match.group(3))
 
 	# for g in range(1, 1+len(match.groups())):
 	# 	fs = "Group {g} found at {start}-{end}: {group}"
