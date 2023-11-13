@@ -21,7 +21,7 @@ URL6 = "https://schack.se"
 URL7 = "https://schack.se/?s="
 URL8 = "https://www.google.com/search?q=site:schack.se "
 
-title9  = "Alternativa kollektioner"
+title9  = "Äldre fotografier"
 title10 = "Bildbanken 1"
 title11 = "Bildbanken 2"
 URL9  = "https://wasask.se/SSF.Bildkollektioner.version2.php"
