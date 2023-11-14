@@ -1,0 +1,7 @@
+(defn fac [x]
+	(if
+		(= x 0
+		1
+		(*
+			(fac
+				(- x 1
