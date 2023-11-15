@@ -1,0 +1,4 @@
+Datum;Avsändarkonto;Avsändare;Kontoform;Mottagare;Mottagarkonto;Motvärde enligt fil;Valuta;Belopp;Egen referens;Referens;Via;Registrerad av;Betalningskategori;Antal uppdrag;
+2023-09-04;SE 213339668;VÄRMDÖ-EVLINGE SAMFÄLLIGHETSFÖRENIN;Affärskonto;Accessa Finans AB;600-9500;0,00;SEK;38 500,00;;303155652413;Internet;BERTIL FRIMAN;Betalningar;;
+2023-09-19;SE 213339668;VÄRMDÖ-EVLINGE SAMFÄLLIGHETSFÖRENIN;Affärskonto;Norva24 Miljövision AB;5028-0395;0,00;SEK;4 705,00;;3085991165976;Internet;BERTIL FRIMAN;Betalningar;;
+2023-09-24;SE 213339668;VÄRMDÖ-EVLINGE SAMFÄLLIGHETSFÖRENIN;Affärskonto;Tanja Ingman;33005909102765;;SEK;3 012,00;TI Utl e-dag;Utlägg E-dag;Internet;BERTIL FRIMAN;Överföringar;;

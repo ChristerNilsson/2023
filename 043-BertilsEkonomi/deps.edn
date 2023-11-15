@@ -1,0 +1,6 @@
+{:deps {
+	org.clojure/data.csv {:mvn/version "1.0.0"}
+	;; clojure.java-io/clojure.java-io {:mvn/version "1.3.0"}
+    dk.ative/docjure {:mvn/version "1.7.0"}
+	}
+}
