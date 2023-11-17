@@ -1,0 +1,141 @@
+Christer Nilsson
+  1 hour ago
+When I press Enter with the cursor being after (filter leap-year? )|
+the inserted line contains four spaces and two tabs as the image shows.
+I would like to have nothing or two/three tabs. NO spaces, I'm a tab indenter. (edited) 
+image.png
+ 
+image.png
+
+
+
+
+
+21 replies
+
+
+pez
+:calva:  1 hour ago
+Clojure formatting generally does not use tabs, so I think the best option for you is to disable format-on-type for Clojure files. Paste this in the Settings search box to find the setting: @id:editor.formatOnType @lang:clojure formatontype
+image.png
+ 
+image.png
+
+
+
+
+Christer Nilsson
+  1 hour ago
+Perfect! My problem, just disappeared.
+:pray:
+1
+
+
+
+Christer Nilsson
+  1 hour ago
+One step closer to a world with no, or at least very few, right parentheses. Left parens and tabs will be enough.
+
+
+pez
+:calva:  1 hour ago
+I think you’re going to have a better time with Clojure if you follow the Clojure way with things. :smiley:
+
+
+Christer Nilsson
+  44 minutes ago
+Hmm, a lot of experience in those words. Parinfer is not available, so what can I do (-:
+
+
+pez
+:calva:  43 minutes ago
+There is a parinfer extension. Unmaintained, though.
+
+
+Christer Nilsson
+  37 minutes ago
+Tried it. The trouble with parinfer is, it is going in both directions. My starting point is left brackets and tabs for indentation. Right brackets are allowed, but not necessary. This is my modest attempt so far. Standalone, Run on Save. https://github.com/ChristerNilsson/2023/blob/main/042-cli2clj/cli2clj.py
+
+cli2clj.py
+```
+import json
+import re
+def ass(a,b):
+    if a!=b: print(a,'!=',b)
+def parse_expression(expression):
+    stack = []
+Show more
+<https://github.com/ChristerNilsson/2023|ChristerNilsson/2023>ChristerNilsson/2023 | Added by GitHub
+
+
+pez
+:calva:  34 minutes ago
+Looks fun!
+
+
+Christer Nilsson
+  28 minutes ago
+This will work even in notepad. Hopefully this can be integrated in a lisp IDE in the future. All that is needed is a small program like this, between reading the file and parsing it. The current balanced version we are using today also works of course. Maybe you know if there is a hook hidden somewhere in clojure, calva or code.
+
+
+pez
+:calva:  28 minutes ago
+Hook for what?
+
+
+Christer Nilsson
+  28 minutes ago
+Run on Save will be ok, but it is a pity to lose the data.
+
+
+Christer Nilsson
+  25 minutes ago
+When i do Alt+Enter there is some parsing done. I need to transform the lines with missing right parenteses, by adding the missing right parentheses.  They will never be seen in the IDE, not even greyed out like in Parinfer.
+
+
+pez
+:calva:  23 minutes ago
+I see. Calva has some code that does that too, but it’s not really accessible via some API.
+
+
+Christer Nilsson
+  22 minutes ago
+Actually the clojure parser could do this also.
+
+
+Christer Nilsson
+  20 minutes ago
+This is like leaving json and going to yaml. Maybe the left parens could also be chucked out, but keeping them seems easier atm.
+
+
+pez
+:calva:  19 minutes ago
+There is a VS Code command called runCommands that you can bind to a keyboard shortcut. You would need to make your thing there run on a command. Not sure what VS Code has for that, but if there is such a command, you can string that command and Calva’s evaluate command together with runCommands.
+
+
+pez
+:calva:  19 minutes ago
+There is also YAMLScript, a Clojure in YAML. #yamlscript
+
+
+Christer Nilsson
+  18 minutes ago
+Thanks! Thanks again! I will check this out.
+
+
+pez
+:calva:  13 minutes ago
+If VS Code doesn’t provide a command for executing your program on the file, you can always create an extension that provides the command. Or, thinking about it a bit more, #joyride can probably be used for it. Then it would maybe make sense to write the whole add-missing-closing-brackets as a Joyride script. And use runCommands for stringing together the Joyride command and Calva’s evaluate command.
+
+
+Christer Nilsson
+  2 minutes ago
+I guess only top level fragments will be sent to joyride?
+
+
+Christer Nilsson
+  2 minutes ago
+YAMLScript seemed to be too extreme for my taste. I think going half way is a good compromise. :slightly_smiling_face: (edited) 
+:joy:
+1
+
