@@ -13,10 +13,22 @@ def save(name):
 for name in 'A B C D E F G H I J K L M N O P Q R S T U V W X Y Z'.split(" "):
 	save(name)
 
-N= len(persons)
+N = len(persons)
+
+hash = {}
 
 score = lambda p: sum(persons[p]['result'])
-didMeet = lambda i,j: i in persons[j]['opps']
+
+def didMeet (i,j):
+	return i in persons[j]['opps']
+	# key = (j, i)
+	# if i < j: key = (i,j)
+	# if key in hash:
+	# 	return True
+	# if i in persons[j]['opps']:
+	# 	hash[key] = True
+	# 	return True
+	# return False
 
 # Tag fram lista för varje spelare med personer man inte mött
 def lotta(ids,pairing=[]):
@@ -63,4 +75,5 @@ for rond in range(20):
 		persons[b]['result'].append(res[1])
 	visaLottning(ids)
 
+print(N,hash)
 print((time.time_ns() - start)/10**6, "ms")
