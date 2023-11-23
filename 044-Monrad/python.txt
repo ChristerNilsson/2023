@@ -1,0 +1,98 @@
+C:\github\2023\venv\Scripts\python.exe C:/github/2023/044-Monrad/monrad.py
+8 players, 3 rounds
+
+=== Namelist Round 1 ===
+Table Colour Name
+1B Adam
+1W Bert
+2B Curt
+2W Dana
+3B Erik
+3W Fina
+4B Gorm
+4W Hans
+
+=== Tables Round 1 ===
+ # Score White  Remis  Black Score
+ 1   0.0 Adam           Bert   0.0
+ 2   0.0 Curt           Dana   0.0
+ 3   0.0 Erik           Fina   0.0
+ 4   0.0 Gorm           Hans   0.0
+
+Lottning
+{'id': 0, 'name': 'Adam', 'opps': [1], 'color': [-1], 'mandatory': 0, 'colorComp': [0, 0], 'result': [2], 'T1': 0, 'T2': 0, 'T3': 0}
+{'id': 1, 'name': 'Bert', 'opps': [0], 'color': [1], 'mandatory': 0, 'colorComp': [0, 0], 'result': [0], 'T1': 0, 'T2': 0, 'T3': 0}
+{'id': 2, 'name': 'Curt', 'opps': [3], 'color': [-1], 'mandatory': 0, 'colorComp': [0, 0], 'result': [0], 'T1': 0, 'T2': 0, 'T3': 0}
+{'id': 3, 'name': 'Dana', 'opps': [2], 'color': [1], 'mandatory': 0, 'colorComp': [0, 0], 'result': [2], 'T1': 0, 'T2': 0, 'T3': 0}
+{'id': 4, 'name': 'Erik', 'opps': [5], 'color': [-1], 'mandatory': 0, 'colorComp': [0, 0], 'result': [0], 'T1': 0, 'T2': 0, 'T3': 0}
+{'id': 5, 'name': 'Fina', 'opps': [4], 'color': [1], 'mandatory': 0, 'colorComp': [0, 0], 'result': [2], 'T1': 0, 'T2': 0, 'T3': 0}
+{'id': 6, 'name': 'Gorm', 'opps': [7], 'color': [-1], 'mandatory': 0, 'colorComp': [0, 0], 'result': [0], 'T1': 0, 'T2': 0, 'T3': 0}
+{'id': 7, 'name': 'Hans', 'opps': [6], 'color': [1], 'mandatory': 0, 'colorComp': [0, 0], 'result': [2], 'T1': 0, 'T2': 0, 'T3': 0}
+=== Namelist Round 2 ===
+Table Colour Name
+1W Adam
+4B Bert
+2W Curt
+1B Dana
+3W Erik
+2B Fina
+4W Gorm
+3B Hans
+
+=== Tables Round 2 ===
+ # Score White  Remis  Black Score
+ 1   1.0 Adam           Dana   1.0
+ 2   1.0 Fina           Curt   0.0
+ 3   1.0 Hans           Erik   0.0
+ 4   0.0 Bert           Gorm   0.0
+
+Lottning
+{'id': 0, 'name': 'Adam', 'opps': [1, 3], 'color': [-1, 1], 'mandatory': 1, 'colorComp': [-1, -1], 'result': [2, 0], 'T1': 0, 'T2': 0, 'T3': 0}
+{'id': 3, 'name': 'Dana', 'opps': [2, 0], 'color': [1, -1], 'mandatory': -1, 'colorComp': [1, 1], 'result': [2, 2], 'T1': 0, 'T2': 0, 'T3': 0}
+{'id': 5, 'name': 'Fina', 'opps': [4, 2], 'color': [1, -1], 'mandatory': -1, 'colorComp': [1, 1], 'result': [2, 0], 'T1': 0, 'T2': 0, 'T3': 0}
+{'id': 2, 'name': 'Curt', 'opps': [3, 5], 'color': [-1, 1], 'mandatory': 1, 'colorComp': [-1, -1], 'result': [0, 2], 'T1': 0, 'T2': 0, 'T3': 0}
+{'id': 7, 'name': 'Hans', 'opps': [6, 4], 'color': [1, -1], 'mandatory': -1, 'colorComp': [1, 1], 'result': [2, 2], 'T1': 0, 'T2': 0, 'T3': 0}
+{'id': 4, 'name': 'Erik', 'opps': [5, 7], 'color': [-1, 1], 'mandatory': 1, 'colorComp': [-1, -1], 'result': [0, 0], 'T1': 0, 'T2': 0, 'T3': 0}
+{'id': 1, 'name': 'Bert', 'opps': [0, 6], 'color': [1, -1], 'mandatory': -1, 'colorComp': [1, 1], 'result': [0, 2], 'T1': 0, 'T2': 0, 'T3': 0}
+{'id': 6, 'name': 'Gorm', 'opps': [7, 1], 'color': [-1, 1], 'mandatory': 1, 'colorComp': [-1, -1], 'result': [0, 0], 'T1': 0, 'T2': 0, 'T3': 0}
+=== Namelist Round 3 ===
+Table Colour Name
+2B Adam
+3B Bert
+2W Curt
+1B Dana
+4B Erik
+3W Fina
+4W Gorm
+1W Hans
+
+=== Tables Round 3 ===
+ # Score White  Remis  Black Score
+ 1   2.0 Dana           Hans   2.0
+ 2   1.0 Adam           Curt   1.0
+ 3   1.0 Bert           Fina   1.0
+ 4   0.0 Erik           Gorm   0.0
+
+Lottning
+{'id': 3, 'name': 'Dana', 'opps': [2, 0, 7], 'color': [1, -1, -1], 'mandatory': 0, 'colorComp': [0, -1], 'result': [2, 2, 2], 'T1': 0, 'T2': 0, 'T3': 0}
+{'id': 7, 'name': 'Hans', 'opps': [6, 4, 3], 'color': [1, -1, 1], 'mandatory': 0, 'colorComp': [0, -1], 'result': [2, 2, 0], 'T1': 0, 'T2': 0, 'T3': 0}
+{'id': 0, 'name': 'Adam', 'opps': [1, 3, 2], 'color': [-1, 1, -1], 'mandatory': 0, 'colorComp': [0, 1], 'result': [2, 0, 0], 'T1': 0, 'T2': 0, 'T3': 0}
+{'id': 2, 'name': 'Curt', 'opps': [3, 5, 0], 'color': [-1, 1, 1], 'mandatory': 0, 'colorComp': [0, 1], 'result': [0, 2, 2], 'T1': 0, 'T2': 0, 'T3': 0}
+{'id': 1, 'name': 'Bert', 'opps': [0, 6, 5], 'color': [1, -1, -1], 'mandatory': 0, 'colorComp': [0, -1], 'result': [0, 2, 2], 'T1': 0, 'T2': 0, 'T3': 0}
+{'id': 5, 'name': 'Fina', 'opps': [4, 2, 1], 'color': [1, -1, 1], 'mandatory': 0, 'colorComp': [0, -1], 'result': [2, 0, 0], 'T1': 0, 'T2': 0, 'T3': 0}
+{'id': 4, 'name': 'Erik', 'opps': [5, 7, 6], 'color': [-1, 1, -1], 'mandatory': 0, 'colorComp': [0, 1], 'result': [0, 0, 2], 'T1': 0, 'T2': 0, 'T3': 0}
+{'id': 6, 'name': 'Gorm', 'opps': [7, 1, 4], 'color': [-1, 1, 1], 'mandatory': 0, 'colorComp': [0, 1], 'result': [0, 0, 0], 'T1': 0, 'T2': 0, 'T3': 0}
+=== Result after round 3 ===
+Rank Name R1   R2   R3  Score  T1 T2 T3
+1    Dana 2W1  5B1  3B1   3    0  3  5  1 2
+2    Curt 1B0  6W1  5W1   2    0  2  5  2 1
+3    Hans 8W1  7B1  1W0   2    0  2  4  2 1
+4    Bert 5W0  8B1  6B1   2    0  2  2  1 2
+5    Adam 4B1  1W0  2B0   1    0  1  7  1 2
+6    Fina 7W1  2B0  4W0   1    0  1  5  2 1
+7    Erik 6B0  3W0  8B1   1    0  1  3  1 2
+8    Gorm 3B0  4W0  7W0   0    0  0  5  2 1
+
+15.957 ms
+
+Process finished with exit code 0
