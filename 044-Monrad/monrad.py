@@ -1,6 +1,9 @@
 import random
 import time
 import math
+import sys
+
+#sys.setrecursionlimit(8000)
 
 # Klarar upp till 1950 spelare.
 # 1600 spelar tar 1866 millisekunder för alla 16 ronderna. (Python)
@@ -20,7 +23,7 @@ def save(name):
 
 #for name in 'Adam Bert Curt Dana Erik Falk Gran Hans IIII JJJJ KKKK LLLL MMMM NNNN OOOO PPPP QQQQ RRRR SSSS TTTT'.split(" "): save(name)
 for name in 'Adam Bert Curt Dana Erik Fina Gorm Hans'.split(" "): save(name)
-#for i in range(1600): save(i)
+#for i in range(1024): save(i)
 
 N = len(persons)
 R = int(round(1.5*math.log2(N))) # antal ronder
