@@ -2,6 +2,8 @@ ALFABET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-/'
 N = 0 # antal personer
 R = 0 # antal ronder
 
+DY = 40
+
 seed = 12 # Math.random()
 random = -> (((Math.sin(seed++)/2+0.5)*10000)%100)/100
 
@@ -9,8 +11,14 @@ print = console.log
 range = _.range
 persons = []
 nameList = []
+state = 0
+rond = 0
+ids = []
 
-createURL = () ->
+assert = (a,b) ->
+	if a!=b then print "Assert failure: '#{a}' != '#{b}'"
+
+createURL = ->
 	res = ""
 	res += "?T=" + "Wasa SK KM blixt"
 	res += "&D=" + "2023-11-25"
@@ -21,7 +29,7 @@ createURL = () ->
 		res += "&R=" + (_.map persons, (person) -> person.r).join "|"
 	res
 
-fetchURL = () ->
+fetchURL = ->
 	res = {}
 	urlParams = new URLSearchParams window.location.search
 	persons = []
@@ -61,19 +69,15 @@ fetchURL = () ->
 		R = Math.round 1.5 * Math.log2 N # antal ronder
 		if N < 10 then R = 3
 
-fejkaData = () ->
-	förnamn = 'ABCDEFGH' #.split ""
-	efternamn = 'ABCDEFGH' # _.map förnamn, (namn) -> namn + "sson"
+fejkaData = ->
+	förnamn = 'Anders Bertil Christer Daniel Erik Ferdinand Göran Helge'.split " "
+	efternamn = 'ANDERSSON BENGTSSON CARLSEN DANIELSSON ERIKSSON FRANSSON GREIDER HARALDSSON'.split " "
 	persons = []
-	N = 64
-	R = 9
-	for i in range 64
-		namn = förnamn[i//8] + efternamn[i%8]
+	N = 8
+	R = 4
+	for i in range 8
+		namn = efternamn[i%8] + ' ' + förnamn[i%8]
 		persons.push {id:i, n: namn, c:'', r: '', s:0, opps:[], T:[0,0,0] }
-#fetchURL()
-fejkaData()
-
-start = new Date()
 
 sum = (s) ->
 	res = 0
@@ -81,13 +85,16 @@ sum = (s) ->
 		res += parseInt item
 	res
 
+sumBW = (s) ->
+	res = 0
+	for item in s
+		res += if item=='B' then -1 else 1
+	res
+
 spara = (name) ->
 	persons.push {s:0, id:persons.length, n:name, c:'', mandatory:0, colorComp:[], r:'', opps:[], T:[0,0,0]}
 #for i in range 16
 #	spara(i)
-
-print N + ' players ' + R + ' rounds'
-print()
 
 score =  (p) -> sum persons[p].r
 getMet = (a,b) -> b in persons[a].opps
@@ -105,7 +112,7 @@ colorize = (ids) ->
 		pa.c += pac
 		pb.c += if pac=='W' then 'B'  else 'W'
 
-lotta = (ids,pairing=[]) ->
+pair = (ids,pairing=[]) ->
 	if pairing.length == N then return pairing
 	for a in ids # a är ett personindex
 		for b in ids # b är ett personindex
@@ -115,32 +122,44 @@ lotta = (ids,pairing=[]) ->
 			if 2 == Math.abs mandatory then continue # Spelarna kan inte ha samma färg.
 			newids = (id for id in ids when id not in [a,b])
 			newPairing = pairing.concat [a,b]
-			result = lotta newids,newPairing
+			result = pair newids,newPairing
 			if result.length == N then return result
 	return []
 
-visaNamnlista = (rond,ids) ->
-	print '=== Namelist Round',rond+1,'==='
-	print 'Table Colour Name'
-	ids = invert ids
-	for i in range N
-		person = persons[nameList[i]]
-		bord = (1+ids[i]//2).toString().padStart 2
-		print "#{bord}#{_.last(person.c)} #{person.n}"
-	print()
+lotta = ->
 
-visaBordslista = (rond,ids) ->
-	print '=== Tables Round',rond+1,'==='
-	print ' # Score W R B Score'
+	start = new Date()
+
+	# prepare pairing
+	for p in persons
+		colorSum = sumBW p.c
+		latest = if p.c.length== 0 then 0 else _.last p.c
+		latest2 = if p.c.length < 2 then 0 else sumBW _.slice p.c, p.c.length - 2
+
+		p.mandatory = 0
+		if colorSum <= -1 or latest2 == -2 then p.mandatory =  1
+		if colorSum >=  1 or latest2 ==  2 then p.mandatory = -1
+		p.colorComp = [colorSum,latest] # fundera på ordningen här.
+
+	calcScore()
+	temp = _.sortBy persons, ['s']
+	ids = _.map temp, (person) -> person.id
+	ids = ids.reverse()
+
+	ids = pair ids
+
+	# update persons
+	colorize ids
+
 	for i in range N//2
-		a = persons[ids[2*i]]
-		b = persons[ids[2*i+1]]
-		pa = sum a.r
-		pb = sum b.r
-		nr = (i+1).toString()
-		if nr.length==1 then nr = ' ' + nr
-		print nr,' ',prRes(pa).padEnd(2),a.n.padEnd(2),'-',b.n.padEnd(2),' ',prRes(pb)
-	print()
+		a = ids[2*i]
+		b = ids[2*i+1]
+		persons[a].opps.push b
+		persons[b].opps.push a
+
+	print "#{new Date() - start} milliseconds"
+
+	state = 2
 
 visaLottning = (ids) ->
 	print 'Lottning'
@@ -148,14 +167,20 @@ visaLottning = (ids) ->
 		person = persons[p]
 
 prRes = (score) ->
-	if score % 2 == 1 then remis = '½' else remis = ''
-	score = (score//2).toString()
-	score = score + remis
-	if score == '0½' then score = '½'
-	score
+	score = parseInt score
+	if score == 1 then return '½'
+	a = (score // 2).toString()
+	if score % 2 == 1 then b='½' else b=''
+	a + b
+assert '0', prRes '0'
+assert '½', prRes '1'
+assert '1', prRes '2'
+assert '1½', prRes 3
+assert '10', prRes 20
+assert '10½', prRes 21
 
 invert = (arr) ->
-	res = [0,0,0,0,0,0,0,0]
+	res = []
 	for i in range arr.length
 		res[arr[i]] = i
 	return res
@@ -163,43 +188,16 @@ invert = (arr) ->
 antal = (p,color) ->
 	return sum [1 for c in p.c when color==c]
 
-visaResultat = (rond,ids) ->
-	calcT rond
-	calcScore()
-	sRonder = _.map range(rond+1), (i) -> "R#{i+1}".padStart 5
-	sRonder = sRonder.join ''
-
-	temp = _.sortBy persons, ['s', 'T']
-	ids = _.map temp, (person) -> person.id
-
-	ids = ids.reverse()
-	inv = invert ids # pga korstabell
-	print '=== Result after round',rond+1,'==='
-	print ' # N',sRonder, 'Score Tie'
-	for i in ids
-		p = persons[i]
-		T0 = prRes p.T[0]
-		T1 = p.T[1]
-		T2 = prRes p.T[2]
-		sRonder = _.map range(rond+1), (r) -> "#{1+inv[p.opps[r]]}#{p.c[r][0]}#{prRes(p.r[r])}".padStart 5
-		sRonder = sRonder.join ''
-
-		nr = (1+inv[p.id]).toString()
-		if nr.length==1 then nr = ' ' + nr
-		pn = p.n.padEnd 2 #20
-		score = prRes(sum(p.r)).padEnd 2
-		print "#{nr} #{pn} #{sRonder}   #{score}   #{T0}  #{T1} #{T2}"  #, antal(p,1), antal(p,-1)"
-
-calcScore = () ->
+calcScore = ->
 	for person in persons
 		person.s = parseInt sum person.r
 
 setT0 = (p,q) ->
 	if q in persons[p].opps
-		rond = persons[p].opps.indexOf q
-		persons[p].T[0] = persons[p].r[rond]
+		r = persons[p].opps.indexOf q
+		persons[p].T[0] = persons[p].r[r]
 
-calcT = (rond) ->
+calcT = ->
 	# T ska beräknas först när allt är klart!
 	# Beräkna T1 bara för de poänggrupper som har exakt två personer och då enbart om de har mött varandra.
 	# Oklart om detta används för grupper med t ex tre personer. Låg sannolikhet att alla mött varandra.
@@ -222,45 +220,10 @@ calcT = (rond) ->
 		for i in p.opps
 			p.T[2] += sum persons[i].r # Buchholz: summan av motståndarnas poäng
 
-print persons
-
-for rond in range R
-	nameList = range persons.length
-	nameList.sort (p) -> persons[p].n
-
-	for p in persons
-		colorSum = sum p.c
-		latest = if p.c.length== 0 then 0 else _.last p.c
-		latest2 = if p.c.length < 2 then 0 else sum _.slice p.c, p.c.length - 2
-
-		p.mandatory = 0
-		if colorSum <= -1 or latest2 == -2 then p.mandatory =  1
-		if colorSum >=  1 or latest2 ==  2 then p.mandatory = -1
-		p.colorComp = [colorSum,latest] # fundera på ordningen här.
-
-	calcScore()
-	temp = _.sortBy persons, ['s']
-	ids = _.map temp, (person) -> person.id
-	ids = ids.reverse()
-
-	print({ids})
-
-	ids = lotta ids,[]
-	if ids.length == 0
-		print "Denna rond kan inte lottas! (Troligen för många ronder)"
-		break
-
-	colorize ids
-
-	visaNamnlista rond,ids
-	print temp.reverse()
-	visaBordslista rond,ids
-
+fejkaResultat = ->
 	for i in range N//2
 		a = ids[2*i]
 		b = ids[2*i+1]
-		persons[a].opps.push b
-		persons[b].opps.push a
 		x = random()
 		if x < 0.1 then res = "11"
 		else if x < 0.5 then res = "02"
@@ -268,11 +231,154 @@ for rond in range R
 		persons[a].r += res[0]
 		persons[b].r += res[1]
 
-	visaLottning ids
-	if rond == R-1 then visaResultat rond,ids
+########### GUI ############
 
-print persons
-print createURL()
+window.setup = ->
+	#fetchURL()
+	fejkaData()
+	createCanvas 710,100 + N*40
+	print N + ' players ' + R + ' rounds'
+	textAlign CENTER,CENTER
+	lotta()
 
-print()
-print(new Date() - start)
+window.draw = ->
+
+	visaNamnlista = ->
+		nameList = range N
+		nameList.sort (p) -> persons[p].n
+
+		nameList = _.sortBy persons, ['n']
+		#print nameList
+		textSize 16
+		textAlign CENTER,CENTER
+		fill 'black'
+		text "Namelist Round #{rond+1}",350,30
+		textAlign LEFT,CENTER
+		text 'Table Name',10,60
+		#ids = invert ids
+		for i in ids
+			person = nameList[i]
+			x = 350 * (i // 32)
+			y = 90+30*(i % 32)
+			bord = 1 + ids[i]//2
+			fill if 'B' == _.last person.c then 'black' else 'white'
+			textAlign RIGHT,CENTER
+			text bord,30+x,y
+			textAlign LEFT,CENTER
+			text person.n,40+x,y
+
+	visaBordslista = ->
+		text "Tables Round #{rond+1}", 100, 40
+		text '# Score W R B Score',100,80
+		for i in range N//2
+			a = persons[ids[2*i]]
+			b = persons[ids[2*i+1]]
+			pa = sum a.r
+			pb = sum b.r
+			nr = (i+1).toString()
+			if nr.length==1 then nr = ' ' + nr
+			text "#{nr} #{prRes(pa).padEnd(2)} #{a.n.padEnd(2)} - #{b.n.padEnd(2)} #{prRes(pb)}", 100, 100 + i*30
+
+	lightbulb = (color, x, y, result, opponent) ->
+		fill 'red yellow green'.split(' ')[result]
+		circle x,y,30
+		fill {B:'black', W:'white'}[color]
+		textSize 20
+		push()
+		if result=='1' and color=='W'
+			stroke 'black'
+			strokeWeight = 1
+		else 
+			noStroke()
+			strokeWeight = 0
+		text 1+opponent,x,y+2
+		pop()
+
+	visaResultat = ->
+		if ids.length == 0
+			text "Denna rond kan inte lottas! (Troligen för många ronder)",100,100
+			return
+
+		noStroke()
+		calcT rond
+		calcScore()
+
+		temp = _.sortBy persons, ['s', 'T']
+		ids = _.map temp, (person) -> person.id
+
+		ids = ids.reverse()
+		inv = invert ids # pga korstabell
+
+		textAlign CENTER,CENTER
+		arr = "0½1"
+		for res in "012"
+			x = [50,90,130][res]
+			fill 'white'
+			textSize 16
+			text arr[res],x,15
+			lightbulb 'W',x,40,res,N-1
+			lightbulb 'B',x,80,res,N-1
+
+		textSize 16
+		textAlign CENTER,CENTER
+		fill 'white'
+		text "Result after round #{rond+1}",355,40
+
+		textAlign LEFT,CENTER
+		
+		y = 80
+		textAlign CENTER,CENTER
+		for r in range R
+			text r+1,220+40*r, y
+		text "Score",580,y
+		textAlign LEFT,CENTER
+		text "Tiebreak",610,y-20
+		text "D",610,y
+		text "W",640,y
+		text "B",670,y
+
+		for i in range N
+
+			p = persons[i]
+
+			y = DY*(inv[i]+3)
+			fill 'white'
+			textSize 16
+			textAlign RIGHT,CENTER
+			text 1+inv[i],25,y
+			textAlign LEFT,CENTER
+			text p.n,35,y
+			textAlign CENTER,CENTER
+			for r in range rond+1
+				x = 220+40*r
+				lightbulb p.c[r][0], x, y, p.r[r], inv[p.opps[r]]
+
+			textSize 16
+			textAlign CENTER,CENTER
+			fill 'white'
+			score = sum(p.r)
+			text score, 570, y
+
+			text prRes(p.T[0]),610,y
+			text p.T[1],640,y
+			text prRes(p.T[2]),670,y
+
+	background 'gray'
+	
+	if state <= 1 then text "State #{state}",100,100
+	else if state == 2 then visaNamnlista()
+	else if state == 3 then visaBordslista()
+	else if state == 4 then visaResultat()
+
+window.mousePressed = ->
+	if state==2
+		state=3
+	else if state==3
+		fejkaResultat()
+		print persons
+		state=4
+	else if state==4
+		print createURL()
+		if rond < R-1
+			rond += 1
+			lotta()
