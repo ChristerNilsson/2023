@@ -1,5 +1,9 @@
 [Try it!](https://christernilsson.github.io/2023/044-Monrad)
 
+[64 players](https://christernilsson.github.io/2023/044-Monrad?T=Wasa_SK&D=2023-11-28&N=AA|AB|AC|AD|AE|AF|AG|AH|BA|BB|BC|BD|BE|BF|BG|BH|CA|CC|CC|CD|CE|CF|CG|CH|DA|DD|DC|DD|DE|DF|DG|DH|EA|EE|EC|ED|EE|EF|EG|EH|FA|FF|FC|FD|FE|FF|FG|FH|GA|GB|GC|GD|GE|GF|GG|GH|HA|HB|HC|HD|HE|HF|HG|HH)
+
+
+
 ### ToDo
 
 * Slumpa namnen om ORC saknas!
