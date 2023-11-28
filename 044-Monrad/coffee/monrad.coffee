@@ -7,8 +7,36 @@ R = 0 # antal ronder
 # 3 Tables
 # 4 Result
 
+seed = Math.random()
+random = -> (((Math.sin(seed++)/2+0.5)*10000)%100)/100
+
+print = console.log
+range = _.range
+persons = []
+nameList = []
+state = 0
+rond = 0
+ids = []
+
+assert = (a,b) -> if a!=b then print "Assert failure: '#{a}' != '#{b}'"
+
 buttons = [[],[],[],[],[]]
 released = true
+message = 'This is a tutorial tournament. Use it or edit the URL'
+
+copyToClipboard = (text) ->
+	if !navigator.clipboard
+		textarea = document.createElement 'textarea'
+		textarea.value = text
+		document.body.appendChild textarea
+		textarea.select()
+		document.execCommand 'copy'
+		document.body.removeChild textarea
+		message = 'Urlen har kopierats till klippbordet 1'
+	else
+		navigator.clipboard.writeText text
+		.then => message = 'Urlen har kopierats till klippbordet 2'
+		.catch (err) => message 'Kopiering till klippbordet misslyckades'
 
 class Button
 	constructor : (@prompt,@x,@y,@w,@h,@click) ->
@@ -24,22 +52,8 @@ class Button
 		text @prompt,@x, @y + 0.5
 	inside : (mx,my) -> @x-@w/2 <= mx <= @x+@w/2 and @y-@h/2 <= my <= @y+@h/2 and @active
 
-seed = Math.random()
-random = -> (((Math.sin(seed++)/2+0.5)*10000)%100)/100
-
-print = console.log
-range = _.range
-persons = []
-nameList = []
-state = 0
-rond = 0
-ids = []
-
-assert = (a,b) ->
-	if a!=b then print "Assert failure: '#{a}' != '#{b}'"
-
 createURL = ->
-	res = ""
+	res = "https://christernilsson.github.io/2023/044-Monrad"
 	res += "?T=" + "Wasa SK KM blixt"
 	res += "&D=" + "2023-11-25"
 	res += "&N=" + (_.map persons, (person) -> person.n.replaceAll " ","_").join "|"
@@ -60,7 +74,7 @@ fetchURL = ->
 	N = res.N.length
 
 	if not (4 <= N <= 64)
-		print "Error: Number players must be between 4 and 64!"
+		print "Error: Number of players must be between 4 and 64!"
 		return
 
 	if res.O and res.C and res.R
@@ -84,22 +98,24 @@ fetchURL = ->
 			persons.push {id:i, n: res.N[i], c:res.C[i], r:res.R[i], s:0, opps:res.O[i], T:[0,0,0] }
 
 	else
-		for i in range N
-			persons.push {id:i, n: res.N[i], c:'', r:'', s:0, opps:[]}
+		res.N = _.shuffle res.N
+		persons = _.map range(N), (i) -> {id:i, n: res.N[i], c:'', r:'', s:0, opps:[], T:[]}
+		print persons
+			# persons.push {id:i, n: res.N[i], c:'', r:'', s:0, opps:[]}
 		R = Math.round 1.5 * Math.log2 N # antal ronder
 		#if N < 10 then R = 3
 
-fejkaData = ->
-	förnamn = 'Anders Bertil Christer Daniel Erik Ferdinand Göran Helge'.split " "
-	efternamn = 'ANDERSSON BENGTSSON CARLSEN DANIELSSON ERIKSSON FRANSSON GREIDER HARALDSSON'.split " "
-	persons = []
-	N = förnamn.length
-	R = Math.round 1.5 * Math.log2 N
-	for i in range N
-		namn = efternamn[i%8] + ' ' + förnamn[i%8]
-		persons.push {id:i, n: namn, c:'', r: '', s:0, opps:[], T:[0,0,0] }
-
-	# This is a tutorial tournament. Use it or edit the URL in the clipboard.
+# fejkaData = ->
+# 	förnamn = 'Anders Bertil Christer Daniel Erik Ferdinand Göran Helge'.split " "
+# 	efternamn = 'ANDERSSON BENGTSSON CARLSEN DANIELSSON ERIKSSON FRANSSON GREIDER HARALDSSON'.split " "
+# 	persons = []
+# 	N = förnamn.length
+# 	R = Math.round 1.5 * Math.log2 N
+# 	for i in range N
+# 		namn = efternamn[i%8] + ' ' + förnamn[i%8]
+# 		persons.push {id:i, n: namn, c:'', r: '', s:0, opps:[], T:[0,0,0] }
+# spara = (name) ->
+# 	persons.push {s:0, id:persons.length, n:name, c:'', mandatory:0, colorComp:[], r:'', opps:[], T:[0,0,0]}
 
 sum = (s) ->
 	res = 0
@@ -112,11 +128,6 @@ sumBW = (s) ->
 	for item in s
 		res += if item=='B' then -1 else 1
 	res
-
-spara = (name) ->
-	persons.push {s:0, id:persons.length, n:name, c:'', mandatory:0, colorComp:[], r:'', opps:[], T:[0,0,0]}
-#for i in range 16
-#	spara(i)
 
 score =  (p) -> sum persons[p].r
 getMet = (a,b) -> b in persons[a].opps
@@ -263,6 +274,7 @@ visaNamnlista = ->
 		txt person.n,40+x,y,LEFT
 
 	buttons[3][0].active = false
+	txt message, 350, height-50, CENTER
 
 
 visaBordslista = ->
@@ -309,7 +321,7 @@ lightbulb = (color, x, y, result, opponent) ->
 
 visaResultat = ->
 	if ids.length == 0
-		txt "Denna rond kan inte lottas! (Troligen för många ronder)",width/2,height/2,CENTER
+		txt "This round can't be paired! (Too many rounds)",width/2,height/2,CENTER
 		return
 
 	noStroke()
@@ -345,7 +357,7 @@ visaResultat = ->
 	txt "W",640,y
 	txt "B",670,y
 
-	fill 'white'
+	fill 'white' 
 	textSize 16
 	for i in range N
 		p = persons[i]
@@ -372,8 +384,10 @@ setPrompt = (button,prompt) ->
 	buttons[3][0].active = ok
 
 window.setup = ->
-	#fetchURL()
-	fejkaData()
+	if window.location.search == ''
+		window.location.href += '?T=Wasa_SK&D=2023-11-28&N=ANDERSSON_Anders|BENGTSSON_Bertil|CARLSEN_Christer|DANIELSSON_Daniel|ERIKSSON_Erik|FRANSSON_Ferdinand|GREIDER_Göran|HARALDSSON_Helge'
+	else
+		fetchURL()
 	createCanvas 710,100 + N*40
 	print N + ' players ' + R + ' rounds'
 	textAlign CENTER,CENTER
@@ -396,7 +410,9 @@ window.setup = ->
 			buttons[3].push new Button b.n,490,y, 180,30, -> setPrompt buttons[3][n+1], '0 - 1'
 
 	buttons[4].push new Button 'next', 600,20, 60,20, ->
-		print createURL()
+		s = createURL()
+		print s
+		copyToClipboard s
 		if rond < R-1
 			rond += 1
 			lotta()
