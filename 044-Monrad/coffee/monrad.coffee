@@ -2,9 +2,29 @@ ALFABET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-/'
 N = 0 # antal personer
 R = 0 # antal ronder
 
-DY = 40
+# States:
+# 2 Names
+# 3 Tables
+# 4 Result
 
-seed = 12 # Math.random()
+buttons = [[],[],[],[],[]]
+released = true
+
+class Button
+	constructor : (@prompt,@x,@y,@w,@h,@click) ->
+		@active = true
+	draw : ->
+		if not @active then return
+		textAlign CENTER,CENTER
+		rectMode CENTER
+		if @prompt == 'next'
+			fill 'black'
+			rect @x,@y, @w,@h
+			fill 'yellow'
+		text @prompt,@x, @y + 0.5
+	inside : (mx,my) -> @x-@w/2 <= mx <= @x+@w/2 and @y-@h/2 <= my <= @y+@h/2 and @active
+
+seed = Math.random()
 random = -> (((Math.sin(seed++)/2+0.5)*10000)%100)/100
 
 print = console.log
@@ -67,17 +87,19 @@ fetchURL = ->
 		for i in range N
 			persons.push {id:i, n: res.N[i], c:'', r:'', s:0, opps:[]}
 		R = Math.round 1.5 * Math.log2 N # antal ronder
-		if N < 10 then R = 3
+		#if N < 10 then R = 3
 
 fejkaData = ->
 	förnamn = 'Anders Bertil Christer Daniel Erik Ferdinand Göran Helge'.split " "
 	efternamn = 'ANDERSSON BENGTSSON CARLSEN DANIELSSON ERIKSSON FRANSSON GREIDER HARALDSSON'.split " "
 	persons = []
-	N = 8
-	R = 4
-	for i in range 8
+	N = förnamn.length
+	R = Math.round 1.5 * Math.log2 N
+	for i in range N
 		namn = efternamn[i%8] + ' ' + förnamn[i%8]
 		persons.push {id:i, n: namn, c:'', r: '', s:0, opps:[], T:[0,0,0] }
+
+	# This is a tutorial tournament. Use it or edit the URL in the clipboard.
 
 sum = (s) ->
 	res = 0
@@ -145,32 +167,21 @@ lotta = ->
 	temp = _.sortBy persons, ['s']
 	ids = _.map temp, (person) -> person.id
 	ids = ids.reverse()
-
 	ids = pair ids
-
-	# update persons
 	colorize ids
-
 	for i in range N//2
 		a = ids[2*i]
 		b = ids[2*i+1]
 		persons[a].opps.push b
 		persons[b].opps.push a
-
 	print "#{new Date() - start} milliseconds"
-
 	state = 2
-
-visaLottning = (ids) ->
-	print 'Lottning'
-	for p in ids
-		person = persons[p]
 
 prRes = (score) ->
 	score = parseInt score
 	if score == 1 then return '½'
-	a = (score // 2).toString()
-	if score % 2 == 1 then b='½' else b=''
+	a = "#{score // 2}"
+	b = if score % 2 == 1 then '½' else ''
 	a + b
 assert '0', prRes '0'
 assert '½', prRes '1'
@@ -220,18 +231,145 @@ calcT = ->
 		for i in p.opps
 			p.T[2] += sum persons[i].r # Buchholz: summan av motståndarnas poäng
 
-fejkaResultat = ->
+transferResult = ->
 	for i in range N//2
 		a = ids[2*i]
 		b = ids[2*i+1]
-		x = random()
-		if x < 0.1 then res = "11"
-		else if x < 0.5 then res = "02"
-		else res = "20"
+		prompt = buttons[3][2+3*i].prompt
+		buttons[3][2+3*i].prompt = ''
+		res = {'1 - 0':'20', '½ - ½':'11', '0 - 1':'02'}[prompt]		
 		persons[a].r += res[0]
 		persons[b].r += res[1]
 
 ########### GUI ############
+
+txt = (value, x, y, align=null, color=null) ->
+	if align then textAlign align,CENTER
+	if color then fill color
+	text value,x,y
+
+visaNamnlista = ->
+	nameList = _.sortBy persons, ['n']
+	textSize 16
+	txt "Namelist Round #{rond+1}",350,30,CENTER,'black'
+	txt 'Table Name',10,60,LEFT
+	for i in ids
+		person = nameList[i]
+		x = 350 * (i // 32)
+		y = 90+30 * (i % 32)
+		bord = 1 + ids[i]//2
+		fill if 'B' == _.last person.c then 'black' else 'white'
+		txt bord,30+x,y,RIGHT
+		txt person.n,40+x,y,LEFT
+
+	buttons[3][0].active = false
+
+
+visaBordslista = ->
+
+	txt "Table List Round #{rond+1}", 350, 40,CENTER,'lightgray'
+	txt "Click on a winner or in the middle. Twice cancels", 350, 40 + 40*N,CENTER,'lightgray'
+	y = 80
+	txt '#',50,y,CENTER,'white'
+	txt 'Score',100,y,CENTER,'white'
+	txt 'Result',350,y,CENTER,'lightgray'
+	txt 'Score',600,y,CENTER,'black'
+	txt '#', 650,y,CENTER,'black'
+	txt 'White', 250,y,CENTER,'white'
+	txt 'Black', 450,y,CENTER,'black'
+
+	for i in range N//2
+		y = 120 + 40*i
+		a = persons[ids[2*i]]
+		b = persons[ids[2*i+1]]
+
+		pa = sum a.r
+		pb = sum b.r
+		nr = i+1
+		txt nr,50,y,CENTER,'white'
+		txt prRes(pa), 100,y
+		txt '',350,y,CENTER,'lightgray'
+		txt prRes(pb), 600,y,CENTER,'black'
+		txt nr, 650,y
+
+lightbulb = (color, x, y, result, opponent) ->
+	push()
+	fill 'red yellow green'.split(' ')[result]
+	circle x,y,30
+	fill {B:'black', W:'white'}[color]
+	textSize 20
+	if result=='1' and color=='W'
+		stroke 'black'
+		strokeWeight = 1
+	else 
+		noStroke()
+		strokeWeight = 0
+	txt 1+opponent,x,y+2,CENTER
+	pop()
+
+visaResultat = ->
+	if ids.length == 0
+		txt "Denna rond kan inte lottas! (Troligen för många ronder)",width/2,height/2,CENTER
+		return
+
+	noStroke()
+	calcT rond
+	calcScore()
+
+	temp = _.sortBy persons, ['s', 'T']
+	ids = _.map temp, (person) -> person.id
+
+	ids = ids.reverse()
+	inv = invert ids # pga korstabell
+
+	textAlign CENTER,CENTER
+	arr = "0½1"
+	fill 'white'
+	textSize 16
+	for res in "012"
+		x = [50,90,130][res]
+		txt arr[res],x,15
+		lightbulb 'W',x,40,res,N-1
+		lightbulb 'B',x,80,res,N-1
+
+	#textSize 16
+	txt "Result after round #{rond+1}",355,40
+
+	y = 80
+	textAlign CENTER
+	for r in range R
+		txt r+1,220+40*r, y
+	txt "Score",570,y
+	txt "Tiebreak",640,y-20
+	txt "D",610,y
+	txt "W",640,y
+	txt "B",670,y
+
+	fill 'white'
+	textSize 16
+	for i in range N
+		p = persons[i]
+		y = 40*(inv[i]+3)
+		txt 1+inv[i],25,y,RIGHT
+		txt p.n,35,y,LEFT
+		for r in range rond+1
+			x = 220+40*r
+			lightbulb p.c[r][0], x, y, p.r[r], inv[p.opps[r]]
+
+		# textSize 16
+		score = prRes sum p.r
+		txt score, 570, y, CENTER,'white'
+
+		txt prRes(p.T[0]),610,y
+		txt p.T[1],640,y
+		txt prRes(p.T[2]),670,y
+
+setPrompt = (button,prompt) -> 
+	button.prompt = if button.prompt == prompt then '' else prompt
+	ok = true
+	for button in buttons[3].slice 1
+		if button.prompt == '' then ok = false
+	buttons[3][0].active = ok
 
 window.setup = ->
 	#fetchURL()
@@ -241,144 +379,46 @@ window.setup = ->
 	textAlign CENTER,CENTER
 	lotta()
 
+	buttons[2].push new Button 'next', 600,20, 60,20, -> state =3
+
+	buttons[3].push new Button 'next', 600,20, 60,20, ->
+		transferResult()
+		state = 4
+
+	for i in range N//2
+		y = 120 + 40*i
+		a = persons[ids[2*i]]
+		b = persons[ids[2*i+1]]
+		n = buttons[3].length
+		do (n) ->
+			buttons[3].push new Button a.n,210,y, 180,30, -> setPrompt buttons[3][n+1], '1 - 0'
+			buttons[3].push new Button '', 350,y,  90,30, -> setPrompt buttons[3][n+1], '½ - ½'
+			buttons[3].push new Button b.n,490,y, 180,30, -> setPrompt buttons[3][n+1], '0 - 1'
+
+	buttons[4].push new Button 'next', 600,20, 60,20, ->
+		print createURL()
+		if rond < R-1
+			rond += 1
+			lotta()
+
 window.draw = ->
-
-	visaNamnlista = ->
-		nameList = range N
-		nameList.sort (p) -> persons[p].n
-
-		nameList = _.sortBy persons, ['n']
-		#print nameList
-		textSize 16
-		textAlign CENTER,CENTER
-		fill 'black'
-		text "Namelist Round #{rond+1}",350,30
-		textAlign LEFT,CENTER
-		text 'Table Name',10,60
-		#ids = invert ids
-		for i in ids
-			person = nameList[i]
-			x = 350 * (i // 32)
-			y = 90+30*(i % 32)
-			bord = 1 + ids[i]//2
-			fill if 'B' == _.last person.c then 'black' else 'white'
-			textAlign RIGHT,CENTER
-			text bord,30+x,y
-			textAlign LEFT,CENTER
-			text person.n,40+x,y
-
-	visaBordslista = ->
-		text "Tables Round #{rond+1}", 100, 40
-		text '# Score W R B Score',100,80
-		for i in range N//2
-			a = persons[ids[2*i]]
-			b = persons[ids[2*i+1]]
-			pa = sum a.r
-			pb = sum b.r
-			nr = (i+1).toString()
-			if nr.length==1 then nr = ' ' + nr
-			text "#{nr} #{prRes(pa).padEnd(2)} #{a.n.padEnd(2)} - #{b.n.padEnd(2)} #{prRes(pb)}", 100, 100 + i*30
-
-	lightbulb = (color, x, y, result, opponent) ->
-		fill 'red yellow green'.split(' ')[result]
-		circle x,y,30
-		fill {B:'black', W:'white'}[color]
-		textSize 20
-		push()
-		if result=='1' and color=='W'
-			stroke 'black'
-			strokeWeight = 1
-		else 
-			noStroke()
-			strokeWeight = 0
-		text 1+opponent,x,y+2
-		pop()
-
-	visaResultat = ->
-		if ids.length == 0
-			text "Denna rond kan inte lottas! (Troligen för många ronder)",100,100
-			return
-
-		noStroke()
-		calcT rond
-		calcScore()
-
-		temp = _.sortBy persons, ['s', 'T']
-		ids = _.map temp, (person) -> person.id
-
-		ids = ids.reverse()
-		inv = invert ids # pga korstabell
-
-		textAlign CENTER,CENTER
-		arr = "0½1"
-		for res in "012"
-			x = [50,90,130][res]
-			fill 'white'
-			textSize 16
-			text arr[res],x,15
-			lightbulb 'W',x,40,res,N-1
-			lightbulb 'B',x,80,res,N-1
-
-		textSize 16
-		textAlign CENTER,CENTER
-		fill 'white'
-		text "Result after round #{rond+1}",355,40
-
-		textAlign LEFT,CENTER
-		
-		y = 80
-		textAlign CENTER,CENTER
-		for r in range R
-			text r+1,220+40*r, y
-		text "Score",580,y
-		textAlign LEFT,CENTER
-		text "Tiebreak",610,y-20
-		text "D",610,y
-		text "W",640,y
-		text "B",670,y
-
-		for i in range N
-
-			p = persons[i]
-
-			y = DY*(inv[i]+3)
-			fill 'white'
-			textSize 16
-			textAlign RIGHT,CENTER
-			text 1+inv[i],25,y
-			textAlign LEFT,CENTER
-			text p.n,35,y
-			textAlign CENTER,CENTER
-			for r in range rond+1
-				x = 220+40*r
-				lightbulb p.c[r][0], x, y, p.r[r], inv[p.opps[r]]
-
-			textSize 16
-			textAlign CENTER,CENTER
-			fill 'white'
-			score = sum(p.r)
-			text score, 570, y
-
-			text prRes(p.T[0]),610,y
-			text p.T[1],640,y
-			text prRes(p.T[2]),670,y
-
 	background 'gray'
-	
+	for button in buttons[state]
+		button.draw()
 	if state <= 1 then text "State #{state}",100,100
 	else if state == 2 then visaNamnlista()
 	else if state == 3 then visaBordslista()
 	else if state == 4 then visaResultat()
 
-window.mousePressed = ->
-	if state==2
-		state=3
-	else if state==3
-		fejkaResultat()
-		print persons
-		state=4
-	else if state==4
-		print createURL()
-		if rond < R-1
-			rond += 1
-			lotta()
+window.mousePressed = (event) ->
+	event.preventDefault()
+	if not released then return
+	released = false
+	for button in buttons[state]
+		if button.inside mouseX,mouseY then button.click()
+	false
+
+window.mouseReleased = (event) ->
+	event.preventDefault()
+	released = true
+	false
