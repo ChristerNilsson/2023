@@ -1,6 +1,7 @@
 ALFABET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-/'
 N = 0 # antal personer
 R = 0 # antal ronder
+DY = 40
 
 # States:
 # 2 Names
@@ -12,6 +13,8 @@ random = -> (((Math.sin(seed++)/2+0.5)*10000)%100)/100
 
 print = console.log
 range = _.range
+title = ''
+datum = ''
 persons = []
 nameList = []
 state = 0
@@ -23,6 +26,58 @@ assert = (a,b) -> if a!=b then print "Assert failure: '#{a}' != '#{b}'"
 buttons = [[],[],[],[],[]]
 released = true
 message = 'This is a tutorial tournament. Use it or edit the URL'
+
+fetchURL = (url = window.location.search) ->
+	res = {}
+	urlParams = new URLSearchParams url
+	persons = []
+	title = urlParams.get('T').replace "_"," "
+	datum = urlParams.get 'D'
+
+	res.N = urlParams.get('N').replaceAll('_',' ').split '|'
+	N = res.N.length
+
+	if not (4 <= N <= 64)
+		print "Error: Number of players must be between 4 and 64!"
+		return
+
+	if res.O and res.C and res.R
+
+		res.O = urlParams.get('O').split '|'
+		res.C = urlParams.get('C').split '|'
+		res.R = urlParams.get('R').split '|'
+		if res.N.length != res.O.length != res.C.length != res.R.length
+			print "Error: Illegal number of players in O, C or R!"
+			return
+		R = res.R[0].length
+
+		res.O = _.map res.O, (r) -> _.map r, (ch) -> ALFABET.indexOf ch
+		res.C = _.map res.C, (r) -> _.map r, (ch) -> {B:-1,W:1}[ch]
+		res.R = _.map res.R, (r) -> _.map r, (ch) -> parseInt ch
+
+		for i in range N
+			if R != res.O[i].length != res.C[i].length != res.R[i].length
+				print "Error: Illegal number of rounds for player #{res.N[i]}!"
+				return
+			persons.push {id:i, n: res.N[i], c:res.C[i], r:res.R[i], s:0, opps:res.O[i], T:[0,0,0] }
+
+	else
+		res.N = _.shuffle res.N
+		persons = _.map range(N), (i) -> {id:i, n: res.N[i], c:'', r:'', s:0, opps:[], T:[]}
+		print persons
+			# persons.push {id:i, n: res.N[i], c:'', r:'', s:0, opps:[]}
+		R = Math.round 1.5 * Math.log2 N # antal ronder
+		#if N < 10 then R = 3
+
+print "(#{window.location.search})"
+if window.location.search == ''
+	title = 'Wasa SK'
+	datum = new Date()
+	datum = datum.toISOString().split('T')[0]
+	url = "?T=#{title.replace(" ","_")}&D=#{datum}&N=ANDERSSON_Anders|BENGTSSON_Bertil|CARLSEN_Christer|DANIELSSON_Daniel|ERIKSSON_Erik|FRANSSON_Ferdinand|GREIDER_Göran|HARALDSSON_Helge"
+	location.replace url
+else
+	fetchURL()
 
 copyToClipboard = (text) ->
 	if !navigator.clipboard
@@ -63,47 +118,6 @@ createURL = ->
 		res += "&R=" + (_.map persons, (person) -> person.r).join "|"
 	res
 
-fetchURL = ->
-	res = {}
-	urlParams = new URLSearchParams window.location.search
-	persons = []
-	res.T = urlParams.get 'T'
-	res.D = urlParams.get 'D'
-
-	res.N = urlParams.get('N').replaceAll('_',' ').split '|'
-	N = res.N.length
-
-	if not (4 <= N <= 64)
-		print "Error: Number of players must be between 4 and 64!"
-		return
-
-	if res.O and res.C and res.R
-
-		res.O = urlParams.get('O').split '|'
-		res.C = urlParams.get('C').split '|'
-		res.R = urlParams.get('R').split '|'
-		if res.N.length != res.O.length != res.C.length != res.R.length
-			print "Error: Illegal number of players in O, C or R!"
-			return
-		R = res.R[0].length
-
-		res.O = _.map res.O, (r) -> _.map r, (ch) -> ALFABET.indexOf ch
-		res.C = _.map res.C, (r) -> _.map r, (ch) -> {B:-1,W:1}[ch]
-		res.R = _.map res.R, (r) -> _.map r, (ch) -> parseInt ch
-
-		for i in range N
-			if R != res.O[i].length != res.C[i].length != res.R[i].length
-				print "Error: Illegal number of rounds for player #{res.N[i]}!"
-				return
-			persons.push {id:i, n: res.N[i], c:res.C[i], r:res.R[i], s:0, opps:res.O[i], T:[0,0,0] }
-
-	else
-		res.N = _.shuffle res.N
-		persons = _.map range(N), (i) -> {id:i, n: res.N[i], c:'', r:'', s:0, opps:[], T:[]}
-		print persons
-			# persons.push {id:i, n: res.N[i], c:'', r:'', s:0, opps:[]}
-		R = Math.round 1.5 * Math.log2 N # antal ronder
-		#if N < 10 then R = 3
 
 # fejkaData = ->
 # 	förnamn = 'Anders Bertil Christer Daniel Erik Ferdinand Göran Helge'.split " "
@@ -254,34 +268,41 @@ transferResult = ->
 
 ########### GUI ############
 
+visaHeader = (header) ->
+	y = 20
+	textAlign CENTER,CENTER
+	txt "#{title} #{datum}" ,10,y,LEFT,'black'
+	txt header, 350,y,CENTER
+	txt rond+1, 600,y,RIGHT
+
 txt = (value, x, y, align=null, color=null) ->
 	if align then textAlign align,CENTER
 	if color then fill color
 	text value,x,y
 
 visaNamnlista = ->
+	visaHeader 'Names'
 	nameList = _.sortBy persons, ['n']
 	textSize 16
-	txt "Namelist Round #{rond+1}",350,30,CENTER,'black'
-	txt 'Table Name',10,60,LEFT
+	#txt "Namelist Round #{rond+1}",350,30,CENTER,'black'
+	txt 'Table Name',10,50,LEFT
 	for i in ids
 		person = nameList[i]
 		x = 350 * (i // 32)
-		y = 90+30 * (i % 32)
+		y = 80 + 30 * (i % 32)
 		bord = 1 + ids[i]//2
 		fill if 'B' == _.last person.c then 'black' else 'white'
 		txt bord,30+x,y,RIGHT
 		txt person.n,40+x,y,LEFT
 
 	buttons[3][0].active = false
-	txt message, 350, height-50, CENTER
-
+	txt message, 350, height-20, CENTER
 
 visaBordslista = ->
-
-	txt "Table List Round #{rond+1}", 350, 40,CENTER,'lightgray'
+	visaHeader 'Tables'
+	#txt "Table List Round #{rond+1}", 350, 40,CENTER,'lightgray'
 	txt "Click on a winner or in the middle. Twice cancels", 350, 40 + 40*N,CENTER,'lightgray'
-	y = 80
+	y = 60
 	txt '#',50,y,CENTER,'white'
 	txt 'Score',100,y,CENTER,'white'
 	txt 'Result',350,y,CENTER,'lightgray'
@@ -291,7 +312,7 @@ visaBordslista = ->
 	txt 'Black', 450,y,CENTER,'black'
 
 	for i in range N//2
-		y = 120 + 40*i
+		y = 120 + 60*i
 		a = persons[ids[2*i]]
 		b = persons[ids[2*i+1]]
 
@@ -300,14 +321,14 @@ visaBordslista = ->
 		nr = i+1
 		txt nr,50,y,CENTER,'white'
 		txt prRes(pa), 100,y
-		txt '',350,y,CENTER,'lightgray'
+		txt '-',350,y,CENTER,'lightgray'
 		txt prRes(pb), 600,y,CENTER,'black'
 		txt nr, 650,y
 
 lightbulb = (color, x, y, result, opponent) ->
 	push()
 	fill 'red yellow green'.split(' ')[result]
-	circle x,y,30
+	circle x,y,28
 	fill {B:'black', W:'white'}[color]
 	textSize 20
 	if result=='1' and color=='W'
@@ -320,6 +341,7 @@ lightbulb = (color, x, y, result, opponent) ->
 	pop()
 
 visaResultat = ->
+	visaHeader 'Result'
 	if ids.length == 0
 		txt "This round can't be paired! (Too many rounds)",width/2,height/2,CENTER
 		return
@@ -334,23 +356,23 @@ visaResultat = ->
 	ids = ids.reverse()
 	inv = invert ids # pga korstabell
 
-	textAlign CENTER,CENTER
-	arr = "0½1"
-	fill 'white'
-	textSize 16
-	for res in "012"
-		x = [50,90,130][res]
-		txt arr[res],x,15
-		lightbulb 'W',x,40,res,N-1
-		lightbulb 'B',x,80,res,N-1
+	# textAlign CENTER,CENTER
+	# arr = "0½1"
+	# fill 'white'
+	# textSize 16
+	# for res in "012"
+	# 	x = [50,90,130][res]
+	# 	txt arr[res],x,15
+	# 	lightbulb 'W',x,40,res,N-1
+	# 	lightbulb 'B',x,80,res,N-1
 
 	#textSize 16
-	txt "Result after round #{rond+1}",355,40
+	#txt "Result after round #{rond+1}",355,40
 
-	y = 80
+	y = 60
 	textAlign CENTER
 	for r in range R
-		txt r+1,220+40*r, y
+		txt r+1,220+30*r, y
 	txt "Score",570,y
 	txt "Tiebreak",640,y-20
 	txt "D",610,y
@@ -361,7 +383,7 @@ visaResultat = ->
 	textSize 16
 	for i in range N
 		p = persons[i]
-		y = 40*(inv[i]+3)
+		y = 30*(inv[i]+3)
 		txt 1+inv[i],25,y,RIGHT
 		txt p.n,35,y,LEFT
 		for r in range rond+1
@@ -384,23 +406,19 @@ setPrompt = (button,prompt) ->
 	buttons[3][0].active = ok
 
 window.setup = ->
-	if window.location.search == ''
-		window.location.href += '?T=Wasa_SK&D=2023-11-28&N=ANDERSSON_Anders|BENGTSSON_Bertil|CARLSEN_Christer|DANIELSSON_Daniel|ERIKSSON_Erik|FRANSSON_Ferdinand|GREIDER_Göran|HARALDSSON_Helge'
-	else
-		fetchURL()
-	createCanvas 710,100 + N*40
+	createCanvas 710,100 + N*30
 	print N + ' players ' + R + ' rounds'
 	textAlign CENTER,CENTER
 	lotta()
 
-	buttons[2].push new Button 'next', 600,20, 60,20, -> state =3
+	buttons[2].push new Button 'next', 670,20, 60,20, -> state =3
 
-	buttons[3].push new Button 'next', 600,20, 60,20, ->
+	buttons[3].push new Button 'next', 670,20, 60,20, ->
 		transferResult()
 		state = 4
 
 	for i in range N//2
-		y = 120 + 40*i
+		y = 120 + 60*i
 		a = persons[ids[2*i]]
 		b = persons[ids[2*i+1]]
 		n = buttons[3].length
@@ -409,7 +427,7 @@ window.setup = ->
 			buttons[3].push new Button '', 350,y,  90,30, -> setPrompt buttons[3][n+1], '½ - ½'
 			buttons[3].push new Button b.n,490,y, 180,30, -> setPrompt buttons[3][n+1], '0 - 1'
 
-	buttons[4].push new Button 'next', 600,20, 60,20, ->
+	buttons[4].push new Button 'next', 670,20, 60,20, ->
 		s = createURL()
 		print s
 		copyToClipboard s
