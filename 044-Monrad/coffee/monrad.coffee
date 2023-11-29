@@ -26,7 +26,7 @@ assert = (a,b) -> if a!=b then print "Assert failure: '#{a}' != '#{b}'"
 
 buttons = [[],[],[],[],[]]
 released = true
-message = 'This is a tutorial tournament. Use it or edit the URL'
+message = '' #This is a tutorial tournament. Use it or edit the URL'
 
 fetchURL = (url = window.location.search) ->
 	res = {}
@@ -270,11 +270,11 @@ transferResult = ->
 ########### GUI ############
 
 visaHeader = (header) ->
-	y = 20
+	y = DY/2
 	textAlign CENTER,CENTER
-	txt "#{title} #{datum}" ,10,y,LEFT,'black'
-	txt header, 350,y,CENTER
-	txt rond+1, 600,y,RIGHT
+	txt "#{title} #{datum}" ,5/700*width,y,LEFT,'black'
+	txt header, 0.5*width,y,CENTER
+	txt rond+1, 0.9*width,y,RIGHT
 
 txt = (value, x, y, align=null, color=null) ->
 	if align then textAlign align,CENTER
@@ -284,12 +284,12 @@ txt = (value, x, y, align=null, color=null) ->
 visaNamnlista = ->
 	visaHeader 'Names'
 	nameList = _.sortBy persons, ['n']
-	textSize 16
+	textSize DY*0.5
 	#txt "Namelist Round #{rond+1}",350,30,CENTER,'black'
-	txt 'Table Name',10,50,LEFT
+	#txt 'Table Name',10,50,LEFT
 	for i in ids
 		person = nameList[i]
-		x = 350 * (i // 32)
+		x = width/2 * (i // 32)
 		y = 80 + DY * (i % 32)
 		bord = 1 + ids[i]//2
 		fill if 'B' == _.last person.c then 'black' else 'white'
@@ -302,15 +302,15 @@ visaNamnlista = ->
 visaBordslista = ->
 	visaHeader 'Tables'
 	#txt "Table List Round #{rond+1}", 350, 40,CENTER,'lightgray'
-	txt "Click on a winner or in the middle. Twice cancels", 350, 40 + 40*N,CENTER,'lightgray'
+	#txt "Click on a winner or in the middle. Twice cancels", width/2, 40 + 40*N,CENTER,'lightgray'
 	y = 1.5 * DY
-	txt '#',50,y,CENTER,'white'
-	txt 'Score',100,y,CENTER,'white'
-	txt 'Result',350,y,CENTER,'lightgray'
-	txt 'Score',600,y,CENTER,'black'
-	txt '#', 650,y,CENTER,'black'
-	txt 'White', 250,y,CENTER,'white'
-	txt 'Black', 450,y,CENTER,'black'
+	txt '#',50/700*width,y,CENTER,'white'
+	txt 'Score',100/700*width,y,CENTER,'white'
+	txt 'Result',0.5*width,y,CENTER,'lightgray'
+	txt 'Score',6/7*width,y,CENTER,'black'
+	txt '#', 6.5/7 * width,y,CENTER,'black'
+	txt 'White', 210/700*width,y,CENTER,'white'
+	txt 'Black', 490/700*width,y,CENTER,'black'
 
 	for i in range N//2
 		y = DY * (i+2.5)
@@ -320,18 +320,18 @@ visaBordslista = ->
 		pa = sum a.r
 		pb = sum b.r
 		nr = i+1
-		txt nr,50,y,CENTER,'white'
-		txt prRes(pa), 100,y
-		txt '-',350,y,CENTER,'lightgray'
-		txt prRes(pb), 600,y,CENTER,'black'
-		txt nr, 650,y
+		txt nr,50/700*width,y,CENTER,'white'
+		txt prRes(pa), 100/700*width,y
+		txt '-',0.5*width,y,CENTER,'lightgray'
+		txt prRes(pb), 600/700*width,y,CENTER,'black'
+		txt nr, 650/700*width,y
 
 lightbulb = (color, x, y, result, opponent) ->
 	push()
 	fill 'red yellow green'.split(' ')[result]
-	circle x,y,28
+	circle x,y,0.9*DY
 	fill {B:'black', W:'white'}[color]
-	textSize 20
+	textSize DY * 0.6
 	if result=='1' and color=='W'
 		stroke 'black'
 		strokeWeight = 1
@@ -370,34 +370,34 @@ visaResultat = ->
 	#textSize 16
 	#txt "Result after round #{rond+1}",355,40
 
-	y = 50
+	y = 1.5 * DY
 	textAlign CENTER
 	for r in range R
-		txt r+1,220+30*r, y
-	txt "Score",570,y
+		txt r+1,220/700*width+DY*r, y
+	txt "Score",570/700*width,y
 	#txt "Tiebreak",640,y-20
-	txt "D",610,y
-	txt "W",640,y
-	txt "B",670,y
+	txt "D",610/700*width,y
+	txt "W",640/700*width,y
+	txt "B",670/700*width,y
 
 	fill 'white' 
-	textSize 16
+	textSize DY * 0.5
 	for i in range N
 		p = persons[i]
 		y = DY * (inv[i]+2.5)
-		txt 1+inv[i],25,y,RIGHT
-		txt p.n,35,y,LEFT
+		txt 1+inv[i],25/700*width,y,RIGHT
+		txt p.n,35/700*width,y,LEFT
 		for r in range rond+1
-			x = 220+40*r
+			x = 220/700*width+DY*r
 			lightbulb p.c[r][0], x, y, p.r[r], inv[p.opps[r]]
 
 		# textSize 16
 		score = prRes sum p.r
-		txt score, 570, y, CENTER,'white'
+		txt score, 570/700*width, y, CENTER,'white'
 
-		txt prRes(p.T[0]),610,y
-		txt p.T[1],640,y
-		txt prRes(p.T[2]),670,y
+		txt prRes(p.T[0]),610/700*width,y
+		txt p.T[1],640/700*width,y
+		txt prRes(p.T[2]),670/700*width,y
 
 setPrompt = (button,prompt) -> 
 	button.prompt = if button.prompt == prompt then '' else prompt
@@ -406,11 +406,15 @@ setPrompt = (button,prompt) ->
 		if button.prompt == '' then ok = false
 	buttons[3][0].active = ok
 
-#window.windowResized = -> resizeCanvas windowWidth, windowHeight//DY * linesPerPage
+window.windowResized = -> 
+	DY = 30*windowWidth/windowHeight
+	linesPerPage = windowHeight / DY
+	resizeCanvas windowWidth, windowHeight * [34,34,34,34,66][state] * linesPerPage
 
 window.setup = ->
 	createCanvas windowWidth,windowHeight
-	DY = 30 # windowHeight/(N/2+2)
+	DY = 50*width/1000
+	# DY = 30 # windowHeight/(N/2+2)
 	print N + ' players ' + R + ' rounds'
 	textAlign CENTER,CENTER
 	lotta()
@@ -418,12 +422,12 @@ window.setup = ->
 	linesPerPage = windowHeight/DY
 	resizeCanvas windowWidth, windowHeight * 34 / linesPerPage
 
-	buttons[2].push new Button 'next', 670,20, 60,20, -> 
+	buttons[2].push new Button 'next', 670/700*width,20, 60,20, -> 
 		linesPerPage = windowHeight/DY
 		resizeCanvas windowWidth, windowHeight * 34 / linesPerPage
 		state = 3
 
-	buttons[3].push new Button 'next', 670,20, 60,20, ->
+	buttons[3].push new Button 'next', 670/700*width,20, 60,20, ->
 		linesPerPage = windowHeight/DY
 		resizeCanvas windowWidth, windowHeight * 66 / linesPerPage
 		transferResult()
@@ -435,11 +439,11 @@ window.setup = ->
 		b = persons[ids[2*i+1]]
 		n = buttons[3].length
 		do (n) ->
-			buttons[3].push new Button a.n,210,y, 180,30, -> setPrompt buttons[3][n+1], '1 - 0'
-			buttons[3].push new Button '', 350,y,  90,30, -> setPrompt buttons[3][n+1], '½ - ½'
-			buttons[3].push new Button b.n,490,y, 180,30, -> setPrompt buttons[3][n+1], '0 - 1'
+			buttons[3].push new Button a.n,210/700*width,y, 180,30, -> setPrompt buttons[3][n+1], '1 - 0'
+			buttons[3].push new Button '', 350/700*width,y,  90,30, -> setPrompt buttons[3][n+1], '½ - ½'
+			buttons[3].push new Button b.n,490/700*width,y, 180,30, -> setPrompt buttons[3][n+1], '0 - 1'
 
-	buttons[4].push new Button 'next', 670,20, 60,20, ->
+	buttons[4].push new Button 'next', 670/700*width,20, 60,20, ->
 		linesPerPage = windowHeight/DY
 		resizeCanvas windowWidth, windowHeight * 34 / linesPerPage
 		s = createURL()
