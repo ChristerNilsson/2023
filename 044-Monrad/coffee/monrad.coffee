@@ -1,7 +1,7 @@
 ALFABET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-/'
 N = 0 # antal personer
 R = 0 # antal ronder
-DY = 40
+DY = 30
 
 # States:
 # 2 Names
@@ -20,6 +20,7 @@ nameList = []
 state = 0
 rond = 0
 ids = []
+linesPerPage = 0
 
 assert = (a,b) -> if a!=b then print "Assert failure: '#{a}' != '#{b}'"
 
@@ -31,7 +32,7 @@ fetchURL = (url = window.location.search) ->
 	res = {}
 	urlParams = new URLSearchParams url
 	persons = []
-	title = urlParams.get('T').replace "_"," "
+	title = urlParams.get('T').replace "_",""
 	datum = urlParams.get 'D'
 
 	res.N = urlParams.get('N').replaceAll('_',' ').split '|'
@@ -83,10 +84,10 @@ copyToClipboard = (text) ->
 	if !navigator.clipboard
 		textarea = document.createElement 'textarea'
 		textarea.value = text
-		document.body.appendChild textarea
+		document.boF.appendChild textarea
 		textarea.select()
 		document.execCommand 'copy'
-		document.body.removeChild textarea
+		document.boF.removeChild textarea
 		message = 'Urlen har kopierats till klippbordet 1'
 	else
 		navigator.clipboard.writeText text
@@ -260,11 +261,11 @@ transferResult = ->
 	for i in range N//2
 		a = ids[2*i]
 		b = ids[2*i+1]
-		prompt = buttons[3][2+3*i].prompt
-		buttons[3][2+3*i].prompt = ''
-		res = {'1 - 0':'20', '½ - ½':'11', '0 - 1':'02'}[prompt]		
-		persons[a].r += res[0]
-		persons[b].r += res[1]
+		#prompt = buttons[3][2+3*i].prompt
+		#buttons[3][2+3*i].prompt = ''
+		#res = {'1 - 0':'20', '½ - ½':'11', '0 - 1':'02'}[prompt]		
+		persons[a].r += '2' #res[0]
+		persons[b].r += '0' # res[1]
 
 ########### GUI ############
 
@@ -289,20 +290,20 @@ visaNamnlista = ->
 	for i in ids
 		person = nameList[i]
 		x = 350 * (i // 32)
-		y = 80 + 30 * (i % 32)
+		y = 80 + DY * (i % 32)
 		bord = 1 + ids[i]//2
 		fill if 'B' == _.last person.c then 'black' else 'white'
 		txt bord,30+x,y,RIGHT
 		txt person.n,40+x,y,LEFT
 
-	buttons[3][0].active = false
+	buttons[3][0].active = true #false
 	txt message, 350, height-20, CENTER
 
 visaBordslista = ->
 	visaHeader 'Tables'
 	#txt "Table List Round #{rond+1}", 350, 40,CENTER,'lightgray'
 	txt "Click on a winner or in the middle. Twice cancels", 350, 40 + 40*N,CENTER,'lightgray'
-	y = 60
+	y = 1.5 * DY
 	txt '#',50,y,CENTER,'white'
 	txt 'Score',100,y,CENTER,'white'
 	txt 'Result',350,y,CENTER,'lightgray'
@@ -312,7 +313,7 @@ visaBordslista = ->
 	txt 'Black', 450,y,CENTER,'black'
 
 	for i in range N//2
-		y = 120 + 60*i
+		y = DY * (i+2.5)
 		a = persons[ids[2*i]]
 		b = persons[ids[2*i+1]]
 
@@ -369,12 +370,12 @@ visaResultat = ->
 	#textSize 16
 	#txt "Result after round #{rond+1}",355,40
 
-	y = 60
+	y = 50
 	textAlign CENTER
 	for r in range R
 		txt r+1,220+30*r, y
 	txt "Score",570,y
-	txt "Tiebreak",640,y-20
+	#txt "Tiebreak",640,y-20
 	txt "D",610,y
 	txt "W",640,y
 	txt "B",670,y
@@ -383,7 +384,7 @@ visaResultat = ->
 	textSize 16
 	for i in range N
 		p = persons[i]
-		y = 30*(inv[i]+3)
+		y = DY * (inv[i]+2.5)
 		txt 1+inv[i],25,y,RIGHT
 		txt p.n,35,y,LEFT
 		for r in range rond+1
@@ -405,20 +406,31 @@ setPrompt = (button,prompt) ->
 		if button.prompt == '' then ok = false
 	buttons[3][0].active = ok
 
+#window.windowResized = -> resizeCanvas windowWidth, windowHeight//DY * linesPerPage
+
 window.setup = ->
-	createCanvas 710,100 + N*30
+	createCanvas windowWidth,windowHeight
+	DY = 30 # windowHeight/(N/2+2)
 	print N + ' players ' + R + ' rounds'
 	textAlign CENTER,CENTER
 	lotta()
 
-	buttons[2].push new Button 'next', 670,20, 60,20, -> state =3
+	linesPerPage = windowHeight/DY
+	resizeCanvas windowWidth, windowHeight * 34 / linesPerPage
+
+	buttons[2].push new Button 'next', 670,20, 60,20, -> 
+		linesPerPage = windowHeight/DY
+		resizeCanvas windowWidth, windowHeight * 34 / linesPerPage
+		state = 3
 
 	buttons[3].push new Button 'next', 670,20, 60,20, ->
+		linesPerPage = windowHeight/DY
+		resizeCanvas windowWidth, windowHeight * 66 / linesPerPage
 		transferResult()
 		state = 4
 
 	for i in range N//2
-		y = 120 + 60*i
+		y = DY * (i+2.5)
 		a = persons[ids[2*i]]
 		b = persons[ids[2*i+1]]
 		n = buttons[3].length
@@ -428,6 +440,8 @@ window.setup = ->
 			buttons[3].push new Button b.n,490,y, 180,30, -> setPrompt buttons[3][n+1], '0 - 1'
 
 	buttons[4].push new Button 'next', 670,20, 60,20, ->
+		linesPerPage = windowHeight/DY
+		resizeCanvas windowWidth, windowHeight * 34 / linesPerPage
 		s = createURL()
 		print s
 		copyToClipboard s
