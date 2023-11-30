@@ -1,15 +1,15 @@
 ALFABET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-/'
 N = 0 # antal personer
 R = 0 # antal ronder
-DY = 30
+DY = 30 # radavstånd i pixlar
 
 # States:
 # 2 Names
 # 3 Tables
 # 4 Result
 
-seed = Math.random()
-random = -> (((Math.sin(seed++)/2+0.5)*10000)%100)/100
+#seed = Math.random()
+#random = -> (((Math.sin(seed++)/2+0.5)*10000)%100)/100
 
 print = console.log
 range = _.range
@@ -18,11 +18,28 @@ datum = ''
 persons = []
 nameList = []
 state = 0
-rond = 0
+rond = 0 
 ids = []
-linesPerPage = 0
+resultat = []
 
-assert = (a,b) -> if a!=b then print "Assert failure: '#{a}' != '#{b}'"
+showType = (a) -> if typeof a == 'string' then "'#{a}'" else a
+
+assert = (a,b) -> if not _.isEqual a,b then print "Assert failure: #{showType a} != #{showType b}"
+
+selectRounds = (n) -> # antal ronder ska vara cirka 150% av antalet matcher i en cup. Samt jämnt.
+	res = Math.floor 1.50 * Math.log2 n
+	res += res % 2
+	if 2*res > n then res -= 1
+	if n==4 then res = 2
+	res
+assert 2, selectRounds 4
+assert 3, selectRounds 6
+assert 4, selectRounds 10
+assert 6, selectRounds 12
+assert 6, selectRounds 24
+assert 8, selectRounds 26
+assert 8, selectRounds 60
+assert 10, selectRounds 64
 
 buttons = [[],[],[],[],[]]
 released = true
@@ -32,14 +49,17 @@ fetchURL = (url = window.location.search) ->
 	res = {}
 	urlParams = new URLSearchParams url
 	persons = []
-	title = urlParams.get('T').replace "_",""
-	datum = urlParams.get 'D'
+	title = urlParams.get('T').replace '_',' '
+	datum = urlParams.get('D') or ""
 
 	res.N = urlParams.get('N').replaceAll('_',' ').split '|'
 	N = res.N.length
 
-	if not (4 <= N <= 64)
-		print "Error: Number of players must be between 4 and 64!"
+	if N < 4
+		print "Error: Number of players must be 4 or more!"
+		return
+	if N > 64
+		print "Error: Number of players must be 64 or less!"
 		return
 
 	if res.O and res.C and res.R
@@ -63,22 +83,17 @@ fetchURL = (url = window.location.search) ->
 			persons.push {id:i, n: res.N[i], c:res.C[i], r:res.R[i], s:0, opps:res.O[i], T:[0,0,0] }
 
 	else
-		res.N = _.shuffle res.N
+		if N % 2 == 1
+			res.N.push '-frirond-'
+			N += 1
+
+		#res.N = _.shuffle res.N
 		persons = _.map range(N), (i) -> {id:i, n: res.N[i], c:'', r:'', s:0, opps:[], T:[]}
+
 		print persons
 			# persons.push {id:i, n: res.N[i], c:'', r:'', s:0, opps:[]}
-		R = Math.round 1.5 * Math.log2 N # antal ronder
+		R = selectRounds N
 		#if N < 10 then R = 3
-
-print "(#{window.location.search})"
-if window.location.search == ''
-	title = 'Wasa SK'
-	datum = new Date()
-	datum = datum.toISOString().split('T')[0]
-	url = "?T=#{title.replace(" ","_")}&D=#{datum}&N=ANDERSSON_Anders|BENGTSSON_Bertil|CARLSEN_Christer|DANIELSSON_Daniel|ERIKSSON_Erik|FRANSSON_Ferdinand|GREIDER_Göran|HARALDSSON_Helge"
-	location.replace url
-else
-	fetchURL()
 
 copyToClipboard = (text) ->
 	if !navigator.clipboard
@@ -101,8 +116,9 @@ class Button
 		if not @active then return
 		textAlign CENTER,CENTER
 		rectMode CENTER
+		fill 'black'
 		if @prompt == 'next'
-			fill 'black'
+			#stroke 'black'
 			rect @x,@y, @w,@h
 			fill 'yellow'
 		text @prompt,@x, @y + 0.5
@@ -119,30 +135,21 @@ createURL = ->
 		res += "&R=" + (_.map persons, (person) -> person.r).join "|"
 	res
 
-
-# fejkaData = ->
-# 	förnamn = 'Anders Bertil Christer Daniel Erik Ferdinand Göran Helge'.split " "
-# 	efternamn = 'ANDERSSON BENGTSSON CARLSEN DANIELSSON ERIKSSON FRANSSON GREIDER HARALDSSON'.split " "
-# 	persons = []
-# 	N = förnamn.length
-# 	R = Math.round 1.5 * Math.log2 N
-# 	for i in range N
-# 		namn = efternamn[i%8] + ' ' + förnamn[i%8]
-# 		persons.push {id:i, n: namn, c:'', r: '', s:0, opps:[], T:[0,0,0] }
-# spara = (name) ->
-# 	persons.push {s:0, id:persons.length, n:name, c:'', mandatory:0, colorComp:[], r:'', opps:[], T:[0,0,0]}
-
 sum = (s) ->
 	res = 0
 	for item in s
 		res += parseInt item
 	res
+assert 6, sum '012012'
 
 sumBW = (s) ->
 	res = 0
 	for item in s
 		res += if item=='B' then -1 else 1
 	res
+assert 0, sumBW 'BWBWWB'
+assert -6, sumBW 'BBBBBB'
+assert 6, sumBW 'WWWWWW'
 
 score =  (p) -> sum persons[p].r
 getMet = (a,b) -> b in persons[a].opps
@@ -162,8 +169,8 @@ colorize = (ids) ->
 
 pair = (ids,pairing=[]) ->
 	if pairing.length == N then return pairing
-	for a in ids # a är ett personindex
-		for b in ids # b är ett personindex
+	for a in ids # a är ett personid
+		for b in ids # b är ett personid
 			if a == b then continue # man kan inte möta sig själv
 			if getMet a,b then continue # a och b får ej ha mötts tidigare
 			mandatory = persons[a].mandatory + persons[b].mandatory
@@ -221,9 +228,8 @@ invert = (arr) ->
 	for i in range arr.length
 		res[arr[i]] = i
 	return res
-
-antal = (p,color) ->
-	return sum [1 for c in p.c when color==c]
+assert [0,1,2,3], invert [0,1,2,3]
+assert [3,2,0,1], invert [2,3,1,0]
 
 calcScore = ->
 	for person in persons
@@ -258,59 +264,58 @@ calcT = ->
 			p.T[2] += sum persons[i].r # Buchholz: summan av motståndarnas poäng
 
 transferResult = ->
+	print {resultat}
 	for i in range N//2
 		a = ids[2*i]
 		b = ids[2*i+1]
-		#prompt = buttons[3][2+3*i].prompt
-		#buttons[3][2+3*i].prompt = ''
-		#res = {'1 - 0':'20', '½ - ½':'11', '0 - 1':'02'}[prompt]		
-		persons[a].r += '2' #res[0]
-		persons[b].r += '0' # res[1]
+		buttons[3][2+3*i].prompt = ''
+		res = resultat[2+3*i]
+		persons[a].r += res[0]
+		persons[b].r += res[1]
+
+mw = (x) -> x/1000 * width # (milliWidth)
 
 ########### GUI ############
 
-visaHeader = (header) ->
+showHeader = (header) ->
 	y = DY/2
 	textAlign CENTER,CENTER
-	txt "#{title} #{datum}" ,5/700*width,y,LEFT,'black'
-	txt header, 0.5*width,y,CENTER
-	txt rond+1, 0.9*width,y,RIGHT
+	txt "#{title} #{datum}" ,mw(7),y,LEFT,'black'
+	txt header, mw(500),y,CENTER
+	txt rond+1, mw(900),y,RIGHT
 
 txt = (value, x, y, align=null, color=null) ->
 	if align then textAlign align,CENTER
 	if color then fill color
 	text value,x,y
 
-visaNamnlista = ->
-	visaHeader 'Names'
+showNames = ->
+	showHeader 'Names'
 	nameList = _.sortBy persons, ['n']
-	textSize DY*0.5
-	#txt "Namelist Round #{rond+1}",350,30,CENTER,'black'
-	#txt 'Table Name',10,50,LEFT
+	textSize 0.5 * DY
+	txt 'Table Name',mw(5),DY*1.5,LEFT
+	txt 'Table Name',mw(505),DY*1.5,LEFT
 	for i in ids
 		person = nameList[i]
-		x = width/2 * (i // 32)
-		y = 80 + DY * (i % 32)
+		x = mw(500) * (i // (N//2))
+		y = DY * (2.5 + i % (N//2))
 		bord = 1 + ids[i]//2
 		fill if 'B' == _.last person.c then 'black' else 'white'
-		txt bord,30+x,y,RIGHT
-		txt person.n,40+x,y,LEFT
+		txt bord,0.75*DY+x,y,RIGHT
+		txt person.n,DY+x,y,LEFT
 
-	buttons[3][0].active = true #false
-	txt message, 350, height-20, CENTER
+	buttons[3][0].active = false
 
-visaBordslista = ->
-	visaHeader 'Tables'
-	#txt "Table List Round #{rond+1}", 350, 40,CENTER,'lightgray'
-	#txt "Click on a winner or in the middle. Twice cancels", width/2, 40 + 40*N,CENTER,'lightgray'
+showTables = ->
+	showHeader 'Tables'
 	y = 1.5 * DY
-	txt '#',50/700*width,y,CENTER,'white'
-	txt 'Score',100/700*width,y,CENTER,'white'
-	txt 'Result',0.5*width,y,CENTER,'lightgray'
-	txt 'Score',6/7*width,y,CENTER,'black'
-	txt '#', 6.5/7 * width,y,CENTER,'black'
-	txt 'White', 210/700*width,y,CENTER,'white'
-	txt 'Black', 490/700*width,y,CENTER,'black'
+	txt '#',     mw( 75),y,CENTER,'white'
+	txt 'Score', mw(150),y,CENTER,'white'
+	txt 'White', mw(300),y,CENTER,'white'
+	txt 'Result',mw(500),y,CENTER,'lightgray'
+	txt 'Black', mw(700),y,CENTER,'black'
+	txt 'Score', mw(850),y,CENTER,'black'
+	txt '#',     mw(925),y,CENTER,'black'
 
 	for i in range N//2
 		y = DY * (i+2.5)
@@ -320,11 +325,11 @@ visaBordslista = ->
 		pa = sum a.r
 		pb = sum b.r
 		nr = i+1
-		txt nr,50/700*width,y,CENTER,'white'
-		txt prRes(pa), 100/700*width,y
-		txt '-',0.5*width,y,CENTER,'lightgray'
-		txt prRes(pb), 600/700*width,y,CENTER,'black'
-		txt nr, 650/700*width,y
+		txt nr,        mw( 75),y,CENTER,'white'
+		txt prRes(pa), mw(150),y
+		txt '-',       mw(500),y,CENTER,'lightgray'
+		txt prRes(pb), mw(850),y,CENTER,'black'
+		txt nr,        mw(925),y
 
 lightbulb = (color, x, y, result, opponent) ->
 	push()
@@ -341,8 +346,8 @@ lightbulb = (color, x, y, result, opponent) ->
 	txt 1+opponent,x,y+2,CENTER
 	pop()
 
-visaResultat = ->
-	visaHeader 'Result'
+showResult = ->
+	showHeader 'Result'
 	if ids.length == 0
 		txt "This round can't be paired! (Too many rounds)",width/2,height/2,CENTER
 		return
@@ -357,47 +362,32 @@ visaResultat = ->
 	ids = ids.reverse()
 	inv = invert ids # pga korstabell
 
-	# textAlign CENTER,CENTER
-	# arr = "0½1"
-	# fill 'white'
-	# textSize 16
-	# for res in "012"
-	# 	x = [50,90,130][res]
-	# 	txt arr[res],x,15
-	# 	lightbulb 'W',x,40,res,N-1
-	# 	lightbulb 'B',x,80,res,N-1
-
-	#textSize 16
-	#txt "Result after round #{rond+1}",355,40
-
 	y = 1.5 * DY
 	textAlign CENTER
 	for r in range R
-		txt r+1,220/700*width+DY*r, y
-	txt "Score",570/700*width,y
-	#txt "Tiebreak",640,y-20
-	txt "D",610/700*width,y
-	txt "W",640/700*width,y
-	txt "B",670/700*width,y
+		txt r+1,mw(330) + DY*r, y
+	txt "Score",mw(850),y
+	txt "D",    mw(900),y
+	txt "W",    mw(930),y
+	txt "B",    mw(960),y
 
 	fill 'white' 
 	textSize DY * 0.5
 	for i in range N
 		p = persons[i]
 		y = DY * (inv[i]+2.5)
-		txt 1+inv[i],25/700*width,y,RIGHT
-		txt p.n,35/700*width,y,LEFT
+		txt 1+inv[i],mw(40),y,RIGHT
+		txt p.n,mw(50),y,LEFT
 		for r in range rond+1
-			x = 220/700*width+DY*r
+			x = mw(330) + DY*r
 			lightbulb p.c[r][0], x, y, p.r[r], inv[p.opps[r]]
 
-		# textSize 16
 		score = prRes sum p.r
-		txt score, 570/700*width, y, CENTER,'white'
+		txt score, mw(850), y, CENTER,'white'
 
-		txt prRes(p.T[0]),610/700*width,y
-		txt p.T[1],640/700*width,y
-		txt prRes(p.T[2]),670/700*width,y
+		txt prRes(p.T[0]),mw(900),y
+		txt       p.T[1], mw(930),y
+		txt prRes(p.T[2]),mw(960),y
 
 setPrompt = (button,prompt) -> 
 	button.prompt = if button.prompt == prompt then '' else prompt
@@ -406,46 +396,48 @@ setPrompt = (button,prompt) ->
 		if button.prompt == '' then ok = false
 	buttons[3][0].active = ok
 
-window.windowResized = -> 
-	DY = 30*windowWidth/windowHeight
-	linesPerPage = windowHeight / DY
-	resizeCanvas windowWidth, windowHeight * [34,34,34,34,66][state] * linesPerPage
+window.windowResized = ->
+	DY = mw 50
+	resizeCanvas windowWidth, DY * (N//2+2)
+	updateScreenParameters()
 
-window.setup = ->
-	createCanvas windowWidth,windowHeight
-	DY = 50*width/1000
-	# DY = 30 # windowHeight/(N/2+2)
-	print N + ' players ' + R + ' rounds'
-	textAlign CENTER,CENTER
-	lotta()
+updateScreenParameters = ->
+	print 'updateScreenParameters'
+	DY = mw 50
 
-	linesPerPage = windowHeight/DY
-	resizeCanvas windowWidth, windowHeight * 34 / linesPerPage
+	buttons = [[],[],[],[],[]]
 
-	buttons[2].push new Button 'next', 670/700*width,20, 60,20, -> 
-		linesPerPage = windowHeight/DY
-		resizeCanvas windowWidth, windowHeight * 34 / linesPerPage
+	buttons[2].push new Button 'next', mw(950),0.45*DY, mw(60),0.55*DY, -> 
 		state = 3
+		DY = mw 50
+		resizeCanvas windowWidth, DY * (N//2+2)
 
-	buttons[3].push new Button 'next', 670/700*width,20, 60,20, ->
-		linesPerPage = windowHeight/DY
-		resizeCanvas windowWidth, windowHeight * 66 / linesPerPage
-		transferResult()
+	buttons[3].push new Button 'next', mw(950),0.45*DY, mw(60),0.55*DY, ->
 		state = 4
+		transferResult()
+		DY = mw 50
+		resizeCanvas windowWidth, DY * (N+2)
 
+	ids = range N #
 	for i in range N//2
 		y = DY * (i+2.5)
 		a = persons[ids[2*i]]
 		b = persons[ids[2*i+1]]
 		n = buttons[3].length
 		do (n) ->
-			buttons[3].push new Button a.n,210/700*width,y, 180,30, -> setPrompt buttons[3][n+1], '1 - 0'
-			buttons[3].push new Button '', 350/700*width,y,  90,30, -> setPrompt buttons[3][n+1], '½ - ½'
-			buttons[3].push new Button b.n,490/700*width,y, 180,30, -> setPrompt buttons[3][n+1], '0 - 1'
+			buttons[3].push new Button a.n,mw(300),y, mw(200),30, ->
+				setPrompt buttons[3][n+1], '1 - 0'
+				resultat[n+1] = "20"
+			buttons[3].push new Button '', mw(500),y, mw(200),30, ->
+				setPrompt buttons[3][n+1], '½ - ½'
+				resultat[n+1] = "11"
+			buttons[3].push new Button b.n,mw(700),y, mw(200),30, ->
+				setPrompt buttons[3][n+1], '0 - 1'
+				resultat[n+1] = "02"
 
-	buttons[4].push new Button 'next', 670/700*width,20, 60,20, ->
-		linesPerPage = windowHeight/DY
-		resizeCanvas windowWidth, windowHeight * 34 / linesPerPage
+	buttons[4].push new Button 'next', mw(950),0.45*DY, mw(60),0.55*DY, ->
+		DY = mw 50
+		resizeCanvas windowWidth, DY * (N//2+2)
 		s = createURL()
 		print s
 		copyToClipboard s
@@ -453,14 +445,34 @@ window.setup = ->
 			rond += 1
 			lotta()
 
+print "(#{window.location.search})"
+if window.location.search == ''
+	title = 'Editera urlen!'
+	#datum = new Date()
+	#datum = datum.toISOString().split('T')[0]
+	url = "?T=#{title.replace(" ","_")}&N=ANDERSSON_Anders|BENGTSSON_Bertil|CARLSEN_Christer|DANIELSSON_Daniel|ERIKSSON_Erik|FRANSSON_Ferdinand|GREIDER_Göran|HARALDSSON_Helge"
+	window.location.href = url
+else
+	fetchURL()
+	print 'persons read',persons
+
+window.setup = ->
+	createCanvas windowWidth,windowHeight
+	DY = mw 50
+	updateScreenParameters()
+
+	print N + ' players ' + R + ' rounds'
+	textAlign CENTER,CENTER
+	lotta()
+
 window.draw = ->
 	background 'gray'
 	for button in buttons[state]
 		button.draw()
 	if state <= 1 then text "State #{state}",100,100
-	else if state == 2 then visaNamnlista()
-	else if state == 3 then visaBordslista()
-	else if state == 4 then visaResultat()
+	else if state == 2 then showNames()
+	else if state == 3 then showTables()
+	else if state == 4 then showResult()
 
 window.mousePressed = (event) ->
 	event.preventDefault()

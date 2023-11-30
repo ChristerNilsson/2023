@@ -1,9 +1,108 @@
+WORK IN PROGRESS!
+
 [Try it!](https://christernilsson.github.io/2023/044-Monrad)
 
 64 players:
 https://christernilsson.github.io/2023/044-Monrad?T=Wasa_SK&D=2023-11-28&N=AA|AB|AC|AD|AE|AF|AG|AH|BA|BB|BC|BD|BE|BF|BG|BH|CA|CC|CC|CD|CE|CF|CG|CH|DA|DD|DC|DD|DE|DF|DG|DH|EA|EE|EC|ED|EE|EF|EG|EH|FA|FF|FC|FD|FE|FF|FG|FH|GA|GB|GC|GD|GE|GF|GG|GH|HA|HB|HC|HD|HE|HF|HG|HH
 
+### Monrad
+	* Handles tournaments with 4 to 64 players.
 
+### Instructions
+	Edit the URL above.  
+	Add the names of the players.  
+
+	* N contains then names, separated with |. Mandatory!
+	* H contains the header of the tournament
+	* R contains the number of rounds. 
+		* Default: minimum number of rounds if the tournament was a cup, plus 50%.
+		* One round added to make the number of rounds even.
+		* If you want a different number of rounds, just state it.
+	* T contains the tiebreak order. Default: T=WD1
+		* W = Number of Wins
+		* D = Direct Encounter. Used only groups with exactly two players
+		* 1 = Buchholz 1. The sum of all opponents
+		* 2 = Buchholz 2. The sum of all opponents except the weakest.
+		* B = Number of Black games
+		* S = Sonneborn-Berger
+		* F = Fide Tiebreak
+	* Z states the team size. Default: Z=1
+
+	The following parameters are internal and handled by the program:
+	* D contains the date
+	* O contains the opponents
+	* C contains the colours, B & W
+	* S contains the scores, 0, 1 or 2 for victory.
+
+### Handling the GUI
+Look at the names and let everybody be seated.
+![Names](1.JPG)
+When the first game is played, click Next to see the Tables screen.
+![Tables](2.JPG)
+Click on the winner or between them.  
+When all results are entered, click Next.  
+![Results](3.JPG)
+Click Next to start the next round.
+
+### Saving the tournament
+	* The updated URL contains all information to display the result page.
+	* The URL is available on the clipboard. Windows:ok, Apple:no (thanks to EU and GDPR)
+	* No tournament will be stored on the server.
+
+### Sample URL
+Eight players, four rounds  
+Just copy and paste it into your browser. Oneliner not needed.  
+```
+https://christernilsson.github.io/2023/044-Monrad
+?H=Wasa SK KM blixt
+&D=2023-11-25
+&N=CARLSEN_Christer|BENGTSSON_Bertil|HARALDSSON_Helge|ERIKSSON_Erik|ANDERSSON_Anders|DANIELSSON_Daniel|GREIDER_Göran|FRANSSON_Ferdinand
+&O=1356|0437|3765|2014|5173|4602|7520|6241
+&C=WBWB|BWWB|WBWB|BWBW|WBWB|BWBW|WBBW|BWBW
+&S=2111|0200|1222|1122|0020|2010|2201|0002
+&T=WD1
+```
+
+### Teams
+
+* State the team size in parameter Z
+* Keys: 
+	* 0
+	* space ½
+	* 1
+	* q 1½
+	* 2
+	* w 2½ 
+	* 3
+	* e 3½
+	* 4
+	* r 4½
+	* 5
+	* t 5½
+	* 6
+	* y 6½
+	* 7
+	* u 7½
+	* 8
+	* Left  Arrow: Decrease White with ½. Modulo.
+	* Right Arrow: Increase White with ½. Modulo.
+* Use Up and Down to select game
+
+# Kontroller av URL.
+* Antal spelare skall överensstämma i N, O, C och R
+* Antal ronder skall överensstämma i O C och R
+* Tillåtna tecken I N: I princip alla möjliga. De kodas/avkodas automatiskt. T ex åäöÅÄÖéæýþÿüïœßđèùúøàáçìíñμ-. Emojis?
+* Tillåtna tecken i O: 0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-/ (64 tecken)
+* Tillåtna tecken i C: BW (två tecken)
+* Tillåtna tecken i R: 012 (tre tecken)
+
+### Begränsningar
+* 4 till 64 spelare
+
+### Frågor
+* Ska man se till att antaler ronder alltid är jämnt ? (Av färgrättviseskäl)
+* Vad är lämpligt antal ronder, givet N spelare ?
+* Visa placering som 12 (plats, Jämn=Vit, Udda=Svart) eller 6W (bord + färg) ?
 
 ### ToDo
 
@@ -16,91 +115,3 @@ https://christernilsson.github.io/2023/044-Monrad?T=Wasa_SK&D=2023-11-28&N=AA|AB
 * Ändra Result till Score
 * Scores anges med ett tecken. T ex åtta spelare: 0123456789abcdefg 0:0-8 1:½-7½ .. f:7½-½ g:8-0
 
-### Prestanda, utan utskrifter, millisekunder
-N = antal spelare
-R = antal ronder
-```
-   N  R   JS Python 3.10
-   8  3    3
-  16  6    6
-  32  8    7
-  64  9    8
-
-ej tillgängligt:
- 128 11   14 
- 256 12   33
- 512 14   75
-1024 15  129 1476
-2048 17  521 6086
-4096 18 1821 28 sek
-8192 20 7457 81 sek
-```
-
-### URL
-```
-N=8 R=4
-
-http://127.0.0.1:5500/index.html?
-T=KM_Blixt_Wasa_SK&
-D=2023-11-25&
-N=Adam_Adamsson|Bertil_Bertilsson|Cesar_Cesarsson|David_Davidsson|Erik_Eriksson|Filip_Filipsson|Gustav_Gustavsson|Helge_Helgesson&
-O=0123|1234|1234|1234|1234|1234|1234|1234|1234&
-C=BWBW|BWBW|BWBW|BWBW|BWBW|BWBW|BWBW|BWBW|BWBW&
-R=1021|1021|1021|1021|1021|1021|1021|1021|1021&
-TB=SBC
-
-N=Adam_Adamsson|Bertil_Bertilsson|Cesar_Cesarsson|David_Davidsson|Erik_Eriksson|Filip_Filipsson|Gustav_Gustavsson|Helge_Helgesson
-O=0123|1234|1234|1234|1234|1234|1234|1234|1234 (Opponents: 64-kodning, dvs 0-9 a-z A-Z - / )
-C=BWBW|BWBW|BWBW|BWBW|BWBW|BWBW|BWBW|BWBW|BWBW (Color:     B=Black W=White)
-R=1021|1021|1021|1021|1021|1021|1021|1021|1021 (Result:    0=Loss 1=Remis 2=Win)
-
-This will be stored internally as:
-[{id:0, name:"Adam Adamsson, opps:[0,1,2,3], color:[-1,1,-1,1], result:[1,0,2,1]}, ...]
-
-20 * N + 3 * N * R = 160 + 96 = 256 tecken
-
-N=64 R=10
-20 * N + 3 * N * R = 1280 + 1920 = 3200 tecken
-
-Minimal URL, bara namn. N:
-http://127.0.0.1:5500/index.html?N=Adam_Adamsson|Bertil_Bertilsson|Cesar_Cesarsson|David_Davidsson|Erik_Eriksson|Filip_Filipsson|Gustav_Gustavsson|Helge_Helgesson
-
-Möjliga kombinationer: Names [Opponents Color Result] [Date] [Title]. Bara Names är obligatoriskt.
-
-```
-
-# Tie Breaks
-* Sonneborn-Berger
-* Direct Encounter
-* Black
-* Win
-* 1 = Buchholz 1
-* 2 = Buchholz 2
-* Fide Tiebreak
-
-T ex TB=SDBW12F (valfritt antal tecken, default=???)
-
-# Laghantering
-* Ange antal partier i egen variabel
-* Tillåt inmatning av dessa resultat. T ex genom upprepade klick
-	* Klick på vit ökar med 1, Klick på svart minskar med 1, klick på remi ökar/minskar med 1/2
-	* Fyra spelare => nil 0-4 1-3 2-2 3-1 4-0 cykliskt
-	* Åtta spelare => nil 0-8 1-7 2-6 3-5 4-4 5-3 6-2 7-1 8-0 cykliskt
-* Parameter P=4 eller P=8. Default=1
-
-# Kontroller av URL.
-* Antal spelare skall överensstämma i N, O, C och R
-* Antal ronder skall överensstämma i O C och R
-* Tillåtna tecken I N: I princip alla möjliga. De kodas/avkodas automatiskt. T ex åäöÅÄÖéæýþÿüïœßđèùúøàáçìíñμ-. Emojis?
-* Tillåtna tecken i O: 0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-/ (64 tecken)
-* Tillåtna tecken i C: BW (två tecken)
-* Tillåtna tecken i R: 012 (tre tecken)
-
-### Begränsningar
-* 4 till 64 spelare
-* Kan ganska enkelt utvidgas till 4096 spelare (två tecken per spelare, 64-kodat. 64*64=4096)
-
-### Frågor
-* Ska man se till att antaler ronder alltid är jämnt ? (Av färgrättviseskäl)
-* Vad är lämpligt antal ronder, givet N spelare ?
-* Visa placering som 12 (plats, Jämn=Vit, Udda=Svart) eller 6W (bord + färg) ?
