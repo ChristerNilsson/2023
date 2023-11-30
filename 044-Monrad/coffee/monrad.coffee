@@ -1,4 +1,4 @@
-ALFABET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-/'
+ALFABET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-/' # ½
 N = 0 # antal personer
 R = 0 # antal ronder
 DY = 30 # radavstånd i pixlar
@@ -15,12 +15,15 @@ print = console.log
 range = _.range
 title = ''
 datum = ''
-persons = []
-nameList = []
+
+persons = [] # stabil, sorterad på id
+nameList = [] # stabil, sorterad på namn
+pairings = [] # varierar med varje rond
+
 state = 0
 rond = 0 
-ids = []
-resultat = []
+# ids = []
+resultat = [] # 012 sorterad på id
 
 showType = (a) -> if typeof a == 'string' then "'#{a}'" else a
 
@@ -90,10 +93,11 @@ fetchURL = (url = window.location.search) ->
 		#res.N = _.shuffle res.N
 		persons = _.map range(N), (i) -> {id:i, n: res.N[i], c:'', r:'', s:0, opps:[], T:[]}
 
-		print persons
+		#print persons
 			# persons.push {id:i, n: res.N[i], c:'', r:'', s:0, opps:[]}
 		R = selectRounds N
 		#if N < 10 then R = 3
+	nameList = _.sortBy persons, ['n']
 
 copyToClipboard = (text) ->
 	if !navigator.clipboard
@@ -110,17 +114,17 @@ copyToClipboard = (text) ->
 		.catch (err) => message 'Kopiering till klippbordet misslyckades'
 
 class Button
-	constructor : (@prompt,@x,@y,@w,@h,@click) ->
+	constructor : (@prompt,@fill,@click) ->
 		@active = true
+	setExtent : (@x,@y,@w,@h) ->
 	draw : ->
 		if not @active then return
 		textAlign CENTER,CENTER
 		rectMode CENTER
-		fill 'black'
 		if @prompt == 'next'
-			#stroke 'black'
+			fill 'black'
 			rect @x,@y, @w,@h
-			fill 'yellow'
+		fill @fill
 		text @prompt,@x, @y + 0.5
 	inside : (mx,my) -> @x-@w/2 <= mx <= @x+@w/2 and @y-@h/2 <= my <= @y+@h/2 and @active
 
@@ -147,39 +151,51 @@ sumBW = (s) ->
 	for item in s
 		res += if item=='B' then -1 else 1
 	res
+assert 0, sumBW ''
 assert 0, sumBW 'BWBWWB'
 assert -6, sumBW 'BBBBBB'
 assert 6, sumBW 'WWWWWW'
 
-score =  (p) -> sum persons[p].r
-getMet = (a,b) -> b in persons[a].opps
+scorex =  (person) -> sum person.r
+getMet = (a,b) -> b.id in persons[a.id].opps
 
-colorize = (ids) ->
-	for i in range ids.length//2
-		pa = persons[ids[2*i]]
-		pb = persons[ids[2*i+1]]
-		if pa.mandatory
-			pac = if pa.mandatory==1 then 'W'  else 'B'
-		else if pb.mandatory
-			pac = if pa.mandatory==1 then 'B'  else 'W'
-		else 
-			if pa.colorComp < pb.colorComp then pac = 'W' else pac = 'B'
+colorize = (persons) ->
+	for i in range persons.length//2
+		pa = persons[2*i]
+		pb = persons[2*i+1]
+		pac = 'B W'[pa.mandatory+1]
+		pbc = 'B W'[pb.mandatory+1]
+		if pac == pbc
+			if pa.colorComp <= pb.colorComp then pac = 'W' else pac = 'B'
 		pa.c += pac
 		pb.c += if pac=='W' then 'B'  else 'W'
 
-pair = (ids,pairing=[]) ->
+pair = (persons,pairing=[]) ->
 	if pairing.length == N then return pairing
-	for a in ids # a är ett personid
-		for b in ids # b är ett personid
+	for a in persons
+		for b in persons
 			if a == b then continue # man kan inte möta sig själv
 			if getMet a,b then continue # a och b får ej ha mötts tidigare
-			mandatory = persons[a].mandatory + persons[b].mandatory
+			mandatory = a.mandatory + b.mandatory
 			if 2 == Math.abs mandatory then continue # Spelarna kan inte ha samma färg.
-			newids = (id for id in ids when id not in [a,b])
+			newPersons = (p for p in persons when p not in [a,b])
 			newPairing = pairing.concat [a,b]
-			result = pair newids,newPairing
+			result = pair newPersons,newPairing
 			if result.length == N then return result
 	return []
+
+adjustForColors = (pairings) ->
+	res = []
+	print 'adjustForColors',pairings
+	for i in range N//2
+		if pairings[2*i].c.length == 0 or 'W' == _.last(pairings[2*i].c)
+			res.push pairings[2*i] # W
+			res.push pairings[2*i+1] # B
+		else
+			res.push pairings[2*i+1] # W
+			res.push pairings[2*i] # B
+	print 'adjustForColors',res
+	res
 
 lotta = ->
 
@@ -188,8 +204,8 @@ lotta = ->
 	# prepare pairing
 	for p in persons
 		colorSum = sumBW p.c
-		latest = if p.c.length== 0 then 0 else _.last p.c
-		latest2 = if p.c.length < 2 then 0 else sumBW _.slice p.c, p.c.length - 2
+		latest = if p.c.length== 0 then '' else _.last p.c
+		latest2 = if p.c.length < 2 then '' else sumBW _.slice p.c, p.c.length - 2
 
 		p.mandatory = 0
 		if colorSum <= -1 or latest2 == -2 then p.mandatory =  1
@@ -197,18 +213,27 @@ lotta = ->
 		p.colorComp = [colorSum,latest] # fundera på ordningen här.
 
 	calcScore()
-	temp = _.sortBy persons, ['s']
-	ids = _.map temp, (person) -> person.id
-	ids = ids.reverse()
-	ids = pair ids
-	colorize ids
+	#print {rond}
+	if rond == 0
+		pairings = persons
+	else
+		# print 'persons after pair',persons
+		pairings = _.sortBy persons, ['s']
+		# print 'pairings after calcScore',pairings
+		#ids = _.map temp, (person) -> person.id
+		pairings = pairings.reverse()
+		pairings = pair pairings
+	colorize pairings
+	pairings = adjustForColors pairings
 	for i in range N//2
-		a = ids[2*i]
-		b = ids[2*i+1]
-		persons[a].opps.push b
-		persons[b].opps.push a
-	print "#{new Date() - start} milliseconds"
+		a = pairings[2*i]
+		b = pairings[2*i+1]
+		a.opps.push b.id
+		b.opps.push a.id
+
+	#print "#{new Date() - start} milliseconds"
 	state = 2
+	print {'pairings efter lottning',pairings}
 
 prRes = (score) ->
 	score = parseInt score
@@ -263,16 +288,6 @@ calcT = ->
 		for i in p.opps
 			p.T[2] += sum persons[i].r # Buchholz: summan av motståndarnas poäng
 
-transferResult = ->
-	print {resultat}
-	for i in range N//2
-		a = ids[2*i]
-		b = ids[2*i+1]
-		buttons[3][2+3*i].prompt = ''
-		res = resultat[2+3*i]
-		persons[a].r += res[0]
-		persons[b].r += res[1]
-
 mw = (x) -> x/1000 * width # (milliWidth)
 
 ########### GUI ############
@@ -291,15 +306,13 @@ txt = (value, x, y, align=null, color=null) ->
 
 showNames = ->
 	showHeader 'Names'
-	nameList = _.sortBy persons, ['n']
 	textSize 0.5 * DY
-	txt 'Table Name',mw(5),DY*1.5,LEFT
+	txt 'Table Name',mw(  5),DY*1.5,LEFT
 	txt 'Table Name',mw(505),DY*1.5,LEFT
-	for i in ids
-		person = nameList[i]
-		x = mw(500) * (i // (N//2))
-		y = DY * (2.5 + i % (N//2))
-		bord = 1 + ids[i]//2
+	for person,i in pairings
+		x = mw(500) * (person.id // (N//2))
+		y = DY * (2.5 + person.id % (N//2))
+		bord = 1 + i//2
 		fill if 'B' == _.last person.c then 'black' else 'white'
 		txt bord,0.75*DY+x,y,RIGHT
 		txt person.n,DY+x,y,LEFT
@@ -310,17 +323,17 @@ showTables = ->
 	showHeader 'Tables'
 	y = 1.5 * DY
 	txt '#',     mw( 75),y,CENTER,'white'
-	txt 'Score', mw(150),y,CENTER,'white'
-	txt 'White', mw(300),y,CENTER,'white'
+	txt 'Score', mw(150),y
+	txt 'White', mw(300),y
 	txt 'Result',mw(500),y,CENTER,'lightgray'
 	txt 'Black', mw(700),y,CENTER,'black'
-	txt 'Score', mw(850),y,CENTER,'black'
-	txt '#',     mw(925),y,CENTER,'black'
+	txt 'Score', mw(850),y
+	txt '#',     mw(925),y
 
 	for i in range N//2
 		y = DY * (i+2.5)
-		a = persons[ids[2*i]]
-		b = persons[ids[2*i+1]]
+		a = pairings[2*i  ] # White
+		b = pairings[2*i+1] # Black
 
 		pa = sum a.r
 		pb = sum b.r
@@ -348,7 +361,7 @@ lightbulb = (color, x, y, result, opponent) ->
 
 showResult = ->
 	showHeader 'Result'
-	if ids.length == 0
+	if pairings.length == 0
 		txt "This round can't be paired! (Too many rounds)",width/2,height/2,CENTER
 		return
 
@@ -357,10 +370,10 @@ showResult = ->
 	calcScore()
 
 	temp = _.sortBy persons, ['s', 'T']
-	ids = _.map temp, (person) -> person.id
 
-	ids = ids.reverse()
-	inv = invert ids # pga korstabell
+	temp = temp.reverse()
+	inv = (p.id for p in temp)
+	inv = invert inv
 
 	y = 1.5 * DY
 	textAlign CENTER
@@ -373,21 +386,20 @@ showResult = ->
 
 	fill 'white' 
 	textSize DY * 0.5
-	for i in range N
-		p = persons[i]
-		y = DY * (inv[i]+2.5)
-		txt 1+inv[i],mw(40),y,RIGHT
-		txt p.n,mw(50),y,LEFT
+	for person,i in temp
+		y = DY * (i+2.5)
+		txt 1+i,mw(40),y,RIGHT
+		txt person.n,mw(50),y,LEFT
 		for r in range rond+1
 			x = mw(330) + DY*r
-			lightbulb p.c[r][0], x, y, p.r[r], inv[p.opps[r]]
+			lightbulb person.c[r][0], x, y, person.r[r], inv[person.opps[r]]
 
-		score = prRes sum p.r
+		score = prRes sum person.r
 		txt score, mw(850), y, CENTER,'white'
 
-		txt prRes(p.T[0]),mw(900),y
-		txt       p.T[1], mw(930),y
-		txt prRes(p.T[2]),mw(960),y
+		txt prRes(person.T[0]),mw(900),y
+		txt       person.T[1], mw(930),y
+		txt prRes(person.T[2]),mw(960),y
 
 setPrompt = (button,prompt) -> 
 	button.prompt = if button.prompt == prompt then '' else prompt
@@ -398,45 +410,63 @@ setPrompt = (button,prompt) ->
 
 window.windowResized = ->
 	DY = mw 50
-	resizeCanvas windowWidth, DY * (N//2+2)
-	updateScreenParameters()
+	if state < 4
+		resizeCanvas windowWidth, DY * (N//2+2)
+	else
+		resizeCanvas windowWidth, DY * (N+2)
+	moveAllButtons()
 
-updateScreenParameters = ->
-	print 'updateScreenParameters'
-	DY = mw 50
+transferResult = ->
+	for i in range N//2
+		button = buttons[3][2+3*i]
+		white = {'1 - 0': 2,'½ - ½': 1,'0 - 1': 0}[button.prompt]
+		persons[2*i+0].r += "012"[white]
+		persons[2*i+1].r += "012"[2-white]
+		button.prompt = ''
+
+moveAllButtons = ->
+	# DY = mw 50
+	buttons[2][0].setExtent mw(950),0.45*DY, mw(60),0.55*DY
+	buttons[3][0].setExtent mw(950),0.45*DY, mw(60),0.55*DY
+	buttons[4][0].setExtent mw(950),0.45*DY, mw(60),0.55*DY
+
+	for i in range N//2
+		y = DY * (i+2.5)
+		buttons[3][3*i+1].setExtent mw(300),y, mw(200),30
+		buttons[3][3*i+2].setExtent mw(500),y, mw(200),30
+		buttons[3][3*i+3].setExtent mw(700),y, mw(200),30
+
+updateAllButtons = ->
+	for i in range N//2
+		white = pairings[2*i+0]
+		black = pairings[2*i+1]
+		buttons[3][3*i+1].prompt = white.n
+		buttons[3][3*i+2].prompt = '-'
+		buttons[3][3*i+3].prompt = black.n
+
+createAllButtons = ->
 
 	buttons = [[],[],[],[],[]]
 
-	buttons[2].push new Button 'next', mw(950),0.45*DY, mw(60),0.55*DY, -> 
+	buttons[2].push new Button 'next', 'yellow', ->
 		state = 3
-		DY = mw 50
-		resizeCanvas windowWidth, DY * (N//2+2)
+		updateAllButtons()
+		# resizeCanvas windowWidth, DY * (N//2+2)
 
-	buttons[3].push new Button 'next', mw(950),0.45*DY, mw(60),0.55*DY, ->
+	buttons[3] = []
+	buttons[3].push new Button 'next', 'yellow', ->
 		state = 4
 		transferResult()
-		DY = mw 50
-		resizeCanvas windowWidth, DY * (N+2)
-
-	ids = range N #
+		# resizeCanvas windowWidth, DY * (N+2)
 	for i in range N//2
-		y = DY * (i+2.5)
-		a = persons[ids[2*i]]
-		b = persons[ids[2*i+1]]
 		n = buttons[3].length
 		do (n) ->
-			buttons[3].push new Button a.n,mw(300),y, mw(200),30, ->
-				setPrompt buttons[3][n+1], '1 - 0'
-				resultat[n+1] = "20"
-			buttons[3].push new Button '', mw(500),y, mw(200),30, ->
-				setPrompt buttons[3][n+1], '½ - ½'
-				resultat[n+1] = "11"
-			buttons[3].push new Button b.n,mw(700),y, mw(200),30, ->
-				setPrompt buttons[3][n+1], '0 - 1'
-				resultat[n+1] = "02"
+			buttons[3].push new Button 'white','white',     -> setPrompt buttons[3][n+1], '1 - 0'
+			buttons[3].push new Button '-',    'lightgray', -> setPrompt buttons[3][n+1], '½ - ½'
+			buttons[3].push new Button 'black', 'black',    -> setPrompt buttons[3][n+1], '0 - 1'
 
-	buttons[4].push new Button 'next', mw(950),0.45*DY, mw(60),0.55*DY, ->
-		DY = mw 50
+	buttons[4].push new Button 'next', 'yellow', ->
+		#DY = mw 50
 		resizeCanvas windowWidth, DY * (N//2+2)
 		s = createURL()
 		print s
@@ -444,8 +474,9 @@ updateScreenParameters = ->
 		if rond < R-1
 			rond += 1
 			lotta()
+			print {pairings}
+	print "#{buttons[3].length + 2} buttons created"
 
-print "(#{window.location.search})"
 if window.location.search == ''
 	title = 'Editera urlen!'
 	#datum = new Date()
@@ -454,14 +485,14 @@ if window.location.search == ''
 	window.location.href = url
 else
 	fetchURL()
-	print 'persons read',persons
+	pairings = persons
 
 window.setup = ->
 	createCanvas windowWidth,windowHeight
-	DY = mw 50
-	updateScreenParameters()
+	createAllButtons()
+	moveAllButtons()
 
-	print N + ' players ' + R + ' rounds'
+	# print N + ' players ' + R + ' rounds'
 	textAlign CENTER,CENTER
 	lotta()
 
