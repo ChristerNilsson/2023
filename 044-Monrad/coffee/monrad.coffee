@@ -22,7 +22,6 @@ pairings = [] # varierar med varje rond
 
 state = 0
 rond = 0 
-# ids = []
 resultat = [] # 012 sorterad på id
 
 showType = (a) -> if typeof a == 'string' then "'#{a}'" else a
@@ -48,7 +47,7 @@ buttons = [[],[],[],[],[]]
 released = true
 message = '' #This is a tutorial tournament. Use it or edit the URL'
 
-fetchURL = (url = window.location.search) ->
+fetchURL = (url = location.search) ->
 	res = {}
 	urlParams = new URLSearchParams url
 	persons = []
@@ -92,11 +91,7 @@ fetchURL = (url = window.location.search) ->
 
 		#res.N = _.shuffle res.N
 		persons = _.map range(N), (i) -> {id:i, n: res.N[i], c:'', r:'', s:0, opps:[], T:[]}
-
-		#print persons
-			# persons.push {id:i, n: res.N[i], c:'', r:'', s:0, opps:[]}
 		R = selectRounds N
-		#if N < 10 then R = 3
 	nameList = _.sortBy persons, ['n']
 
 copyToClipboard = (text) ->
@@ -120,9 +115,9 @@ class Button
 	draw : ->
 		if not @active then return
 		textAlign CENTER,CENTER
-		rectMode CENTER
 		if @prompt == 'next'
 			fill 'black'
+			rectMode CENTER
 			rect @x,@y, @w,@h
 		fill @fill
 		text @prompt,@x, @y + 0.5
@@ -213,14 +208,10 @@ lotta = ->
 		p.colorComp = [colorSum,latest] # fundera på ordningen här.
 
 	calcScore()
-	#print {rond}
 	if rond == 0
 		pairings = persons
 	else
-		# print 'persons after pair',persons
 		pairings = _.sortBy persons, ['s']
-		# print 'pairings after calcScore',pairings
-		#ids = _.map temp, (person) -> person.id
 		pairings = pairings.reverse()
 		pairings = pair pairings
 	colorize pairings
@@ -402,11 +393,12 @@ showResult = ->
 		txt prRes(person.T[2]),mw(960),y
 
 setPrompt = (button,prompt) -> 
-	button.prompt = if button.prompt == prompt then '' else prompt
-	ok = true
+	button.prompt = if button.prompt == prompt then '-' else prompt
 	for button in buttons[3].slice 1
-		if button.prompt == '' then ok = false
-	buttons[3][0].active = ok
+		if button.prompt == '-'
+			buttons[3][0].active = false
+			return
+	buttons[3][0].active = true
 
 window.windowResized = ->
 	DY = mw 50
@@ -420,12 +412,11 @@ transferResult = ->
 	for i in range N//2
 		button = buttons[3][2+3*i]
 		white = {'1 - 0': 2,'½ - ½': 1,'0 - 1': 0}[button.prompt]
-		persons[2*i+0].r += "012"[white]
-		persons[2*i+1].r += "012"[2-white]
-		button.prompt = ''
+		pairings[2*i+0].r += "012"[white]
+		pairings[2*i+1].r += "012"[2-white]
+		button.prompt = '-'
 
 moveAllButtons = ->
-	# DY = mw 50
 	buttons[2][0].setExtent mw(950),0.45*DY, mw(60),0.55*DY
 	buttons[3][0].setExtent mw(950),0.45*DY, mw(60),0.55*DY
 	buttons[4][0].setExtent mw(950),0.45*DY, mw(60),0.55*DY
@@ -451,13 +442,12 @@ createAllButtons = ->
 	buttons[2].push new Button 'next', 'yellow', ->
 		state = 3
 		updateAllButtons()
-		# resizeCanvas windowWidth, DY * (N//2+2)
 
 	buttons[3] = []
 	buttons[3].push new Button 'next', 'yellow', ->
 		state = 4
 		transferResult()
-		# resizeCanvas windowWidth, DY * (N+2)
+		windowResized()
 	for i in range N//2
 		n = buttons[3].length
 		do (n) ->
@@ -466,7 +456,6 @@ createAllButtons = ->
 			buttons[3].push new Button 'black', 'black',    -> setPrompt buttons[3][n+1], '0 - 1'
 
 	buttons[4].push new Button 'next', 'yellow', ->
-		#DY = mw 50
 		resizeCanvas windowWidth, DY * (N//2+2)
 		s = createURL()
 		print s
@@ -477,12 +466,12 @@ createAllButtons = ->
 			print {pairings}
 	print "#{buttons[3].length + 2} buttons created"
 
-if window.location.search == ''
-	title = 'Editera urlen!'
+if location.search == ''
+	title = 'Tutorial Tournament'
 	#datum = new Date()
 	#datum = datum.toISOString().split('T')[0]
 	url = "?T=#{title.replace(" ","_")}&N=ANDERSSON_Anders|BENGTSSON_Bertil|CARLSEN_Christer|DANIELSSON_Daniel|ERIKSSON_Erik|FRANSSON_Ferdinand|GREIDER_Göran|HARALDSSON_Helge"
-	window.location.href = url
+	location.href = url
 else
 	fetchURL()
 	pairings = persons

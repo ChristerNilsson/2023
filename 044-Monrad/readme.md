@@ -2,22 +2,48 @@ WORK IN PROGRESS!
 
 [Try it!](https://christernilsson.github.io/2023/044-Monrad)
 
-64 players:
-https://christernilsson.github.io/2023/044-Monrad?T=Wasa_SK&D=2023-11-28&N=AA|AB|AC|AD|AE|AF|AG|AH|BA|BB|BC|BD|BE|BF|BG|BH|CA|CC|CC|CD|CE|CF|CG|CH|DA|DD|DC|DD|DE|DF|DG|DH|EA|EE|EC|ED|EE|EF|EG|EH|FA|FF|FC|FD|FE|FF|FG|FH|GA|GB|GC|GD|GE|GF|GG|GH|HA|HB|HC|HD|HE|HF|HG|HH
-
+64 players:  
+```
+https://christernilsson.github.io/2023/044-Monrad
+?T=Wasa_SK
+&D=2023-11-28
+&N=AA|AB|AC|AD|AE|AF|AG|AH|BA|BB|BC|BD|BE|BF|BG|BH|CA|CC|CC|CD|CE|CF|CG|CH|DA|DD|DC|DD|DE|DF|DG|DH|EA|EE|EC|ED|EE|EF|EG|EH|FA|FF|FC|FD|FE|FF|FG|FH|GA|GB|GC|GD|GE|GF|GG|GH|HA|HB|HC|HD|HE|HF|HG|HH
+```
 ### Monrad
+
 	* Handles tournaments with 4 to 64 players.
+
+### Quick Start
+
+Enter the names in the URL.  
+Show the names and let everybody be seated.  
+The names are alphabetically ordered.  
+
+<img align="center" src="1.GIF">
+
+When the first game is played, click Next to see the Tables screen.  
+
+<img align="center" src="2.GIF">
+
+Click on the winner or between them for a draw.  
+Clicking twice cancels the result.  
+When all results are entered, click Next.  
+
+<img align="center" src="3.GIF">
+
+Click Next to start the next round.  
 
 ### Instructions
 	Edit the URL above.  
 	Add the names of the players.  
 
-	* N contains then names, separated with |. Mandatory!
-	* H contains the header of the tournament
-	* R contains the number of rounds. 
+	* N contains then names, separated with |. Mandatory.
+	* H contains the header of the tournament. Optional
+	* D contains the Date. Optional
+	* R contains the number of rounds. Optional
 		* Default: minimum number of rounds if the tournament was a cup, plus 50%.
 		* One round added to make the number of rounds even.
-		* If you want a different number of rounds, just state it.
+		* If you want a different number of rounds, just put it in the URL.
 	* T contains the tiebreak order. Default: T=WD1
 		* W = Number of Wins
 		* D = Direct Encounter. Used only groups with exactly two players
@@ -26,23 +52,12 @@ https://christernilsson.github.io/2023/044-Monrad?T=Wasa_SK&D=2023-11-28&N=AA|AB
 		* B = Number of Black games
 		* S = Sonneborn-Berger
 		* F = Fide Tiebreak
-	* Z states the team size. Default: Z=1
+	* Z states the team size. Default: Z=1. Maximum 8.
 
 	The following parameters are internal and handled by the program:
-	* D contains the date
 	* O contains the opponents
 	* C contains the colours, B & W
 	* S contains the scores, 0, 1 or 2 for victory.
-
-### Handling the GUI
-Look at the names and let everybody be seated.
-![Names](1.JPG)
-When the first game is played, click Next to see the Tables screen.
-![Tables](2.JPG)
-Click on the winner or between them.  
-When all results are entered, click Next.  
-![Results](3.JPG)
-Click Next to start the next round.
 
 ### Saving the tournament
 	* The updated URL contains all information to display the result page.
@@ -54,13 +69,20 @@ Eight players, four rounds
 Just copy and paste it into your browser. Oneliner not needed.  
 ```
 https://christernilsson.github.io/2023/044-Monrad
-?H=Wasa SK KM blixt
+?N=CARLSEN_Christer|BENGTSSON_Bertil|HARALDSSON_Helge|ERIKSSON_Erik|ANDERSSON_Anders|DANIELSSON_Daniel|GREIDER_Göran|FRANSSON_Ferdinand
+&H=Wasa SK KM blixt
 &D=2023-11-25
-&N=CARLSEN_Christer|BENGTSSON_Bertil|HARALDSSON_Helge|ERIKSSON_Erik|ANDERSSON_Anders|DANIELSSON_Daniel|GREIDER_Göran|FRANSSON_Ferdinand
 &O=1356|0437|3765|2014|5173|4602|7520|6241
 &C=WBWB|BWWB|WBWB|BWBW|WBWB|BWBW|WBBW|BWBW
 &S=2111|0200|1222|1122|0020|2010|2201|0002
 &T=WD1
+```
+
+# Table of number of rounds (R) given number of players (N).
+
+```
+N: 4 6 8 10 12 24 26 62 64
+R: 2 3 4  4  6  6  8  8 10
 ```
 
 ### Teams
@@ -84,17 +106,18 @@ https://christernilsson.github.io/2023/044-Monrad
 	* 7
 	* u 7½
 	* 8
-	* Left  Arrow: Decrease White with ½. Modulo.
-	* Right Arrow: Increase White with ½. Modulo.
-* Use Up and Down to select game
+	* Left  Arrow: Decrease White with ½. Wraps.
+	* Right Arrow: Increase White with ½. Wraps.
+* Use Up and Down to select game. Wraps
 
 # Kontroller av URL.
 * Antal spelare skall överensstämma i N, O, C och R
 * Antal ronder skall överensstämma i O C och R
-* Tillåtna tecken I N: I princip alla möjliga. De kodas/avkodas automatiskt. T ex åäöÅÄÖéæýþÿüïœßđèùúøàáçìíñμ-. Emojis?
+* Tillåtna tecken i N: I princip alla möjliga. De kodas/avkodas automatiskt. T ex åäöÅÄÖéæýþÿüïœßđèùúøàáçìíñμ-. Emojis?
 * Tillåtna tecken i O: 0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-/ (64 tecken)
 * Tillåtna tecken i C: BW (två tecken)
-* Tillåtna tecken i R: 012 (tre tecken)
+* Tillåtna tecken i R individuellt spel: 012 (tre tecken)
+* Tillåtna tecken i R med åtta spelare per lag: 0123456789abcdefg (16 tecken)
 
 ### Begränsningar
 * 4 till 64 spelare
@@ -111,7 +134,7 @@ https://christernilsson.github.io/2023/044-Monrad
 * E= (ELO-rating) förberedelse för Swiss
 * TB= (Tiebreaks) Prioritetsordning
 * P= (partier per match) Lagturneringar
-* R= Antal ronder ska kunna anges. Default används annars, cirka 1.5*log2(N)
+* R= Antal ronder
 * Ändra Result till Score
-* Scores anges med ett tecken. T ex åtta spelare: 0123456789abcdefg 0:0-8 1:½-7½ .. f:7½-½ g:8-0
+* Score anges med ett tecken. T ex åtta spelare: 0 1q2w3e4r5t6y7u8  q=½-7½  u=7½-½
 
