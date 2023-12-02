@@ -20,9 +20,9 @@ class Ball
 window.setup = ->
 	createCanvas windowWidth-50,windowHeight-50
 	stroke 'black'
+	background 'gray'
 
 window.draw = ->
-	background 'gray'
 	textSize 50
 	text antal,100,100
 	for ball in balls
@@ -32,7 +32,6 @@ window.draw = ->
 
 window.mousePressed=->
 	antal += 1
-	# print antal
 	for i in _.range 1
 		x = mouseX #_.sample [0.1*width,0.2*width]
 		y = mouseY #_.sample [0,92,95,96,97,99,100]
