@@ -8,8 +8,8 @@ DY = 30 # radavstånd i pixlar
 # 3 Tables
 # 4 Result
 
-#seed = Math.random()
-#random = -> (((Math.sin(seed++)/2+0.5)*10000)%100)/100
+seed = 14 # Math.random()
+random = -> (((Math.sin(seed++)/2+0.5)*10000)%100)/100
 
 print = console.log
 range = _.range
@@ -23,6 +23,7 @@ pairings = [] # varierar med varje rond
 state = 0
 rond = 0 
 resultat = [] # 012 sorterad på id
+antal = 0 
 
 showType = (a) -> if typeof a == 'string' then "'#{a}'" else a
 
@@ -89,7 +90,7 @@ fetchURL = (url = location.search) ->
 			res.N.push '-frirond-'
 			N += 1
 
-		#res.N = _.shuffle res.N
+		res.N = _.shuffle res.N
 		persons = _.map range(N), (i) -> {id:i, n: res.N[i], c:'', r:'', s:0, opps:[], T:[]}
 		R = selectRounds N
 	nameList = _.sortBy persons, ['n']
@@ -167,21 +168,57 @@ colorize = (persons) ->
 
 pair = (persons,pairing=[]) ->
 	if pairing.length == N then return pairing
-	for a in persons
-		for b in persons
-			if a == b then continue # man kan inte möta sig själv
-			if getMet a,b then continue # a och b får ej ha mötts tidigare
-			mandatory = a.mandatory + b.mandatory
-			if 2 == Math.abs mandatory then continue # Spelarna kan inte ha samma färg.
-			newPersons = (p for p in persons when p not in [a,b])
-			newPairing = pairing.concat [a,b]
-			result = pair newPersons,newPairing
-			if result.length == N then return result
+	antal += 1
+	a  = persons[0]
+	for b in persons
+		if a == b then continue # man kan inte möta sig själv
+		if getMet a,b then continue # a och b får ej ha mötts tidigare
+		mandatory = a.mandatory + b.mandatory
+		if 2 == Math.abs mandatory then continue # Spelarna kan inte ha samma färg.
+		# print "pair: #{pairing.length//2} #{a.id} - #{b.id}"
+		newPersons = (p for p in persons when p not in [a,b])
+		newPairing = pairing.concat [a,b]
+		result = pair newPersons,newPairing
+		if result.length == N then return result
 	return []
+
+# pair = (persons,pairing=[]) ->
+# 	if pairing.length == N then return pairing
+# 	antal += 1
+# 	for a in persons
+# 		for b in persons
+# 			if a == b then continue # man kan inte möta sig själv
+# 			if getMet a,b then continue # a och b får ej ha mötts tidigare
+# 			#if a.id > b.id then continue
+# 			mandatory = a.mandatory + b.mandatory
+# 			if 2 == Math.abs mandatory then continue # Spelarna kan inte ha samma färg.
+# 			#print "pair: #{pairing.length//2} #{a.id} - #{b.id}"
+# 			newPersons = (p for p in persons when p not in [a,b])
+# 			newPairing = pairing.concat [a,b]
+# 			result = pair newPersons,newPairing
+# 			if result.length == N then return result
+# 	return []
+
+# pair = (persons,pairing=[]) ->
+# 	if pairing.length == N then return pairing
+# 	antal += 1
+# 	for ia in range persons.length-1
+# 		a = persons[ia]
+# 		for ib in range ia+1, persons.length
+# 			b = persons[ib]
+# 			if ia == ib then continue # man kan inte möta sig själv
+# 			if getMet a,b then continue # a och b får ej ha mötts tidigare
+# 			mandatory = a.mandatory + b.mandatory
+# 			if 2 == Math.abs mandatory then continue # Spelarna kan inte ha samma färg.
+# 			newPersons = (p for p in persons when p not in [a,b])
+# 			newPairing = pairing.concat [a,b]
+# 			result = pair newPersons,newPairing
+# 			if result.length == N then return result
+# 	return []
 
 adjustForColors = (pairings) ->
 	res = []
-	print 'adjustForColors',pairings
+	#print 'adjustForColors',pairings
 	for i in range N//2
 		if pairings[2*i].c.length == 0 or 'W' == _.last(pairings[2*i].c)
 			res.push pairings[2*i] # W
@@ -189,12 +226,10 @@ adjustForColors = (pairings) ->
 		else
 			res.push pairings[2*i+1] # W
 			res.push pairings[2*i] # B
-	print 'adjustForColors',res
+	#print 'adjustForColors',res
 	res
 
 lotta = ->
-
-	start = new Date()
 
 	# prepare pairing
 	for p in persons
@@ -213,7 +248,12 @@ lotta = ->
 	else
 		pairings = _.sortBy persons, ['s']
 		pairings = pairings.reverse()
+		start = new Date()
+		antal = 0 
+		#print JSON.stringify pairings
 		pairings = pair pairings
+		print rond, "#{antal} #{new Date() - start} milliseconds"
+
 	colorize pairings
 	pairings = adjustForColors pairings
 	for i in range N//2
@@ -222,9 +262,8 @@ lotta = ->
 		a.opps.push b.id
 		b.opps.push a.id
 
-	#print "#{new Date() - start} milliseconds"
 	state = 2
-	print {'pairings efter lottning',pairings}
+	# print {'pairings efter lottning',pairings}
 
 prRes = (score) ->
 	score = parseInt score
@@ -357,7 +396,7 @@ showResult = ->
 		return
 
 	noStroke()
-	calcT rond
+	calcT()
 	calcScore()
 
 	temp = _.sortBy persons, ['s', 'T']
@@ -466,43 +505,68 @@ createAllButtons = ->
 			print {pairings}
 	print "#{buttons[3].length + 2} buttons created"
 
-if location.search == ''
-	title = 'Tutorial Tournament'
-	#datum = new Date()
-	#datum = datum.toISOString().split('T')[0]
-	url = "?T=#{title.replace(" ","_")}&N=ANDERSSON_Anders|BENGTSSON_Bertil|CARLSEN_Christer|DANIELSSON_Daniel|ERIKSSON_Erik|FRANSSON_Ferdinand|GREIDER_Göran|HARALDSSON_Helge"
-	location.href = url
-else
-	fetchURL()
-	pairings = persons
+# if location.search == ''
+# 	title = 'Tutorial Tournament'
+# 	#datum = new Date()
+# 	#datum = datum.toISOString().split('T')[0]
+# 	url = "?T=#{title.replace(" ","_")}&N=ANDERSSON_Anders|BENGTSSON_Bertil|CARLSEN_Christer|DANIELSSON_Daniel|ERIKSSON_Erik|FRANSSON_Ferdinand|GREIDER_Göran|HARALDSSON_Helge"
+# 	location.href = url
+# else
+# 	fetchURL()
+# 	pairings = persons
 
-window.setup = ->
-	createCanvas windowWidth,windowHeight
-	createAllButtons()
-	moveAllButtons()
+# window.setup = ->
+# 	createCanvas windowWidth,windowHeight
+# 	createAllButtons()
+# 	moveAllButtons()
 
-	# print N + ' players ' + R + ' rounds'
-	textAlign CENTER,CENTER
+# 	# print N + ' players ' + R + ' rounds'
+# 	textAlign CENTER,CENTER
+# 	lotta()
+
+# window.draw = ->
+# 	background 'gray'
+# 	for button in buttons[state]
+# 		button.draw()
+# 	if state <= 1 then text "State #{state}",100,100
+# 	else if state == 2 then showNames()
+# 	else if state == 3 then showTables()
+# 	else if state == 4 then showResult()
+
+# window.mousePressed = (event) ->
+# 	event.preventDefault()
+# 	if not released then return
+# 	released = false
+# 	for button in buttons[state]
+# 		if button.inside mouseX,mouseY then button.click()
+# 	false
+
+# window.mouseReleased = (event) ->
+# 	event.preventDefault()
+# 	released = true
+# 	false
+
+#############################
+
+N = 64
+for i in range N
+	persons.push {id:i, n: i, c:"", r:"", s:0, opps:[], T:[0,0,0] }
+
+start = new Date()
+for rond in range  N//2
 	lotta()
+	for i in range N//2
+		a = pairings[2*i+0]
+		b = pairings[2*i+1]
+		z = Math.random()
+		if z < 0.1 then res = 1
+		else if z < 0.5 then res =  0
+		else res = 2
+		a.r += res.toString()
+		b.r += (2-res).toString()
+	print "#{new Date() - start} milliseconds"
 
-window.draw = ->
-	background 'gray'
-	for button in buttons[state]
-		button.draw()
-	if state <= 1 then text "State #{state}",100,100
-	else if state == 2 then showNames()
-	else if state == 3 then showTables()
-	else if state == 4 then showResult()
-
-window.mousePressed = (event) ->
-	event.preventDefault()
-	if not released then return
-	released = false
-	for button in buttons[state]
-		if button.inside mouseX,mouseY then button.click()
-	false
-
-window.mouseReleased = (event) ->
-	event.preventDefault()
-	released = true
-	false
+calcT()
+temp = _.sortBy persons, ['s', 'T']
+temp = temp.reverse()
+print temp

@@ -109,6 +109,8 @@ R: 2 3 4  4  6  6  8  8 10
 	* Left  Arrow: Decrease White with ½. Wraps.
 	* Right Arrow: Increase White with ½. Wraps.
 * Use Up and Down to select game. Wraps
+* Also: Home End PgUp PgDn
+* Letters: Search the next Player starting with the letter.
 
 # Kontroller av URL.
 * Antal spelare skall överensstämma i N, O, C och R
@@ -121,6 +123,11 @@ R: 2 3 4  4  6  6  8  8 10
 
 ### Begränsningar
 * 4 till 64 spelare
+
+### Noterat
+Om man sätter R till hälften av N kan man få mycket långa lottningstider.
+Faktiskt kan det bli långa lottningstider redan vid R=24 och N=64.
+Detta verkar vara oberoende av färghanteringen. Blir helt enkelt mycket backtracking när man mött över en tredjedel av deltagarna.
 
 ### Frågor
 * Ska man se till att antaler ronder alltid är jämnt ? (Av färgrättviseskäl)
