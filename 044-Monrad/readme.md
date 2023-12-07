@@ -149,4 +149,5 @@ För stora N och små R är min rekursiva pair mycket snabbare.
 
 ### Transpilering av .py till .coffee.
 Tvingades transpilera fyra funktioner i ett eget pass, pga begränsningar i chatGPT.  
-Enda felaktigheten var att jag behövde byta `i,j = j,i` mot `[i,j] = [j,i]`
+En felaktighet var att jag behövde byta `i,j = j,i` mot `[i,j] = [j,i]`
+En annan att list comprehension använde [] istf ()

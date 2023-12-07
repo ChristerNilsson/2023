@@ -1,3 +1,5 @@
+# import maxWeightMatching from './js/mwmatching.js'
+
 ALFABET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-/' # ½
 N = 0 # antal personer
 R = 0 # antal ronder
@@ -152,7 +154,9 @@ assert 0, sumBW 'BWBWWB'
 assert -6, sumBW 'BBBBBB'
 assert 6, sumBW 'WWWWWW'
 
-scorex =  (person) -> sum person.r
+scorex =  (person) -> 
+	print 'scorex',person
+	sum person.r
 getMet = (a,b) -> b.id in persons[a.id].opps
 
 colorize = (persons) ->
@@ -197,6 +201,50 @@ adjustForColors = (pairings) ->
 	#print 'adjustForColors',res
 	res
 
+lotta_inner = (pairings) -> # personer sorterade
+	# denna funktion anpassar till maxWeightMatching
+	arr = []
+	print 'aaa',pairings
+	for a in pairings
+		for b in pairings
+			if a.id >= b.id then continue
+			if getMet a, b then continue
+			mandatory = a.mandatory + b.mandatory
+			if Math.abs(mandatory) == 2 then continue # Spelarna kan inte ha samma färg.
+			arr.push([a.id+1, b.id+1, 1000 - Math.abs(scorex(a) - scorex(b))])
+	print('arr',arr)
+	z = maxWeightMatching arr
+	print 'z',z
+	z = z.slice 1 #[1:N+1]
+	res = []
+	for i in range N
+		if i < z[i]-1 then res.concat [i,z[i]-1]
+	# res är ej sorterad i bordsordning ännu
+
+	print 'adam',res
+
+	result = []
+	for i in range(N//2)
+		ia = res[2*i]
+		ib = res[2*i+1]
+		a = persons[ia]
+		b = persons[ib]
+		lst = [scorex(a),scorex(b)]
+		lst.sort(reverse=True)
+		result.append([lst,ia,ib])
+	result.sort(reverse=True)
+
+	resultat = []
+	for i in range(N//2)
+		[_,ia,ib] = result[i]
+		resultat.concat [ia,ib]
+		# a = persons[ia]
+		# b = persons[ib]
+		# pa = scorex(a) # sum(a['result'])/2
+		# pb = scorex(b) # sum(b['result'])/2
+		# print('',i+1,' ',pa,a["name"],'         ',b["name"],' ',pb)
+	resultat
+
 lotta = ->
 
 	# prepare pairing
@@ -216,12 +264,13 @@ lotta = ->
 	else
 		pairings = _.sortBy persons, ['s']
 		pairings = pairings.reverse()
-		start = new Date()
-		antal = 0
+		#start = new Date()
+		#antal = 0
 
-		pairings = pair pairings
+		# pairings = pair pairings
+		pairings = lotta_inner pairings
 
-		print rond, "#{antal} #{new Date() - start} milliseconds"
+		#print rond, "#{antal} #{new Date() - start} milliseconds"
 
 	colorize pairings
 	pairings = adjustForColors pairings
@@ -517,12 +566,12 @@ createAllButtons = ->
 
 #############################
 
-N = 64
+N = 16
 for i in range N
-	persons.push {id:i, n: i, c:"", r:"", s:0, opps:[], T:[0,0,0] }
+	persons.push { id:i, n:i, c:"", r:"", s:0, opps:[], T:[0,0,0] }
 
 start = new Date()
-for rond in range 26 # N//2
+for rond in range 10 # N//2
 	lotta()
 	for i in range N//2
 		a = pairings[2*i+0]

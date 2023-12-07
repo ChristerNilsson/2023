@@ -23,12 +23,12 @@ def save(name):
 
 #for name in 'Adam Bert Curt Dana Erik Falk Gran Hans IIII JJJJ KKKK LLLL MMMM NNNN OOOO PPPP QQQQ RRRR SSSS TTTT'.split(" "): save(name)
 #for name in 'Adam Bert Curt Dana Erik Fina Gorm Hans'.split(" "): save(name)
-for i in range(32): save(i)
+for i in range(16): save(i)
 
 N = len(persons)
 R = int(round(1.5*math.log2(N))) # antal ronder
 if N < 10: R=3
-R = 20
+R = 10
 print(N,'players,',R,'rounds')
 print()
 

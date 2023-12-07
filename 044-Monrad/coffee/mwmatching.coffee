@@ -1,3 +1,5 @@
+print = console.log
+
 maxWeightMatching = (edges, maxcardinality = false) ->
 
 	integer_types = [Number]
@@ -5,31 +7,50 @@ maxWeightMatching = (edges, maxcardinality = false) ->
 	return [] unless edges.length
 
 	nedge = edges.length
+	print 'nedge',nedge
 	nvertex = 0
 	for [i, j, w] in edges
 		nvertex = i + 1 if i >= nvertex
 		nvertex = j + 1 if j >= nvertex
 
+	print 'nvertex',nvertex
+
 	maxweight = Math.max(0, Math.max.apply(null, (wt for [i, j, wt] in edges)))
+	print 'maxweight',maxweight
 	endpoint = edges[p // 2][p % 2] for p in [0...2 * nedge]
-	neighbend = [[] for i in [0...nvertex]]
+	print 'endpoint',endpoint
+	neighbend = ([] for i in [0...nvertex])
 	for k in [0...edges.length]
 		[i, j, w] = edges[k]
 		neighbend[i].push(2 * k + 1)
 		neighbend[j].push(2 * k)
-	mate = [-1 for i in [0...nvertex]]
-	label = [0 for i in [0...(2 * nvertex)]]
-	labelend = [-1 for i in [0...(2 * nvertex)]]
-	inblossom = [i for i in [0...nvertex]]
-	blossomparent = [-1 for i in [0...(2 * nvertex)]]
-	blossomchilds = [null for i in [0...(2 * nvertex)]]
-	blossombase = [i for i in [0...nvertex]].concat([-1 for i in [0...nvertex]])
-	blossomendps = [null for i in [0...(2 * nvertex)]]
-	bestedge = [-1 for i in [0...(2 * nvertex)]]
-	blossombestedges = [null for i in [0...(2 * nvertex)]]
-	unusedblossoms = [i for i in [nvertex...2 * nvertex]]
-	dualvar = [maxweight for i in [0...nvertex]].concat([0 for i in [0...nvertex]])
-	allowedge = [false for i in [0...nedge]]
+	print 'neighbend',neighbend
+	mate = (-1 for i in [0...nvertex])
+	print 'mate',mate
+	label = (0 for i in [0...(2 * nvertex)])
+	print 'label',label
+	labelend = (-1 for i in [0...(2 * nvertex)])
+	print 'labelend',labelend
+	inblossom = (i for i in [0...nvertex])
+	print 'inblossom',inblossom
+	blossomparent = (-1 for i in [0...(2 * nvertex)])
+	print 'blossomparent',blossomparent
+	blossomchilds = (null for i in [0...(2 * nvertex)])
+	print 'blossomchilds',blossomchilds
+	blossombase = (i for i in [0...nvertex]).concat(-1 for i in [0...nvertex])
+	print 'blossombase',blossombase
+	blossomendps = (null for i in [0...(2 * nvertex)])
+	print 'blossomendps',blossomendps
+	bestedge = (-1 for i in [0...(2 * nvertex)])
+	print 'bestedge',bestedge
+	blossombestedges = (null for i in [0...(2 * nvertex)])
+	print 'blossombestedges',blossombestedges
+	unusedblossoms = (i for i in [nvertex...2 * nvertex])
+	print 'unusedblossoms',unusedblossoms
+	dualvar = (maxweight for i in [0...nvertex]).concat((0 for i in [0...nvertex]))
+	print 'dualvar',dualvar
+	allowedge = (false for i in [0...nedge])
+	print 'allowedge',allowedge
 	queue = []
 
 	slack = (k) ->
@@ -117,7 +138,7 @@ maxWeightMatching = (edges, maxcardinality = false) ->
 			queue.push(v) if label[inblossom[v]] == 2
 			inblossom[v] = b
 
-		bestedgeto = [-1 for i in [0...(2 * nvertex)]]
+		bestedgeto = (-1 for i in [0...(2 * nvertex)])
 
 		for bv in path
 			nblists = if blossombestedges[bv] then [blossombestedges[bv]] else [[p / 2 | 0 for p in neighbend[v]] for v in blossomLeaves(bv)]
@@ -133,14 +154,14 @@ maxWeightMatching = (edges, maxcardinality = false) ->
 			blossombestedges[bv] = null
 			bestedge[bv] = -1
 
-		blossombestedges[b] = [k for k in bestedgeto when k != -1]
+		blossombestedges[b] = (k for k in bestedgeto when k != -1)
 		bestedge[b] = -1
 
 		for k in blossombestedges[b]
 			bestedge[b] = k if bestedge[b] == -1 or slack(k) < slack(bestedge[b])
 
 
-		expandBlossom = (b, endstage) ->
+	expandBlossom = (b, endstage) ->
 		for s in blossomchilds[b]
 			blossomparent[s] = -1
 			if s < nvertex
