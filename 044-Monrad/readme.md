@@ -79,7 +79,7 @@ https://christernilsson.github.io/2023/044-Monrad
 ```
 
 # Table of number of rounds (R) given number of players (N).
-
+General rule: 2*R <= N. Also R <= 20
 ```
 N: 4 6 8 10 12 24 26 62 64
 R: 2 3 4  4  6  6  8  8 10
@@ -125,9 +125,11 @@ R: 2 3 4  4  6  6  8  8 10
 * 4 till 64 spelare
 
 ### Noterat
-Om man sätter R till hälften av N kan man få mycket långa lottningstider.
-Faktiskt kan det bli långa lottningstider redan vid R=24 och N=64.
-Detta verkar vara oberoende av färghanteringen. Blir helt enkelt mycket backtracking när man mött över en tredjedel av deltagarna.
+Begränsningar i antal ronder med maxweight-algoritmen:
+N 8 16 32 64 128
+R 4 10 25 50 113
+64/50 tar 1204 ms (python) för alla ronderna.
+För stora N och små R är min rekursiva pair mycket snabbare.
 
 ### Frågor
 * Ska man se till att antaler ronder alltid är jämnt ? (Av färgrättviseskäl)
@@ -145,3 +147,6 @@ Detta verkar vara oberoende av färghanteringen. Blir helt enkelt mycket backtra
 * Ändra Result till Score
 * Score anges med ett tecken. T ex åtta spelare: 0 1q2w3e4r5t6y7u8  q=½-7½  u=7½-½
 
+### Transpilering av .py till .coffee.
+Tvingades transpilera fyra funktioner i ett eget pass, pga begränsningar i chatGPT.  
+Enda felaktigheten var att jag behövde byta `i,j = j,i` mot `[i,j] = [j,i]`

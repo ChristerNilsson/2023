@@ -1,12 +1,12 @@
 import random
 import time
 import math
-import sys
+import mwmatching
 
-#sys.setrecursionlimit(8000)
+# sys.setrecursionlimit(8000)
 
 # Klarar upp till 1950 spelare.
-# 1600 spelar tar 1866 millisekunder för alla 16 ronderna. (Python)
+# 1600 spelar tar 1866 millisekunder för alla 16 ronderna. (Python, pair)
 # T1 är inbördes möte. Används bara för att särskilja två spelare
 # T2 är antal vinster
 # T3 är Buchholz. Summan av motståndarnas poäng
@@ -22,12 +22,13 @@ def save(name):
 	persons.append({'id':len(persons), 'name':name, 'opps':[], 'color':[], 'mandatory':0, 'colorComp':[], 'result':[], 'T1':0, 'T2':0, 'T3':0}) # color: 1=W -1=B
 
 #for name in 'Adam Bert Curt Dana Erik Falk Gran Hans IIII JJJJ KKKK LLLL MMMM NNNN OOOO PPPP QQQQ RRRR SSSS TTTT'.split(" "): save(name)
-for name in 'Adam Bert Curt Dana Erik Fina Gorm Hans'.split(" "): save(name)
-#for i in range(1024): save(i)
+#for name in 'Adam Bert Curt Dana Erik Fina Gorm Hans'.split(" "): save(name)
+for i in range(32): save(i)
 
 N = len(persons)
 R = int(round(1.5*math.log2(N))) # antal ronder
 if N < 10: R=3
+R = 20
 print(N,'players,',R,'rounds')
 print()
 
@@ -49,20 +50,38 @@ def colorize(ids):
 		pb["color"].append(-pac)
 	z=99
 
-def lotta(ids,pairing=[]):
-	# print(ids,pairing)
-	if len(pairing) == N: return pairing
-	for a in ids: # a är ett personindex
-		for b in ids: # b är ett personindex
-			if a == b: continue # man kan inte möta sig själv
-			if getMet(a,b): continue # a och b får ej ha mötts tidigare
+# def lotta(ids,pairing=[]):
+# 	# print(ids,pairing)
+# 	if len(pairing) == N: return pairing
+# 	for a in ids: # a är ett personindex
+# 		for b in ids: # b är ett personindex
+# 			if a == b: continue # man kan inte möta sig själv
+# 			if getMet(a,b): continue # a och b får ej ha mötts tidigare
+# 			mandatory = persons[a]["mandatory"] + persons[b]["mandatory"]
+# 			if abs(mandatory) == 2: continue # Spelarna kan inte ha samma färg.
+# 			newids = [id for id in ids if not id in [a,b]]
+# 			newPairing = pairing + [a,b]
+# 			result = lotta(newids,newPairing)
+# 			if len(result) == N: return result
+# 	return []
+
+def lotta(ids):
+	arr = []
+	for a in ids:
+		for b in ids:
+			if a>=b: continue
+			if getMet(a, b): continue
 			mandatory = persons[a]["mandatory"] + persons[b]["mandatory"]
 			if abs(mandatory) == 2: continue # Spelarna kan inte ha samma färg.
-			newids = [id for id in ids if not id in [a,b]]
-			newPairing = pairing + [a,b]
-			result = lotta(newids,newPairing)
-			if len(result) == N: return result
-	return []
+			arr.append([a+1, b+1, 1000 - abs(score(a) - score(b))])
+	#print(len(arr))
+	z = mwmatching.maxWeightMatching(arr)
+	z = z[1:N+1]
+	res = []
+	for i in range(N):
+		if i < z[i]-1:
+			res += [i,z[i]-1]
+	return res
 
 def visaNamnlista(rond,ids):
 	print('=== Namelist Round',rond+1,'===')
@@ -76,9 +95,20 @@ def visaNamnlista(rond,ids):
 def visaBordslista(rond,ids):
 	print('=== Tables Round',rond+1,'===')
 	print(' # Score White  Remis  Black Score')
+	res = []
 	for i in range(N//2):
-		a = persons[ids[2*i]]
-		b = persons[ids[2*i+1]]
+		ia = ids[2*i]
+		ib = ids[2*i+1]
+		a = persons[ia]
+		b = persons[ib]
+		lst = [sum(a['result']),sum(b['result'])]
+		lst.sort(reverse=True)
+		res.append([lst,ia,ib])
+	res.sort(reverse=True)
+	for i in range(N//2):
+		[_,ia,ib] = res[i]
+		a = persons[ia]
+		b = persons[ib]
 		pa = sum(a['result'])/2
 		pb = sum(b['result'])/2
 		print('',i+1,' ',pa,a["name"],'         ',b["name"],' ',pb)
@@ -171,14 +201,14 @@ for rond in range(R):
 	ids = list(range(N))
 	ids.sort(key=lambda p: score(p),reverse=True)
 
-	ids = lotta(ids,[])
+	ids = lotta(ids)
 	if len(ids)==0:
 		print("Denna rond kan inte lottas! (Troligen för många ronder)")
 		break
 
 	colorize(ids)
 
-	#print(ids)
+	print(ids)
 	visaNamnlista(rond,ids)
 	visaBordslista(rond,ids)
 

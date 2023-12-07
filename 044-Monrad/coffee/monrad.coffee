@@ -167,6 +167,8 @@ colorize = (persons) ->
 		pb.c += if pac=='W' then 'B'  else 'W'
 
 pair = (persons,pairing=[]) ->
+	#print 'persons',persons
+	#print 'pairing',pairing
 	if pairing.length == N then return pairing
 	antal += 1
 	a  = persons[0]
@@ -181,40 +183,6 @@ pair = (persons,pairing=[]) ->
 		result = pair newPersons,newPairing
 		if result.length == N then return result
 	return []
-
-# pair = (persons,pairing=[]) ->
-# 	if pairing.length == N then return pairing
-# 	antal += 1
-# 	for a in persons
-# 		for b in persons
-# 			if a == b then continue # man kan inte möta sig själv
-# 			if getMet a,b then continue # a och b får ej ha mötts tidigare
-# 			#if a.id > b.id then continue
-# 			mandatory = a.mandatory + b.mandatory
-# 			if 2 == Math.abs mandatory then continue # Spelarna kan inte ha samma färg.
-# 			#print "pair: #{pairing.length//2} #{a.id} - #{b.id}"
-# 			newPersons = (p for p in persons when p not in [a,b])
-# 			newPairing = pairing.concat [a,b]
-# 			result = pair newPersons,newPairing
-# 			if result.length == N then return result
-# 	return []
-
-# pair = (persons,pairing=[]) ->
-# 	if pairing.length == N then return pairing
-# 	antal += 1
-# 	for ia in range persons.length-1
-# 		a = persons[ia]
-# 		for ib in range ia+1, persons.length
-# 			b = persons[ib]
-# 			if ia == ib then continue # man kan inte möta sig själv
-# 			if getMet a,b then continue # a och b får ej ha mötts tidigare
-# 			mandatory = a.mandatory + b.mandatory
-# 			if 2 == Math.abs mandatory then continue # Spelarna kan inte ha samma färg.
-# 			newPersons = (p for p in persons when p not in [a,b])
-# 			newPairing = pairing.concat [a,b]
-# 			result = pair newPersons,newPairing
-# 			if result.length == N then return result
-# 	return []
 
 adjustForColors = (pairings) ->
 	res = []
@@ -249,9 +217,10 @@ lotta = ->
 		pairings = _.sortBy persons, ['s']
 		pairings = pairings.reverse()
 		start = new Date()
-		antal = 0 
-		#print JSON.stringify pairings
+		antal = 0
+
 		pairings = pair pairings
+
 		print rond, "#{antal} #{new Date() - start} milliseconds"
 
 	colorize pairings
@@ -553,7 +522,7 @@ for i in range N
 	persons.push {id:i, n: i, c:"", r:"", s:0, opps:[], T:[0,0,0] }
 
 start = new Date()
-for rond in range  N//2
+for rond in range 26 # N//2
 	lotta()
 	for i in range N//2
 		a = pairings[2*i+0]
