@@ -154,8 +154,8 @@ assert 0, sumBW 'BWBWWB'
 assert -6, sumBW 'BBBBBB'
 assert 6, sumBW 'WWWWWW'
 
-scorex =  (person) -> 
-	print 'scorex',person
+scorex =  (person) ->
+	# print 'scorex',person
 	sum person.r
 getMet = (a,b) -> b.id in persons[a.id].opps
 
@@ -268,6 +268,7 @@ lotta = ->
 		#antal = 0
 
 		# pairings = pair pairings
+		print 'pairings',pairings
 		pairings = lotta_inner pairings
 
 		#print rond, "#{antal} #{new Date() - start} milliseconds"
@@ -571,12 +572,12 @@ for i in range N
 	persons.push { id:i, n:i, c:"", r:"", s:0, opps:[], T:[0,0,0] }
 
 start = new Date()
-for rond in range 10 # N//2
+for rond in range 2 # N//2
 	lotta()
 	for i in range N//2
 		a = pairings[2*i+0]
 		b = pairings[2*i+1]
-		z = Math.random()
+		z = random()
 		if z < 0.1 then res = 1
 		else if z < 0.5 then res =  0
 		else res = 2
