@@ -151,3 +151,11 @@ För stora N och små R är min rekursiva pair mycket snabbare.
 Tvingades transpilera fyra funktioner i ett eget pass, pga begränsningar i chatGPT.  
 En felaktighet var att jag behövde byta `i,j = j,i` mot `[i,j] = [j,i]`
 En annan att list comprehension använde [] istf ()
+Negativa index fixades genom att [i] => [i %% length]
+
+### Hur jag hittade alla buggar i övergången från Python till Coffeescript
+* Låt python skapa en tracefil med utskrifter
+* Låt Javascript skapa en tracefil med samma utskrifter
+* Ställ dig på python.txt i PyCharm
+* Kör PyCharm|View|Compare With och välj senaste tracefilen från javascript
+

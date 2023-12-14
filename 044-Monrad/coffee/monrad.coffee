@@ -11,7 +11,9 @@ DY = 30 # radavstånd i pixlar
 # 4 Result
 
 seed = 14 # Math.random()
-random = -> (((Math.sin(seed++)/2+0.5)*10000)%100)/100
+random = ->
+	seed++
+	(((Math.sin(seed)/2+0.5)*10000)%100)/100
 
 print = console.log
 range = _.range
@@ -204,7 +206,7 @@ adjustForColors = (pairings) ->
 lotta_inner = (pairings) -> # personer sorterade
 	# denna funktion anpassar till maxWeightMatching
 	arr = []
-	print 'aaa',pairings
+	#print 'aaa',pairings
 	for a in pairings
 		for b in pairings
 			if a.id >= b.id then continue
@@ -221,7 +223,7 @@ lotta_inner = (pairings) -> # personer sorterade
 		if i < z[i]-1 then res.concat [i,z[i]-1]
 	# res är ej sorterad i bordsordning ännu
 
-	print 'adam',res
+	#print 'adam',res
 
 	result = []
 	for i in range(N//2)
@@ -246,7 +248,7 @@ lotta_inner = (pairings) -> # personer sorterade
 	resultat
 
 lotta = ->
-
+	#print 'lotta'
 	# prepare pairing
 	for p in persons
 		colorSum = sumBW p.c
@@ -261,6 +263,8 @@ lotta = ->
 	calcScore()
 	if rond == 0
 		pairings = persons
+		#print 'pairings',pairings
+		pairings = lotta_inner pairings
 	else
 		pairings = _.sortBy persons, ['s']
 		pairings = pairings.reverse()
@@ -268,7 +272,7 @@ lotta = ->
 		#antal = 0
 
 		# pairings = pair pairings
-		print 'pairings',pairings
+		#print 'pairings',pairings
 		pairings = lotta_inner pairings
 
 		#print rond, "#{antal} #{new Date() - start} milliseconds"
@@ -282,7 +286,7 @@ lotta = ->
 		b.opps.push a.id
 
 	state = 2
-	# print {'pairings efter lottning',pairings}
+	#print {'pairings efter lottning',pairings}
 
 prRes = (score) ->
 	score = parseInt score
@@ -583,7 +587,8 @@ for rond in range 2 # N//2
 		else res = 2
 		a.r += res.toString()
 		b.r += (2-res).toString()
-	print "#{new Date() - start} milliseconds"
+	print 'persons',persons
+print "#{new Date() - start} milliseconds"
 
 calcT()
 temp = _.sortBy persons, ['s', 'T']

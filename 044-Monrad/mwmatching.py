@@ -1,9 +1,19 @@
 from __future__ import print_function
 import time
+import json
+
+lines = []
+
+def prnt(a,b='',c='',d='',e='',f=''):
+	s = ''
+	if b!='': s += ' ' + json.dumps(b).replace(' ','')
+	if c!='': s += ' ' + json.dumps(c).replace(' ','')
+	if d!='': s += ' ' + json.dumps(d).replace(' ','')
+	if e!='': s += ' ' + json.dumps(e).replace(' ','')
+	if f!='': s += ' ' + json.dumps(f).replace(' ','')
+	lines.append(a + ' :' + s + "\n")
 
 def maxWeightMatching(edges, maxcardinality=False):
-
-	integer_types = (int,)
 
 	if not edges:
 		return [ ]
@@ -17,7 +27,7 @@ def maxWeightMatching(edges, maxcardinality=False):
 			nvertex = j + 1
 
 	maxweight = max(0, max([ wt for (i, j, wt) in edges ]))
-	endpoint = [ edges[p//2][p%2] for p in range(2*nedge) ]
+	endpoint = [ edges[i//2][i%2] for i in range(2*nedge) ]
 	neighbend = [ [ ] for i in range(nvertex) ]
 	for k in range(len(edges)):
 		(i, j, w) = edges[k]
@@ -38,14 +48,42 @@ def maxWeightMatching(edges, maxcardinality=False):
 	allowedge = nedge * [ False ]
 	queue = [ ]
 
+	def dump():
+		prnt('nedge', nedge)
+		prnt('edges', edges)
+		prnt('nvertex', nvertex)
+		prnt('maxweight',maxweight)
+		prnt('endpoint',endpoint)
+		prnt('neighbend',neighbend)
+		prnt('mate',mate)
+		prnt('label',label)
+		prnt('labelend',labelend)
+		prnt('inblossom',inblossom)
+		prnt('blossomparent',blossomparent)
+		prnt('blossomchilds',blossomchilds)
+		prnt('blossombase',blossombase)
+		prnt('blossomendps',blossomendps)
+		prnt('bestedge',bestedge)
+		prnt('blossombestedges',blossombestedges)
+		prnt('unusedblossoms',unusedblossoms)
+		prnt('dualvar',dualvar)
+		prnt('allowedge', allowedge)
+		prnt('queue',queue)
+
+	dump()
+
 	def slack(k):
 		(i, j, wt) = edges[k]
-		return dualvar[i] + dualvar[j] - 2 * wt
+		res = dualvar[i] + dualvar[j] - 2 * wt
+		prnt('slack k i j wt res',k,i,j,wt,res)
+		return res
 
 	def blossomLeaves(b):
+		prnt('blossomLeaves b',b)
 		if b < nvertex:
 			yield b
 		else:
+			prnt('blossomLeaves length b',len(blossomchilds),b)
 			for t in blossomchilds[b]:
 				if t < nvertex:
 					yield t
@@ -54,17 +92,20 @@ def maxWeightMatching(edges, maxcardinality=False):
 						yield v
 
 	def assignLabel(w, t, p):
+		prnt('assignLabel w t p',w,t,p)
 		b = inblossom[w]
 		label[w] = label[b] = t
 		labelend[w] = labelend[b] = p
 		bestedge[w] = bestedge[b] = -1
 		if t == 1:
-			queue.extend(blossomLeaves(b))
+			for v in blossomLeaves(b):
+				queue.append(v)
 		elif t == 2:
 			base = blossombase[b]
 			assignLabel(endpoint[mate[base]], 1, mate[base] ^ 1)
 
 	def scanBlossom(v, w):
+		prnt('scanBlossom v w',v,w)
 		path = [ ]
 		base = -1
 		while v != -1 or w != -1:
@@ -88,6 +129,7 @@ def maxWeightMatching(edges, maxcardinality=False):
 
 	def addBlossom(base, k):
 		(v, w, wt) = edges[k]
+		prnt('addBlossom base k v w wt',base,k,v,w,wt)
 		bb = inblossom[base]
 		bv = inblossom[v]
 		bw = inblossom[w]
@@ -97,36 +139,43 @@ def maxWeightMatching(edges, maxcardinality=False):
 		blossomparent[bb] = b
 		blossomchilds[b] = path = [ ]
 		blossomendps[b] = endps = [ ]
+
 		while bv != bb:
 			blossomparent[bv] = b
 			path.append(bv)
 			endps.append(labelend[bv])
 			v = endpoint[labelend[bv]]
 			bv = inblossom[v]
+
 		path.append(bb)
 		path.reverse()
 		endps.reverse()
 		endps.append(2*k)
+
 		while bw != bb:
 			blossomparent[bw] = b
 			path.append(bw)
 			endps.append(labelend[bw] ^ 1)
 			w = endpoint[labelend[bw]]
 			bw = inblossom[w]
+
 		label[b] = 1
 		labelend[b] = labelend[bb]
 		dualvar[b] = 0
+
 		for v in blossomLeaves(b):
 			if label[inblossom[v]] == 2:
 				queue.append(v)
 			inblossom[v] = b
+
 		bestedgeto = (2 * nvertex) * [ -1 ]
+
 		for bv in path:
 			if blossombestedges[bv] is None:
-				nblists = [ [ p // 2 for p in neighbend[v] ]
-							for v in blossomLeaves(bv) ]
+				nblists = [ [ p // 2 for p in neighbend[v] ] for v in blossomLeaves(bv) ]
 			else:
 				nblists = [ blossombestedges[bv] ]
+
 			for nblist in nblists:
 				for k in nblist:
 					(i, j, wt) = edges[k]
@@ -137,15 +186,19 @@ def maxWeightMatching(edges, maxcardinality=False):
 						(bestedgeto[bj] == -1 or
 						 slack(k) < slack(bestedgeto[bj]))):
 						bestedgeto[bj] = k
+
 			blossombestedges[bv] = None
 			bestedge[bv] = -1
+
 		blossombestedges[b] = [ k for k in bestedgeto if k != -1 ]
 		bestedge[b] = -1
+
 		for k in blossombestedges[b]:
 			if bestedge[b] == -1 or slack(k) < slack(bestedge[b]):
 				bestedge[b] = k
 
 	def expandBlossom(b, endstage):
+		prnt('expandBlossom b endstage',b,endstage)
 		for s in blossomchilds[b]:
 			blossomparent[s] = -1
 			if s < nvertex:
@@ -201,6 +254,10 @@ def maxWeightMatching(edges, maxcardinality=False):
 		unusedblossoms.append(b)
 
 	def augmentBlossom(b, v):
+		prnt('augmentBlossom b v',b,v)
+		prnt('endpoint',endpoint)
+		prnt('blossomendps',blossomendps)
+		prnt('blossomchilds',blossomchilds)
 		t = v
 		while blossomparent[t] != b:
 			t = blossomparent[t]
@@ -214,31 +271,51 @@ def maxWeightMatching(edges, maxcardinality=False):
 		else:
 			jstep = -1
 			endptrick = 1
+		prnt('i j jstep endptrick',i,j,jstep,endptrick)
 		while j != 0:
 			j += jstep
 			t = blossomchilds[b][j]
 			p = blossomendps[b][j-endptrick] ^ endptrick
+			prnt('p',p)
 			if t >= nvertex:
 				augmentBlossom(t, endpoint[p])
 			j += jstep
 			t = blossomchilds[b][j]
 			if t >= nvertex:
 				augmentBlossom(t, endpoint[p ^ 1])
+			prnt('mate p p^1',mate,p,p^1)
+			prnt('endpoint p',endpoint[p],p)
 			mate[endpoint[p]] = p ^ 1
 			mate[endpoint[p ^ 1]] = p
+			prnt('mate',mate)
+			# prnt('mate endpoint p',  mate[endpoint[p]],   endpoint[p],   p)
+			# prnt('mate endpoint p^1',mate[endpoint[p^1]], endpoint[p^1], p^1)
+
+		#prnt('mate augmentBlossom',mate,p)
 		blossomchilds[b] = blossomchilds[b][i:] + blossomchilds[b][:i]
 		blossomendps[b]  = blossomendps[b][i:]  + blossomendps[b][:i]
 		blossombase[b] = blossombase[blossomchilds[b][0]]
 
+		prnt('blossomchilds',blossomchilds)
+		prnt('blossomendps',blossomendps)
+		prnt('blossombase',blossombase)
+
 	def augmentMatching(k):
 		(v, w, wt) = edges[k]
+		prnt('augmentMatching k v w wt',k,v,w,wt)
+		prnt('labelend',labelend)
+		prnt('inblossom',inblossom)
 		for (s, p) in ((v, 2*k+1), (w, 2*k)):
+			prnt('s p',s,p)
 			while 1:
 				bs = inblossom[s]
+				prnt('bs',bs)
 				if bs >= nvertex:
 					augmentBlossom(bs, s)
 				mate[s] = p
+				prnt('s mate[s]',s,mate[s])
 				if labelend[bs] == -1:
+					prnt('break')
 					break
 				t = endpoint[labelend[bs]]
 				bt = inblossom[t]
@@ -247,28 +324,27 @@ def maxWeightMatching(edges, maxcardinality=False):
 				if bt >= nvertex:
 					augmentBlossom(bt, j)
 				mate[j] = labelend[bt]
+				prnt('j mate[j]',j,mate[j])
 				p = labelend[bt] ^ 1
+				prnt('p2',p)
+		prnt('mate',mate)
 
 	for t in range(nvertex):
 
 		label[:] = (2 * nvertex) * [ 0 ]
-
 		bestedge[:] = (2 * nvertex) * [ -1 ]
 		blossombestedges[nvertex:] = nvertex * [ None ]
-
 		allowedge[:] = nedge * [ False ]
-
 		queue[:] = [ ]
- 
+
 		for v in range(nvertex):
 			if mate[v] == -1 and label[inblossom[v]] == 0:
 				assignLabel(v, 1, -1)
 
-		augmented = 0
+		augmented = False
 		while 1:
 
-			while queue and not augmented:
-
+			while len(queue) > 0 and not augmented:
 				v = queue.pop()
 
 				for p in neighbend[v]:
@@ -289,7 +365,7 @@ def maxWeightMatching(edges, maxcardinality=False):
 								addBlossom(base, k)
 							else:
 								augmentMatching(k)
-								augmented = 1
+								augmented = True
 								break
 						elif label[w] == 0:
 							label[w] = 2
@@ -302,8 +378,7 @@ def maxWeightMatching(edges, maxcardinality=False):
 						if bestedge[w] == -1 or kslack < slack(bestedge[w]):
 							bestedge[w] = k
 
-			if augmented:
-				break
+			if augmented: break
 
 			deltatype = -1
 			delta = deltaedge = deltablossom = None
@@ -321,13 +396,9 @@ def maxWeightMatching(edges, maxcardinality=False):
 						deltaedge = bestedge[v]
 
 			for b in range(2 * nvertex):
-				if ( blossomparent[b] == -1 and label[b] == 1 and
-					 bestedge[b] != -1 ):
+				if ( blossomparent[b] == -1 and label[b] == 1 and bestedge[b] != -1 ):
 					kslack = slack(bestedge[b])
-					if isinstance(kslack, integer_types):
-						d = kslack // 2
-					else:
-						d = kslack / 2
+					d = kslack // 2
 					if deltatype == -1 or d < delta:
 						delta = d
 						deltatype = 3
@@ -344,12 +415,14 @@ def maxWeightMatching(edges, maxcardinality=False):
 			if deltatype == -1:
 				deltatype = 1
 				delta = max(0, min(dualvar[:nvertex]))
+#			prnt('delta',delta)
 
 			for v in range(nvertex):
 				if label[inblossom[v]] == 1:
 					dualvar[v] -= delta
 				elif label[inblossom[v]] == 2:
 					dualvar[v] += delta
+
 			for b in range(nvertex, 2*nvertex):
 				if blossombase[b] >= 0 and blossomparent[b] == -1:
 					if label[b] == 1:
@@ -380,8 +453,14 @@ def maxWeightMatching(edges, maxcardinality=False):
 				 label[b] == 1 and dualvar[b] == 0 ):
 				expandBlossom(b, True)
 
+	prnt('mate',mate)
+	prnt('endpoint',endpoint)
 	for v in range(nvertex):
 		if mate[v] >= 0:
 			mate[v] = endpoint[mate[v]]
+
+	with open('python.txt','w') as f:
+		for line in lines:
+			f.write(line)
 
 	return mate

@@ -3,6 +3,13 @@ import time
 import math
 import mwmatching
 
+seed = 14 # Math.random()
+def random():
+	global seed
+	seed += 1
+	return (((math.sin(seed)/2+0.5)*10000)%100)/100
+
+
 # sys.setrecursionlimit(8000)
 
 # Klarar upp till 1950 spelare.
@@ -28,7 +35,7 @@ for i in range(16): save(i)
 N = len(persons)
 R = int(round(1.5*math.log2(N))) # antal ronder
 if N < 10: R=3
-R = 10
+R = 1
 print(N,'players,',R,'rounds')
 print()
 
@@ -183,7 +190,7 @@ def calcTB(rond):
 		p['T2'] = p['result'].count(2) # Antal vinster
 		p['T3']= sum([sum(persons[i]['result']) for i in p['opps']]) # Buchholz: summan av motståndarnas poäng
 
-for rond in range(R):
+for rond in range(2):
 
 	nameList = list(range(len(persons)))
 	nameList.sort(key=lambda p: persons[p]['name'])
@@ -208,24 +215,24 @@ for rond in range(R):
 
 	colorize(ids)
 
-	print(ids)
-	visaNamnlista(rond,ids)
-	visaBordslista(rond,ids)
+	#print(ids)
+	#visaNamnlista(rond,ids)
+	#visaBordslista(rond,ids)
 
 	for i in range(N//2):
 		a = ids[2*i]
 		b = ids[2*i+1]
 		persons[a]['opps'].append(b)
 		persons[b]['opps'].append(a)
-		x = random.random()
+		x = random()
 		if x < 0.1:   res = [1,1]
 		elif x < 0.5: res = [0,2]
 		else:         res = [2,0]
 		persons[a]['result'].append(res[0])
 		persons[b]['result'].append(res[1])
 
-	visaLottning(ids)
-	if rond==R-1: visaResultat(rond,ids)
+	#visaLottning(ids)
+	#if rond==R-1: visaResultat(rond,ids)
 
 print()
 print(round((time.time_ns() - start)/10**6,3), "ms")

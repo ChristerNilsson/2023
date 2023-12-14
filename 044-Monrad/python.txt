@@ -1,98 +1,292 @@
-C:\github\2023\venv\Scripts\python.exe C:/github/2023/044-Monrad/monrad.py
-8 players, 3 rounds
-
-=== Namelist Round 1 ===
-Table Colour Name
-1B Adam
-1W Bert
-2B Curt
-2W Dana
-3B Erik
-3W Fina
-4B Gorm
-4W Hans
-
-=== Tables Round 1 ===
- # Score White  Remis  Black Score
- 1   0.0 Adam           Bert   0.0
- 2   0.0 Curt           Dana   0.0
- 3   0.0 Erik           Fina   0.0
- 4   0.0 Gorm           Hans   0.0
-
-Lottning
-{'id': 0, 'name': 'Adam', 'opps': [1], 'color': [-1], 'mandatory': 0, 'colorComp': [0, 0], 'result': [2], 'T1': 0, 'T2': 0, 'T3': 0}
-{'id': 1, 'name': 'Bert', 'opps': [0], 'color': [1], 'mandatory': 0, 'colorComp': [0, 0], 'result': [0], 'T1': 0, 'T2': 0, 'T3': 0}
-{'id': 2, 'name': 'Curt', 'opps': [3], 'color': [-1], 'mandatory': 0, 'colorComp': [0, 0], 'result': [0], 'T1': 0, 'T2': 0, 'T3': 0}
-{'id': 3, 'name': 'Dana', 'opps': [2], 'color': [1], 'mandatory': 0, 'colorComp': [0, 0], 'result': [2], 'T1': 0, 'T2': 0, 'T3': 0}
-{'id': 4, 'name': 'Erik', 'opps': [5], 'color': [-1], 'mandatory': 0, 'colorComp': [0, 0], 'result': [0], 'T1': 0, 'T2': 0, 'T3': 0}
-{'id': 5, 'name': 'Fina', 'opps': [4], 'color': [1], 'mandatory': 0, 'colorComp': [0, 0], 'result': [2], 'T1': 0, 'T2': 0, 'T3': 0}
-{'id': 6, 'name': 'Gorm', 'opps': [7], 'color': [-1], 'mandatory': 0, 'colorComp': [0, 0], 'result': [0], 'T1': 0, 'T2': 0, 'T3': 0}
-{'id': 7, 'name': 'Hans', 'opps': [6], 'color': [1], 'mandatory': 0, 'colorComp': [0, 0], 'result': [2], 'T1': 0, 'T2': 0, 'T3': 0}
-=== Namelist Round 2 ===
-Table Colour Name
-1W Adam
-4B Bert
-2W Curt
-1B Dana
-3W Erik
-2B Fina
-4W Gorm
-3B Hans
-
-=== Tables Round 2 ===
- # Score White  Remis  Black Score
- 1   1.0 Adam           Dana   1.0
- 2   1.0 Fina           Curt   0.0
- 3   1.0 Hans           Erik   0.0
- 4   0.0 Bert           Gorm   0.0
-
-Lottning
-{'id': 0, 'name': 'Adam', 'opps': [1, 3], 'color': [-1, 1], 'mandatory': 1, 'colorComp': [-1, -1], 'result': [2, 0], 'T1': 0, 'T2': 0, 'T3': 0}
-{'id': 3, 'name': 'Dana', 'opps': [2, 0], 'color': [1, -1], 'mandatory': -1, 'colorComp': [1, 1], 'result': [2, 2], 'T1': 0, 'T2': 0, 'T3': 0}
-{'id': 5, 'name': 'Fina', 'opps': [4, 2], 'color': [1, -1], 'mandatory': -1, 'colorComp': [1, 1], 'result': [2, 0], 'T1': 0, 'T2': 0, 'T3': 0}
-{'id': 2, 'name': 'Curt', 'opps': [3, 5], 'color': [-1, 1], 'mandatory': 1, 'colorComp': [-1, -1], 'result': [0, 2], 'T1': 0, 'T2': 0, 'T3': 0}
-{'id': 7, 'name': 'Hans', 'opps': [6, 4], 'color': [1, -1], 'mandatory': -1, 'colorComp': [1, 1], 'result': [2, 2], 'T1': 0, 'T2': 0, 'T3': 0}
-{'id': 4, 'name': 'Erik', 'opps': [5, 7], 'color': [-1, 1], 'mandatory': 1, 'colorComp': [-1, -1], 'result': [0, 0], 'T1': 0, 'T2': 0, 'T3': 0}
-{'id': 1, 'name': 'Bert', 'opps': [0, 6], 'color': [1, -1], 'mandatory': -1, 'colorComp': [1, 1], 'result': [0, 2], 'T1': 0, 'T2': 0, 'T3': 0}
-{'id': 6, 'name': 'Gorm', 'opps': [7, 1], 'color': [-1, 1], 'mandatory': 1, 'colorComp': [-1, -1], 'result': [0, 0], 'T1': 0, 'T2': 0, 'T3': 0}
-=== Namelist Round 3 ===
-Table Colour Name
-2B Adam
-3B Bert
-2W Curt
-1B Dana
-4B Erik
-3W Fina
-4W Gorm
-1W Hans
-
-=== Tables Round 3 ===
- # Score White  Remis  Black Score
- 1   2.0 Dana           Hans   2.0
- 2   1.0 Adam           Curt   1.0
- 3   1.0 Bert           Fina   1.0
- 4   0.0 Erik           Gorm   0.0
-
-Lottning
-{'id': 3, 'name': 'Dana', 'opps': [2, 0, 7], 'color': [1, -1, -1], 'mandatory': 0, 'colorComp': [0, -1], 'result': [2, 2, 2], 'T1': 0, 'T2': 0, 'T3': 0}
-{'id': 7, 'name': 'Hans', 'opps': [6, 4, 3], 'color': [1, -1, 1], 'mandatory': 0, 'colorComp': [0, -1], 'result': [2, 2, 0], 'T1': 0, 'T2': 0, 'T3': 0}
-{'id': 0, 'name': 'Adam', 'opps': [1, 3, 2], 'color': [-1, 1, -1], 'mandatory': 0, 'colorComp': [0, 1], 'result': [2, 0, 0], 'T1': 0, 'T2': 0, 'T3': 0}
-{'id': 2, 'name': 'Curt', 'opps': [3, 5, 0], 'color': [-1, 1, 1], 'mandatory': 0, 'colorComp': [0, 1], 'result': [0, 2, 2], 'T1': 0, 'T2': 0, 'T3': 0}
-{'id': 1, 'name': 'Bert', 'opps': [0, 6, 5], 'color': [1, -1, -1], 'mandatory': 0, 'colorComp': [0, -1], 'result': [0, 2, 2], 'T1': 0, 'T2': 0, 'T3': 0}
-{'id': 5, 'name': 'Fina', 'opps': [4, 2, 1], 'color': [1, -1, 1], 'mandatory': 0, 'colorComp': [0, -1], 'result': [2, 0, 0], 'T1': 0, 'T2': 0, 'T3': 0}
-{'id': 4, 'name': 'Erik', 'opps': [5, 7, 6], 'color': [-1, 1, -1], 'mandatory': 0, 'colorComp': [0, 1], 'result': [0, 0, 2], 'T1': 0, 'T2': 0, 'T3': 0}
-{'id': 6, 'name': 'Gorm', 'opps': [7, 1, 4], 'color': [-1, 1, 1], 'mandatory': 0, 'colorComp': [0, 1], 'result': [0, 0, 0], 'T1': 0, 'T2': 0, 'T3': 0}
-=== Result after round 3 ===
-Rank Name R1   R2   R3  Score  T1 T2 T3
-1    Dana 2W1  5B1  3B1   3    0  3  5  1 2
-2    Curt 1B0  6W1  5W1   2    0  2  5  2 1
-3    Hans 8W1  7B1  1W0   2    0  2  4  2 1
-4    Bert 5W0  8B1  6B1   2    0  2  2  1 2
-5    Adam 4B1  1W0  2B0   1    0  1  7  1 2
-6    Fina 7W1  2B0  4W0   1    0  1  5  2 1
-7    Erik 6B0  3W0  8B1   1    0  1  3  1 2
-8    Gorm 3B0  4W0  7W0   0    0  0  5  2 1
-
-15.957 ms
-
-Process finished with exit code 0
+nedge : 10
+edges : [[1,2,45],[1,5,45],[2,3,50],[3,4,45],[4,5,50],[1,6,30],[3,9,35],[4,8,35],[5,7,26],[9,10,5]]
+nvertex : 11
+maxweight : 50
+endpoint : [1,2,1,5,2,3,3,4,4,5,1,6,3,9,4,8,5,7,9,10]
+neighbend : [[],[1,3,11],[0,5],[4,7,13],[6,9,15],[2,8,17],[10],[16],[14],[12,19],[18]]
+mate : [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
+label : [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+labelend : [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
+inblossom : [0,1,2,3,4,5,6,7,8,9,10]
+blossomparent : [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
+blossomchilds : [null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]
+blossombase : [0,1,2,3,4,5,6,7,8,9,10,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
+blossomendps : [null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]
+bestedge : [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
+blossombestedges : [null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]
+unusedblossoms : [11,12,13,14,15,16,17,18,19,20,21]
+dualvar : [50,50,50,50,50,50,50,50,50,50,50,0,0,0,0,0,0,0,0,0,0,0]
+allowedge : [false,false,false,false,false,false,false,false,false,false]
+queue : []
+assignLabel w t p : 0 1 -1
+blossomLeaves b : 0
+assignLabel w t p : 1 1 -1
+blossomLeaves b : 1
+assignLabel w t p : 2 1 -1
+blossomLeaves b : 2
+assignLabel w t p : 3 1 -1
+blossomLeaves b : 3
+assignLabel w t p : 4 1 -1
+blossomLeaves b : 4
+assignLabel w t p : 5 1 -1
+blossomLeaves b : 5
+assignLabel w t p : 6 1 -1
+blossomLeaves b : 6
+assignLabel w t p : 7 1 -1
+blossomLeaves b : 7
+assignLabel w t p : 8 1 -1
+blossomLeaves b : 8
+assignLabel w t p : 9 1 -1
+blossomLeaves b : 9
+assignLabel w t p : 10 1 -1
+blossomLeaves b : 10
+slack k i j wt res : 9 9 10 5 90
+slack k i j wt res : 6 3 9 35 30
+slack k i j wt res : 9 9 10 5 90
+slack k i j wt res : 6 3 9 35 30
+slack k i j wt res : 7 4 8 35 30
+slack k i j wt res : 8 5 7 26 48
+slack k i j wt res : 5 1 6 30 40
+slack k i j wt res : 1 1 5 45 10
+slack k i j wt res : 4 4 5 50 0
+scanBlossom v w : 5 4
+augmentMatching k v w wt : 4 4 5 50
+labelend : [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
+inblossom : [0,1,2,3,4,5,6,7,8,9,10]
+s p : 4 9
+bs : 4
+s mate[s] : 4 9
+break :
+s p : 5 8
+bs : 5
+s mate[s] : 5 8
+break :
+mate : [-1,-1,-1,-1,9,8,-1,-1,-1,-1,-1]
+assignLabel w t p : 0 1 -1
+blossomLeaves b : 0
+assignLabel w t p : 1 1 -1
+blossomLeaves b : 1
+assignLabel w t p : 2 1 -1
+blossomLeaves b : 2
+assignLabel w t p : 3 1 -1
+blossomLeaves b : 3
+assignLabel w t p : 6 1 -1
+blossomLeaves b : 6
+assignLabel w t p : 7 1 -1
+blossomLeaves b : 7
+assignLabel w t p : 8 1 -1
+blossomLeaves b : 8
+assignLabel w t p : 9 1 -1
+blossomLeaves b : 9
+assignLabel w t p : 10 1 -1
+blossomLeaves b : 10
+slack k i j wt res : 9 9 10 5 90
+slack k i j wt res : 6 3 9 35 30
+slack k i j wt res : 9 9 10 5 90
+slack k i j wt res : 6 3 9 35 30
+slack k i j wt res : 7 4 8 35 30
+slack k i j wt res : 8 5 7 26 48
+slack k i j wt res : 5 1 6 30 40
+slack k i j wt res : 2 2 3 50 0
+scanBlossom v w : 3 2
+augmentMatching k v w wt : 2 2 3 50
+labelend : [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
+inblossom : [0,1,2,3,4,5,6,7,8,9,10]
+s p : 2 5
+bs : 2
+s mate[s] : 2 5
+break :
+s p : 3 4
+bs : 3
+s mate[s] : 3 4
+break :
+mate : [-1,-1,5,4,9,8,-1,-1,-1,-1,-1]
+assignLabel w t p : 0 1 -1
+blossomLeaves b : 0
+assignLabel w t p : 1 1 -1
+blossomLeaves b : 1
+assignLabel w t p : 6 1 -1
+blossomLeaves b : 6
+assignLabel w t p : 7 1 -1
+blossomLeaves b : 7
+assignLabel w t p : 8 1 -1
+blossomLeaves b : 8
+assignLabel w t p : 9 1 -1
+blossomLeaves b : 9
+assignLabel w t p : 10 1 -1
+blossomLeaves b : 10
+slack k i j wt res : 9 9 10 5 90
+slack k i j wt res : 6 3 9 35 30
+slack k i j wt res : 9 9 10 5 90
+slack k i j wt res : 7 4 8 35 30
+slack k i j wt res : 8 5 7 26 48
+slack k i j wt res : 5 1 6 30 40
+slack k i j wt res : 0 1 2 45 10
+slack k i j wt res : 1 1 5 45 10
+slack k i j wt res : 8 5 7 26 48
+slack k i j wt res : 5 1 6 30 40
+slack k i j wt res : 0 1 2 45 10
+slack k i j wt res : 6 3 9 35 30
+slack k i j wt res : 7 4 8 35 30
+slack k i j wt res : 1 1 5 45 10
+slack k i j wt res : 5 1 6 30 40
+slack k i j wt res : 5 1 6 30 40
+slack k i j wt res : 9 9 10 5 90
+slack k i j wt res : 9 9 10 5 90
+assignLabel w t p : 2 2 0
+assignLabel w t p : 3 1 4
+blossomLeaves b : 3
+slack k i j wt res : 1 1 5 45 0
+assignLabel w t p : 5 2 2
+assignLabel w t p : 4 1 9
+blossomLeaves b : 4
+slack k i j wt res : 5 1 6 30 20
+slack k i j wt res : 5 1 6 30 20
+slack k i j wt res : 3 3 4 45 10
+slack k i j wt res : 4 4 5 50 0
+slack k i j wt res : 7 4 8 35 20
+slack k i j wt res : 3 3 4 45 10
+slack k i j wt res : 2 2 3 50 0
+slack k i j wt res : 3 3 4 45 10
+slack k i j wt res : 6 3 9 35 20
+slack k i j wt res : 3 3 4 45 10
+slack k i j wt res : 5 1 6 30 20
+slack k i j wt res : 3 3 4 45 10
+slack k i j wt res : 3 3 4 45 10
+slack k i j wt res : 5 1 6 30 20
+slack k i j wt res : 9 9 10 5 70
+slack k i j wt res : 9 9 10 5 70
+scanBlossom v w : 3 4
+addBlossom base k v w wt : 1 3 3 4 45
+blossomLeaves b : 21
+blossomLeaves length b : 22 21
+blossomLeaves b : 1
+blossomLeaves b : 2
+blossomLeaves b : 3
+blossomLeaves b : 4
+blossomLeaves b : 5
+slack k i j wt res : 8 5 7 26 38
+slack k i j wt res : 5 1 6 30 10
+slack k i j wt res : 7 4 8 35 10
+slack k i j wt res : 5 1 6 30 10
+slack k i j wt res : 6 3 9 35 10
+slack k i j wt res : 5 1 6 30 10
+slack k i j wt res : 6 3 9 35 10
+slack k i j wt res : 5 1 6 30 10
+slack k i j wt res : 8 5 7 26 38
+slack k i j wt res : 5 1 6 30 10
+slack k i j wt res : 5 1 6 30 10
+slack k i j wt res : 9 9 10 5 60
+slack k i j wt res : 9 9 10 5 60
+slack k i j wt res : 5 1 6 30 10
+scanBlossom v w : 1 6
+augmentMatching k v w wt : 5 1 6 30
+labelend : [-1,-1,0,4,9,2,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
+inblossom : [0,21,21,21,21,21,6,7,8,9,10]
+s p : 1 11
+bs : 21
+augmentBlossom b v : 21 1
+endpoint : [1,2,1,5,2,3,3,4,4,5,1,6,3,9,4,8,5,7,9,10]
+blossomendps : [null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,[0,4,6,8,3]]
+blossomchilds : [null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,[1,2,3,4,5]]
+i j jstep endptrick : 0 0 -1 1
+blossomchilds : [null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,[1,2,3,4,5]]
+blossomendps : [null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,[0,4,6,8,3]]
+blossombase : [0,1,2,3,4,5,6,7,8,9,10,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,1]
+s mate[s] : 1 11
+break :
+s p : 6 10
+bs : 6
+s mate[s] : 6 10
+break :
+mate : [-1,11,5,4,9,8,10,-1,-1,-1,-1]
+assignLabel w t p : 0 1 -1
+blossomLeaves b : 0
+assignLabel w t p : 7 1 -1
+blossomLeaves b : 7
+assignLabel w t p : 8 1 -1
+blossomLeaves b : 8
+assignLabel w t p : 9 1 -1
+blossomLeaves b : 9
+assignLabel w t p : 10 1 -1
+blossomLeaves b : 10
+slack k i j wt res : 9 9 10 5 50
+slack k i j wt res : 6 3 9 35 0
+assignLabel w t p : 3 2 13
+assignLabel w t p : 6 1 10
+blossomLeaves b : 6
+slack k i j wt res : 9 9 10 5 50
+slack k i j wt res : 5 1 6 30 0
+slack k i j wt res : 7 4 8 35 0
+slack k i j wt res : 8 5 7 26 28
+slack k i j wt res : 9 9 10 5 50
+slack k i j wt res : 9 9 10 5 50
+expandBlossom b endstage : 21 false
+assignLabel w t p : 3 2 13
+assignLabel w t p : 2 1 5
+blossomLeaves b : 2
+blossomLeaves b : 5
+blossomLeaves b : 4
+assignLabel w t p : 4 2 15
+assignLabel w t p : 5 1 8
+blossomLeaves b : 5
+slack k i j wt res : 1 1 5 45 0
+slack k i j wt res : 4 4 5 50 0
+slack k i j wt res : 8 5 7 26 28
+slack k i j wt res : 8 5 7 26 28
+slack k i j wt res : 9 9 10 5 40
+slack k i j wt res : 9 9 10 5 40
+scanBlossom v w : 5 7
+augmentMatching k v w wt : 8 5 7 26
+labelend : [-1,1,5,13,15,8,10,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
+inblossom : [0,1,2,3,4,5,6,7,8,9,10]
+s p : 5 17
+bs : 5
+s mate[s] : 5 17
+j mate[j] : 4 15
+p2 : 14
+bs : 8
+s mate[s] : 8 14
+break :
+s p : 7 16
+bs : 7
+s mate[s] : 7 16
+break :
+mate : [-1,11,5,4,15,17,10,16,14,-1,-1]
+assignLabel w t p : 0 1 -1
+blossomLeaves b : 0
+assignLabel w t p : 9 1 -1
+blossomLeaves b : 9
+assignLabel w t p : 10 1 -1
+blossomLeaves b : 10
+slack k i j wt res : 9 9 10 5 12
+slack k i j wt res : 6 3 9 35 0
+assignLabel w t p : 3 2 13
+assignLabel w t p : 2 1 5
+blossomLeaves b : 2
+slack k i j wt res : 9 9 10 5 12
+slack k i j wt res : 0 1 2 45 0
+assignLabel w t p : 1 2 1
+assignLabel w t p : 6 1 10
+blossomLeaves b : 6
+slack k i j wt res : 2 2 3 50 0
+slack k i j wt res : 5 1 6 30 0
+slack k i j wt res : 9 9 10 5 12
+slack k i j wt res : 9 9 10 5 12
+scanBlossom v w : 9 10
+augmentMatching k v w wt : 9 9 10 5
+labelend : [-1,1,5,13,15,8,10,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
+inblossom : [0,1,2,3,4,5,6,7,8,9,10]
+s p : 9 19
+bs : 9
+s mate[s] : 9 19
+break :
+s p : 10 18
+bs : 10
+s mate[s] : 10 18
+break :
+mate : [-1,11,5,4,15,17,10,16,14,19,18]
+assignLabel w t p : 0 1 -1
+blossomLeaves b : 0
+mate : [-1,11,5,4,15,17,10,16,14,19,18]
+endpoint : [1,2,1,5,2,3,3,4,4,5,1,6,3,9,4,8,5,7,9,10]
