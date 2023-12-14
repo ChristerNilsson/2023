@@ -5,14 +5,14 @@ range = _.range
 lines = []
 
 print = (_a,_b='',_c='',_d='',_e='',_f='') ->
-	_s = _a + ' :'
-	if _b!='' then _s += ' ' + JSON.stringify(_b)
-	if _c!='' then _s += ' ' + JSON.stringify(_c)
-	if _d!='' then _s += ' ' + JSON.stringify(_d)
-	if _e!='' then _s += ' ' + JSON.stringify(_e)
-	if _f!='' then _s += ' ' + JSON.stringify(_f)
-	console.log _s
-	lines.push _s + "\n"
+	# _s = _a + ' :'
+	# if _b!='' then _s += ' ' + JSON.stringify(_b)
+	# if _c!='' then _s += ' ' + JSON.stringify(_c)
+	# if _d!='' then _s += ' ' + JSON.stringify(_d)
+	# if _e!='' then _s += ' ' + JSON.stringify(_e)
+	# if _f!='' then _s += ' ' + JSON.stringify(_f)
+	# console.log _s
+	# lines.push _s + "\n"
 
 ass = (a,b) ->
 	if _.isEqual(a,b)
@@ -24,7 +24,11 @@ ass = (a,b) ->
 		console.log a
 		console.log b,'assert failure'
 
+fill = (n,value) -> new Array(n).fill value # OBS: value får ej vara av typen []
+
 export maxWeightMatching = (edges, maxcardinality = false) ->
+
+	# Jag använder _i osv för lokala variabler
 
 	return [] unless edges.length
 
@@ -34,26 +38,30 @@ export maxWeightMatching = (edges, maxcardinality = false) ->
 		nvertex = _i + 1 if _i >= nvertex
 		nvertex = _j + 1 if _j >= nvertex
 
-	maxweight = Math.max 0, _.max (wt for [_i, _j, wt] in edges)
+	maxweight = Math.max 0, _.max (_wt for [_i, _j, _wt] in edges)
 	endpoint = (edges[_i // 2][_i % 2] for _i in range 2 * nedge)
 	neighbend = ([] for _i in range nvertex)
 	for _k in range edges.length
 		[_i, _j, _w] = edges[_k]
 		neighbend[_i].push 2 * _k + 1
 		neighbend[_j].push 2 * _k
-	mate = (-1 for _i in range nvertex)
-	label = (0 for _i in range 2 * nvertex)
-	labelend = (-1 for _i in range 2 * nvertex)
-	inblossom = (_i for _i in range nvertex)
-	blossomparent = (-1 for _i in range 2 * nvertex)
-	blossomchilds = (null for _i in range 2 * nvertex)
-	blossombase = (_i for _i in range nvertex).concat(-1 for _j in range nvertex)
-	blossomendps = (null for _i in range 2 * nvertex)
-	bestedge = (-1 for _i in range 2 * nvertex)
-	blossombestedges = (null for _i in range 2 * nvertex)
-	unusedblossoms = (_i for _i in range nvertex, 2 * nvertex)
-	dualvar = (maxweight for _i in range nvertex).concat(0 for _j in range nvertex)
-	allowedge = (false for _i in range nedge)
+
+	mate = fill nvertex, -1
+	label = fill 2*nvertex, 0
+	labelend = fill 2*nvertex, -1
+	inblossom = range nvertex
+	blossomparent = fill 2*nvertex, -1
+	blossomchilds = fill 2*nvertex, null
+
+	blossombase = range(nvertex).concat fill nvertex,-1 # blossombase = (_i for _i in range nvertex).concat(-1 for _j in range nvertex)
+
+	blossomendps = fill 2*nvertex, null
+	bestedge = fill 2*nvertex, -1
+	blossombestedges = fill 2*nvertex, null
+	unusedblossoms = range nvertex, 2*nvertex
+
+	dualvar = fill(nvertex, maxweight).concat fill nvertex,0 # dualvar = (maxweight for _i in range nvertex).concat(0 for _j in range nvertex)
+	allowedge = fill nedge, false
 	queue = []
 
 	dump = () ->
@@ -475,9 +483,7 @@ export maxWeightMatching = (edges, maxcardinality = false) ->
 		if mate[v] >= 0
 			mate[v] = endpoint[mate[v]]
 
-	#ass mate,[-1,2,1,4,3]
-
-	saveAs new File lines, "javascript.txt", {type: "text/plain;charset=utf-8"}
+	# saveAs new File lines, "javascript.txt", {type: "text/plain;charset=utf-8"}
 
 	mate
 
