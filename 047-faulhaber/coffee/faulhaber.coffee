@@ -1,8 +1,5 @@
-# https://mathworld.wolfram.com/FaulhabersFormula.html
-# HP Prime sum(n**2,n) BUG?
-
 # Läser in uttrycken från json-filen.
-#   "6 1 3 2" <=> (n + 3n**2 + 2n**3)/6
+#   "1 3 2" <=> (n + 3n**2 + 2n**3)/6
 # BigInt finns numera i Chrome.
 # Fractions saknas dock.
 
@@ -83,9 +80,11 @@ f = (k,n) ->
 	n = BigInt n
 	r = data.a[k]
 	value = BigInt 0
-	for i in range 1,r.length
-		value += BigInt(r[i]) * n ** BigInt i
-	value / BigInt(r[0])
+	summa = BigInt 0
+	for i in range r.length
+		value += BigInt(r[i]) * n ** BigInt i+1
+		summa += BigInt(r[i])
+	value / BigInt(summa)
 
 window.mousePressed = ->
 	for button in buttons
