@@ -1,4 +1,4 @@
-[Try it!](https://christernilsson.github.io/2023/023-Seniorschack)
+[Try it!](https://christernilsson.github.io/2023/023-SeniorSchack)
 
 * Syftet med detta projekt är att kunna visa webbsidorna på mobiler.
 
