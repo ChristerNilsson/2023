@@ -36,3 +36,5 @@ A|Arkivet|https://www.seniorschackstockholm.se/htmfiler/arkivet.htm
 A|Partier|https://www.seniorschackstockholm.se/htmfiler/partier.htm
 
 A|Studier|https://www.seniorschackstockholm.se/htmfiler/schackstudier.htm
+
+A|Schacklänkar|schacklänkar.html
