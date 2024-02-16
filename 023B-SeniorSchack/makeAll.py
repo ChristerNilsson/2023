@@ -1,59 +1,8 @@
 import os
 import time
-
-TOUR   = "https://member.schack.se/ShowTournamentServlet?id="
-ANMÄL  = "https://member.schack.se/turnering/"
-BB2    = "https://storage.googleapis.com/bildbanken2/index.html?query="
-SENIOR = "https://www.seniorschack.se/"
-SMALL  = "https://storage.googleapis.com/bildbanken2/small/"
+import marko
 
 antal = 0
-
-def countTabs (s) :
-	n = 0
-	for c in s:
-		if c != "\t": break
-		n += 1
-	return n
-
-def a(arr, prefix="", suffix=""):
-	if len(arr) == 3: # COMMAND | text | link
-		text = arr[1]
-		link = arr[2]
-		return f"<a href='{prefix + link + suffix}'>{text}</a><br><br>"
-	elif len(arr) == 4: # COMMAND | prompt | text | link
-		prompt = arr[1]
-		text = arr[2]
-		link = arr[3]
-		return f"{prompt}<a href='{prefix + link + suffix}'>{text}</a><br><br>"
-	else:
-		print('Error message')
-
-def link(arr): return a(arr)
-def tour(arr): return a(arr, TOUR)
-def anmäl(arr): return a(arr, ANMÄL, '/anmalan')
-def bb2(arr): return a(arr, BB2)
-def senior(arr): return 
-def bold(arr): return "<b>"+arr[1]+"</b>"
-def br(arr): return "<br>"
-def h2(arr): return "<h2>"+arr[1]+"</h2>"
-def small(arr): return a(arr, SMALL)
-def dot(arr): return "<br>" # " • "
-
-hash = {
-	"LINK": lambda arr: a(arr),
-	"TOUR": lambda arr: a(arr, TOUR),
-	"ANMÄL":lambda arr: a(arr, ANMÄL, '/anmalan'),
-	"BB2":lambda arr: a(arr, BB2),
-	"SENIOR":lambda arr: a(arr, SENIOR),
-	"A":lambda arr: a(arr),
-	"SMALL":lambda arr: a(arr, SMALL),
-	"H1":lambda arr: "<h1>"+arr[1]+"</h1>",
-	"H2":lambda arr: "<h2>"+arr[1]+"</h2>",
-	"H3":lambda arr: "<h3>"+arr[1]+"</h3>",
-	"BOLD":lambda arr: "<b>"+arr[1]+"</b>",
-	"DOT": lambda arr:  " • ",
-	"": lambda arr: "<br>"}
 
 def writeHtmlFile(filename,content=""): # content är en sträng
 	global antal
@@ -77,15 +26,18 @@ def writeHtmlFile(filename,content=""): # content är en sträng
 	with open(filename, 'w', encoding='utf8') as g:
 		g.write('\n'.join(res))
 
-def title(s): return f"<h1>{s.replace('.lean','')}</h1>"
+def title(s): return f"<h1>{s.replace('.md','')}</h1>"
 
 def transpileDir(directory):
+
 	if type(directory) is str:
 		path = directory
 		name = directory
 	else:
 		path = directory.path
 		name = directory.name
+
+	if name == 'filer': return
 
 	name = name.replace("_", " ")
 	res = []
@@ -94,19 +46,20 @@ def transpileDir(directory):
 
 	for f in os.scandir(path):
 		if os.path.isfile(f):
-			if f.name.endswith('.html'):
+			if f.name.endswith('.html') or f.name.endswith('.lean'):
 				pass
-			elif f.name.endswith('index.lean'):
+			elif f.name.endswith('index.md'):
 				indexHtml = transpileFile(f.path)
-			elif f.name.endswith('.lean'):
-				filename = f.path.replace('.lean', '.html')
+			elif f.name.endswith('.md'):
+				filename = f.path.replace('.md', '.html')
 				writeHtmlFile(filename, title(f.name) + transpileFile(f.path))
-				res += [f"<a href='{f.name.replace('.lean', '.html')}'>{f.name.replace('.lean', '')}</a><br><br>" + "\n"]
+				res += [f"<a href='{f.name.replace('.md', '.html')}'>{f.name.replace('.md', '')}</a><br><br>" + "\n"]
 			else:
-				res += [f"<a href='{f.name}'>{f.name.replace('.lean', '')}</a><br><br>" + "\n"]
+				res += [f"<a href='{f.name}'>{f.name.replace('.md', '')}</a><br><br>" + "\n"]
 		else:
-			res += [f"<a href='{f.name}\\index.html'>{f.name}</a><br><br>" + "\n"]
-			transpileDir(f)
+			if f.name != 'filer':
+				res += [f"<a href='{f.name}\\index.html'>{f.name}</a><br><br>" + "\n"]
+				transpileDir(f)
 
 	if indexHtml == "":
 		indexHtml = "\n".join(res)
@@ -115,28 +68,9 @@ def transpileDir(directory):
 
 	writeHtmlFile(path + '\\index.html', f"<h1>{name}</h1>" + indexHtml)
 
-def transpileFile(filename): # returnerar en sträng
+def transpileFile(filename):
 	with open(filename,encoding='utf8') as f:
-		s = f.read()
-
-	res = []
-
-	for line in s.split("\n"):
-		n = countTabs(line)
-		line = line.replace('<red>','<font color=red>').replace('</red>','</font>')
-		line = line.replace('<green>','<font color=green>').replace('</green>','</font>')
-		line = line.strip()
-		arr = line.split("|")
-		cmd = arr[0]
-
-		if cmd in hash: line = hash[cmd](arr)
-
-		if cmd == "" or cmd == 'A' or cmd == 'DOT':
-			res.append(("\t"*n) + line)
-		else:
-			res.append(("\t"*n) + '<div class="I'+str(n)+'">' + line + '</div>')
-
-	return "\n".join(res)
+		return marko.convert(f.read())
 
 start = time.time_ns()
 
