@@ -70,7 +70,10 @@ def transpileDir(directory):
 
 def transpileFile(filename):
 	with open(filename,encoding='utf8') as f:
-		return marko.convert(f.read())
+		html = marko.convert(f.read())
+		html = html.replace('<red>',  '<div style=color:#F00>').replace('</red>','</div>')
+		html = html.replace('<green>','<div style=color:#0A0>').replace('</green>','</div>')
+		return html
 
 start = time.time_ns()
 
