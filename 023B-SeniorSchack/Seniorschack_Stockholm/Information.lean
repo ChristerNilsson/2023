@@ -1,5 +1,4 @@
-H1|Information
-Seniorschack spelas på 
+Seniorschack spelas på
 tisdagar, onsdagar och torsdagar i Schacksalongerna på Ringvägen 9C (<b>T-bana Zinkensdamm</b>), 
 samt på måndagar och fredagar på Rioträffen på Sandhamnsgatan 4 (<b>T-bana Gärdet</b>), 
 där schackintresserade seniorer samlas till en trevlig och kamratlig samvaro 

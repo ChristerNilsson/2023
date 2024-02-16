@@ -1,5 +1,3 @@
-H1|Program
-
 <green>Tisdagar 10.00-12.00 Schackträning</green>
 <red>Onsdagar 11.00-      Seniorserien</red>
 Torsdagar 11.00-      Klubbmästerskap
