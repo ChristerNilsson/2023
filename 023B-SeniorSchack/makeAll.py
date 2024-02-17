@@ -4,7 +4,9 @@ import marko
 
 antal = 0
 
-def writeHtmlFile(filename,content=""): # content är en sträng
+def writeHtmlFile(filename,content=""):
+	index = 1 + filename.rindex("\\")
+	md_name = filename[index:].replace('.html','.md')
 	global antal
 	res = []
 
@@ -12,21 +14,32 @@ def writeHtmlFile(filename,content=""): # content är en sträng
 	res.append('<html>')
 	res.append('<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />')
 	res.append('<head>')
+	# res.append('<title>Seniorschack Stockholm</title>')
 	res.append('	<link rel="STYLESHEET" type="text/css" href="blixt.css">')
 	res.append('	<meta charset = "utf-8"/>')
 	res.append("	<style> body  {font-family:monospace; font-size:18px } </style>")
+	res.append("	<style> a {text-decoration: none } </style>")
 	res.append('</head>')
 	res.append('<body>')
 	res += [content]
 	res.append('</body>')
+	res.append('<footer style=" text-align: right">')
+	res.append(f'	<p><a href="{md_name}">Markdown</a></p>')
+	res.append("</footer>")
 	res.append('</html>')
 
-	print(filename)
+	print(filename,md_name)
 	antal += 1
 	with open(filename, 'w', encoding='utf8') as g:
 		g.write('\n'.join(res))
 
 def title(s): return f"<h1>{s.replace('.md','')}</h1>"
+
+def noExt(s):
+	s = s.replace(".pdf", "")
+	s = s.replace(".md", "")
+	s = s.replace("_", " ")
+	return s
 
 def transpileDir(directory):
 
@@ -46,7 +59,7 @@ def transpileDir(directory):
 
 	for f in os.scandir(path):
 		if os.path.isfile(f):
-			if f.name.endswith('.html') or f.name.endswith('.lean'):
+			if f.name.endswith('.html'):
 				pass
 			elif f.name.endswith('index.md'):
 				indexHtml = transpileFile(f.path)
@@ -55,7 +68,7 @@ def transpileDir(directory):
 				writeHtmlFile(filename, title(f.name) + transpileFile(f.path))
 				res += [f"<a href='{f.name.replace('.md', '.html')}'>{f.name.replace('.md', '')}</a><br><br>" + "\n"]
 			else:
-				res += [f"<a href='{f.name}'>{f.name.replace('.md', '')}</a><br><br>" + "\n"]
+				res += [f"<a href='{f.name}'>{noExt(f.name)}</a><br><br>" + "\n"]
 		else:
 			if f.name != 'filer':
 				res += [f"<a href='{f.name}\\index.html'>{f.name}</a><br><br>" + "\n"]

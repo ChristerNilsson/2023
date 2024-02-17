@@ -4,7 +4,9 @@ samt på måndagar och fredagar på Rioträffen på Sandhamnsgatan 4 (**T-bana G
 där schackintresserade seniorer samlas till en trevlig och kamratlig samvaro 
 med många spännande schackpartier och utvecklande seminarier samt spännande simultanschack. 
 Vill du bli medlem? Hör av dig till tävlingsledare eller kontaktperson enligt nedan eller kom till klubblokalen.
-H2|Avgifter
+
+## Avgifter
+
 Styrelsens förslag till medlemsavgift för 2024 är **300 kr** plus förbundsavgift,
 d.v.s. oförändrad avgift jämfört med 2023.
 Förbundsavgifter till Stockholms Schackförbund och Sveriges Schackförbund är **340 kr**.
