@@ -8,6 +8,8 @@
 
 [Internet Chess Club](https://www.chessclub.com)
 
+[LiChess](https://lichess.org)
+
 [Nalimov - sex pjäser](https://www.k4it.de/index.php?topic=egtb&lang=en)
 
 [Schackhandeln](https://www.schackhandeln.se)

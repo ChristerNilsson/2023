@@ -6,7 +6,7 @@
 
 [Lag-DM](https://member.schack.se/ShowTournamentServlet?id=12575)
 
-## Individ
+## Individ 
 
 [Klubbmästerskap](https://chess-results.com/tnr875945.aspx?lan=6)
 

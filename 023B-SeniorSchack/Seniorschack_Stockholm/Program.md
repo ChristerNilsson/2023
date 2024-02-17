@@ -1,8 +1,6 @@
-<green>Tisdagar 10.00-12.00 Schackträning</green>
-
-<red>Onsdagar 11.00-Seniorserien</red>
-
-Torsdagar 11.00-Klubbmästerskap
+<green>Ti 10-12 Schackträning</green>
+<red>On 11.00 Seniorserien</red>
+To 11.00 Klubbmästerskap
 
 ## Januari
 <red>On 17 Rond 1</red>
@@ -11,7 +9,7 @@ To 18 Rond 1
 <red>On 24 Rond 2</red>
 To 25 Rond 2
 <green>Ti 30 PO Hesselborn: Riktlinjer för slutspel, del 1</green>
-<red>On 31 Rond 3 för klass 1</red>
+<red>On 31 Rond 3 för klass 1</red> 
 In 31 Uppskjutna partier för klass 2–4
 
 ## Februari

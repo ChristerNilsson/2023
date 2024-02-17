@@ -2,6 +2,8 @@ import os
 import time
 import marko
 
+BR = "<br><br>"
+
 antal = 0
 
 def writeHtmlFile(filename, content=""):
@@ -15,39 +17,27 @@ def writeHtmlFile(filename, content=""):
 	res.append('<html>')
 	res.append('<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />')
 	res.append('<head>')
-	# res.append('	<link rel="STYLESHEET" type="text/css" href="blixt.css">')
 	res.append('	<meta charset = "utf-8"/>')
-	res.append("	<style> body  {font-family:monospace; font-size:18px } </style>")
-	res.append("	<style> a {text-decoration: none; background-color: #ff8 } </style>")
+	res.append("	<style> body { font-family:monospace; font-size:20px } </style>")
+	res.append("	<style> a { text-decoration: none; background-color: #ff8 } </style>")
 	res.append('</head>')
 	res.append('<body>')
 	res += [content]
 	res.append('</body>')
 	if os.path.exists(long_md):
 		res.append('<footer style=" text-align: right">')
-		res.append(f'	<p><a href="{short_md}">Markdown</a></p>')
+		res.append(f'	<p><a href="{short_md}">markdown</a></p>')
 		res.append("</footer>")
 	res.append('</html>')
 
-	print(filename,short_md)
+	print(short_md, '=>', filename)
 	antal += 1
 	with open(filename, 'w', encoding='utf8') as g:
 		g.write('\n'.join(res))
 
-# def title(s): return f"<h1>{s.replace('.md','')}</h1>"
+def title(s): return f"<h1>{s.replace('.md','')}</h1>"
 
-def title(s):
-	# if s.endswith('.md'):
-	# 	pass
-	# else:
-	# 	s += '//index.md'
-	return f"<h1>{s.replace('.md','')}</h1>"
-
-def noExt(s):
-	s = s.replace(".pdf", "")
-	s = s.replace(".md", "")
-	s = s.replace("_", " ")
-	return s
+def noExt(s): return s.replace(".pdf", "").replace(".md", "").replace("_", " ")
 
 def transpileDir(directory):
 
@@ -58,7 +48,7 @@ def transpileDir(directory):
 		path = directory.path
 		name = directory.name
 
-	if name == 'filer': return
+	if name == 'files': return
 
 	name = name.replace("_", " ")
 	res = []
@@ -74,12 +64,12 @@ def transpileDir(directory):
 			elif f.name.endswith('.md'):
 				filename = f.path.replace('.md', '.html')
 				writeHtmlFile(filename, title(f.name) + transpileFile(f.path))
-				res += [f"<a href='{f.name.replace('.md', '.html')}'>{f.name.replace('.md', '')}</a><br><br>" + "\n"]
+				res += [f"<a href='{f.name.replace('.md', '.html')}'>{f.name.replace('.md', '')}</a>" + BR + "\n"]
 			else:
-				res += [f"<a href='{f.name}'>{noExt(f.name)}</a><br><br>" + "\n"]
+				res += [f"<a href='{f.name}'>{noExt(f.name)}</a>" + BR + "\n"]
 		else:
-			if f.name != 'filer':
-				res += [f"<a href='{f.name}\\index.html'>{f.name}</a><br><br>" + "\n"]
+			if f.name != 'files':
+				res += [f"<a href='{f.name}\\index.html'>{f.name}</a>" + BR + "\n"]
 				transpileDir(f)
 
 	if indexHtml == "":
@@ -100,4 +90,4 @@ start = time.time_ns()
 
 transpileDir("Seniorschack_Stockholm")
 
-print(antal, 'filer tog', round((time.time_ns() - start)/10**6),'ms')
+print(antal, 'files took', round((time.time_ns() - start)/10**6),'ms')

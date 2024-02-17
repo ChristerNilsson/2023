@@ -1,4 +1,4 @@
-[Arkivet](https://www.seniorschackstockholm.se/htmfiler/arkivet.htm)
+[Arkivet](https://www.seniorschackstockholm.se/htmfiler/arkivet.htm) 
 
 [Foton](https://storage.googleapis.com/bildbanken2/index.html?query=SeniorSchack)
 

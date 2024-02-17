@@ -1,18 +1,24 @@
 [Try it!](https://christernilsson.github.io/2023/023B-SeniorSchack/Seniorschack_Stockholm)
 
-* Detta är ett försök att förenkla skapande av statiska hemsidor mha Mark Down.
+* This program is used to transpile markdown files to html files.
 
-* Nere till höger dyker en länk upp till markdown-filen, om den finns. Filens placering framgår av url:en.
+* The directory structure is used to minimize the amount av markdown needed.
 
-* Katalogstrukturen avspeglas i hur hemsidan är organiserad.
+* You can inspect the markdown file by clicking **markdown** in the right lower corner.
+The file name and location can be found by looking at the url in the browser.
 
-* Textmaterial läggs in genom att skapa filer av typen .md
+* makeAll.py transpiles all .md-files tp .html files.
+    * The md file is not mandatory.
+    * You need it when you want to add text and links.
 
-* Då makeAll.py körs kommer filer med namnet index.html att skapas i alla kataloger, även om index.md saknas. 
-    * index.md behövs om man vill lägga till information. T ex text eller externa länkar.
+* Deploy by copying the root folder to your server.
 
-* Deploya genom att kopiera startkatalogen till servern.
+* Helpful: VS Code and Run On Save
 
-[Cheat Sheet](https://commonmark.org/help/)
+* Helpful: VS Code and Go Live
 
-* Tillägg: <red></red> samt <green></green>
+* [Cheat Sheet](https://commonmark.org/help/)
+
+* Extension: <red></red> and <green></green>
+
+* The hidden directory "files" can be used for storing files.
