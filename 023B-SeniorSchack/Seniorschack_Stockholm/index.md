@@ -10,5 +10,8 @@ CONTENT
 
 [2024-02-17 Robert Spångbergs Minnesturnering 2024](filer/Inbjudan-Robert-Spångberg-memorial-2024.pdf)
 
+[2024-02-15 En liten lathund för att hitta information om Seniorschacks KM på Chess-Results](https://www.seniorschackstockholm.se/htmfiler/Chess-Results.pdf)
+
 [2024-02-08 Frirondsblixten](filer/Frirondsblixten.pdf)
+
 
