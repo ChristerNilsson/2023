@@ -37,11 +37,11 @@ def writeHtmlFile(filename, content=""):
 # def title(s): return f"<h1>{s.replace('.md','')}</h1>"
 
 def title(s):
-	if s.endswith('.md'):
-		pass
-	else:
-		s += '//index.md'
-	return f"<h1><a href='{s}'>{s.replace('.md','')}</a></h1>"
+	# if s.endswith('.md'):
+	# 	pass
+	# else:
+	# 	s += '//index.md'
+	return f"<h1>{s.replace('.md','')}</h1>"
 
 def noExt(s):
 	s = s.replace(".pdf", "")
@@ -73,7 +73,7 @@ def transpileDir(directory):
 				indexHtml = transpileFile(f.path)
 			elif f.name.endswith('.md'):
 				filename = f.path.replace('.md', '.html')
-				writeHtmlFile(filename, f"<h1>{f.name}</h1>" + transpileFile(f.path))
+				writeHtmlFile(filename, title(f.name) + transpileFile(f.path))
 				res += [f"<a href='{f.name.replace('.md', '.html')}'>{f.name.replace('.md', '')}</a><br><br>" + "\n"]
 			else:
 				res += [f"<a href='{f.name}'>{noExt(f.name)}</a><br><br>" + "\n"]
@@ -87,7 +87,7 @@ def transpileDir(directory):
 	else:
 		indexHtml = indexHtml.replace("CONTENT","\n".join(res))
 
-	writeHtmlFile(path + '\\index.html', f"<h1>{name}</h1>" + indexHtml)
+	writeHtmlFile(path + '\\index.html', title(name) + indexHtml)
 
 def transpileFile(filename):
 	with open(filename,encoding='utf8') as f:

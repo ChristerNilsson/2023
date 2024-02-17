@@ -1,4 +1,4 @@
-[Try it!](https://christernilsson.github.io/2023/023B-SeniorSchack/Seniorschack_Stockholm/index.html)
+[Try it!](https://christernilsson.github.io/2023/023B-SeniorSchack/Seniorschack_Stockholm)
 
 * Detta är ett försök att förenkla skapande av statiska hemsidor mha Mark Down.
 
