@@ -2,11 +2,14 @@
 
 * Detta är ett försök att förenkla skapande av statiska hemsidor mha Mark Down.
 
+* Nere till höger dyker en länk upp till markdown-filen, om den finns. Filens placering framgår av url:en.
+
 * Katalogstrukturen avspeglas i hur hemsidan är organiserad.
 
-* Textmaterial läggs in genom att skapa filer med namnet index.md
+* Textmaterial läggs in genom att skapa filer av typen .md
 
-* Då makeAll.py körs kommer filer med namnet index.html att skapas i alla kataloger, även om index.md saknas. index.md behövs om man vill lägga till information. T ex text eller externa länkar.
+* Då makeAll.py körs kommer filer med namnet index.html att skapas i alla kataloger, även om index.md saknas. 
+    * index.md behövs om man vill lägga till information. T ex text eller externa länkar.
 
 * Deploya genom att kopiera startkatalogen till servern.
 
