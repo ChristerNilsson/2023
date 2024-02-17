@@ -16,3 +16,6 @@
 [Resultat från samtliga Veteranserier höst](https://www.seniorschackstockholm.se/htmfiler/resultat_HT22.pdf)
 
 [Lars-Åke Pettersson (Seniorseriemästare vår)](https://www.seniorschackstockholm.se/htmfiler/resultat_VT22.pdf)
+
+## [Tidigare år](https://www.seniorschackstockholm.se/htmfiler/arkivet.htm)
+
