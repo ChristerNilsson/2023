@@ -4,8 +4,11 @@ samt på måndagar och fredagar på Rioträffen på [Sandhamnsgatan 4](https://m
 Där samlas schackintresserade seniorer till en trevlig och kamratlig samvaro  
 med många spännande schackpartier och utvecklande seminarier samt spännande simultanschack.  
 
-Vill du bli medlem?  
-Hör av dig till tävlingsledare eller kontaktperson enligt nedan eller kom till klubblokalen.
+Vill du bli medlem?    
+Kom till klubblokalen eller kontakta någon av dessa medlemmar:  
+Tisdagar: perovehesselborn@yahoo.se   
+Onsdagar: bosse.steiner@icloud.com 073 332 00 32  
+Torsdagar: Bjorn@Lowgren.eu  070 990 30 00
 
 ## Avgifter
 

@@ -15,10 +15,10 @@ def writeHtmlFile(filename, content=""):
 	res.append('<html>')
 	res.append('<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />')
 	res.append('<head>')
-	res.append('	<link rel="STYLESHEET" type="text/css" href="blixt.css">')
+	# res.append('	<link rel="STYLESHEET" type="text/css" href="blixt.css">')
 	res.append('	<meta charset = "utf-8"/>')
 	res.append("	<style> body  {font-family:monospace; font-size:18px } </style>")
-	res.append("	<style> a {text-decoration: none; background-color: #ff4 } </style>")
+	res.append("	<style> a {text-decoration: none; background-color: #ff8 } </style>")
 	res.append('</head>')
 	res.append('<body>')
 	res += [content]
