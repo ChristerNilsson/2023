@@ -18,7 +18,7 @@ def writeHtmlFile(filename, content=""):
 	res.append('	<link rel="STYLESHEET" type="text/css" href="blixt.css">')
 	res.append('	<meta charset = "utf-8"/>')
 	res.append("	<style> body  {font-family:monospace; font-size:18px } </style>")
-	res.append("	<style> a {text-decoration: none } </style>")
+	res.append("	<style> a {text-decoration: none; background-color: #ff4 } </style>")
 	res.append('</head>')
 	res.append('<body>')
 	res += [content]
