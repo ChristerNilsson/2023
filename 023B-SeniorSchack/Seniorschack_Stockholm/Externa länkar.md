@@ -1,4 +1,6 @@
-[Analyser](https://lichess.org/analysis)
+[Analysera ditt parti med lichess.org](https://lichess.org/analysis)
+
+[Analysera ditt parti med chess.com](https://www.chess.com/analysis)
 
 [Anna Cramling](https://www.youtube.com/@AnnaCramling)
 

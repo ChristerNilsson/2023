@@ -1,5 +1,3 @@
-[Arkivet](https://www.seniorschackstockholm.se/htmfiler/arkivet.htm) 
-
 [Foton](https://storage.googleapis.com/bildbanken2/index.html?query=SeniorSchack)
 
 [Klubben](https://www.seniorschackstockholm.se/htmfiler/klubben.htm)
