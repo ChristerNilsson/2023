@@ -1,0 +1,31 @@
+body {
+    color:black; 
+    background-color: 
+    darkgray; 
+    font-family:monospace; 
+    font-size:24px;
+}
+
+a {
+    padding-left:5px; 
+    padding-right:5px; 
+    text-decoration:none; 
+    color:yellow; 
+    background-color:gray;
+}
+
+div {
+    margin-bottom:5px;
+}
+
+table, th, td { 
+    border: 1px solid black; 
+    border-collapse: collapse; 
+    font-family:monospace; 
+    font-size:24px;
+}
+
+th {
+    padding-left:5px; 
+    padding-right:5px; 
+}

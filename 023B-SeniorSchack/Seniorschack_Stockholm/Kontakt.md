@@ -6,11 +6,11 @@ med många spännande schackpartier och utvecklande seminarier samt spännande s
 
 Vill du bli medlem?    
 Kom till klubblokalen eller kontakta någon av dessa medlemmar:  
-Tisdagar: perovehesselborn@yahoo.se   
-Onsdagar: bosse.steiner@icloud.com 073 332 00 32  
-Torsdagar: Bjorn@Lowgren.eu  070 990 30 00
+Tisdagar: [perovehesselborn@yahoo.se](https://storage.googleapis.com/bildbanken2/index.html?md5=9dF00086UF)   
+Onsdagar: [bosse.steiner@icloud.com](https://storage.googleapis.com/bildbanken2/index.html?md5=9O2FFwgn9Z) 073 332 00 32  
+Torsdagar: [Bjorn@Lowgren.eu](https://storage.googleapis.com/bildbanken2/index.html?md5=Ab2GMcW0iJ)  070 990 30 00
 
-## Avgifter
+## Avgifter 
 
 Styrelsens förslag till medlemsavgift för 2024 är **300 kr** plus förbundsavgift,  
 d.v.s. oförändrad avgift jämfört med 2023.  
@@ -24,3 +24,13 @@ För deltagare i den schack-kurs som klubben anordnar i samarbete med PRO
 Klubbens årsmöte tisdagen den 5 mars 2024 beslutar formellt om årsavgiften.
 
 Avgiften betalas till klubbens bankgiro nr. **111-1038**
+
+Huvudklubb|Klubbavgift|Förbundsavgifter|Totalt
+----------|----------:|---------------:|-----:
+SrS       |      300:-|           340:-|640:-
+Annan     |      300:-|                |300:-
+PRO-kurs  |      300:-|                |300:-
+
+## Webmaster
+
+[Lars Johan Andersson](https://storage.googleapis.com/bildbanken2/index.html?md5=9tA9nxUm5e)
