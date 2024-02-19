@@ -79,6 +79,9 @@ def noExt(s):
 	if settings['showExt']: return s
 	else: return s.replace(".pdf", "").replace(".md", "").replace(".xls", "")
 
+def getLink(filename):
+	with open(filename,encoding='utf8') as f: return f.read()
+
 def transpileDir(directory):
 
 	if type(directory) is str:
@@ -105,6 +108,8 @@ def transpileDir(directory):
 				filename = f.path.replace('.md', '.html')
 				writeHtmlFile(filename, title(f.name), transpileFile(f.path))
 				res += [f"<div><a href='{f.name.replace('.md', '.html')}'>{f.name.replace('.md', '')}</a></div>\n"]
+			elif f.name.endswith('.link'):
+				res += [f"<div><a href='{getLink(f.path)}'>{f.name.replace('.link', '')}</a></div>\n"]
 			else:
 				res += [f"<div><a href='{f.name}'>{noExt(f.name)}</a></div>\n"]
 		else:
