@@ -42,12 +42,15 @@ def writeHtmlFile(filename, t, level, content=""):
 	res.append('		<link href="' + (level-1) * '../' + 'style.css" rel="stylesheet" type="text/css" >')
 	res.append('	</head>')
 	res.append('<body>')
-	res += [f"<h1>{t}</h1>"]
-
-	res += [content]
 
 	if os.path.exists(long_md):
-		res.append(f'<div style=" text-align: right"><a href="{short_md}">markdown</a></div>')
+		res += [f'<div style="display:inline; font-size:50px;"><b>{t} </b></div>']
+		res += [f'<a href="{short_md}">md</a>']
+	else:
+		res += [f"<h1>{t}</h1>"]
+		# res += [f'<div style="font-size:50px;"><b>{t} </b></div>']
+
+	res += [content]
 
 	res.append('</body>')
 	res.append('</html>')
