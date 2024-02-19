@@ -8,6 +8,8 @@
 
 [ChessBomb](https://www.chess.com/events)
 
+[Chess-results SWE](https://chess-results.com/fed.aspx?lan=6&fed=SWE)
+
 [Internet Chess Club](https://www.chessclub.com)
 
 [LiChess](https://lichess.org)

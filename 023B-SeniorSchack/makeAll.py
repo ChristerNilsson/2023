@@ -3,8 +3,7 @@ import time
 import markdown
 from markdown.extensions.tables import TableExtension
 
-# Innebär att Startbilden påverkas. Kanske behövs ett kommando i .md-filen a la CONTENT. NEWS?
-# RSS
+# Todo: RSS
 
 file_count = 0
 md_bytes = 0
