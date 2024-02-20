@@ -102,7 +102,7 @@ def transpileDir(directory,level=0):
 
 	for f in os.scandir(path):
 		if os.path.isfile(f):
-			if f.name.endswith('.html') or f.name.endswith('.css'):
+			if f.name.endswith('.html') or f.name.endswith('.css') or f.name.endswith('.ico'):
 				pass
 			elif f.name.endswith('index.md'):
 				indexHtml = transpileFile(f.path,f.name,level)
