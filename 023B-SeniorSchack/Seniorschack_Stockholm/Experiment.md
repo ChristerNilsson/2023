@@ -21,6 +21,10 @@ Några high lights:
 * [RSS](https://sv.wikipedia.org/wiki/RSS) på begäran.
 * Open Source [Github](https://github.com/ChristerNilsson/2023/blob/main/023B-SeniorSchack/makeAll.py)
 
+## Matematiska formler
+
+$\sqrt{3x-1}+(1+x)^2$
+
 ## Exempel på tabellhantering
  
  År |    Segrare
