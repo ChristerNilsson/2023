@@ -12,7 +12,7 @@ html_bytes = 0
 settings = {
 	'rootFolder': "Seniorschack_Stockholm",
 	'showExt': False,
-	'latestNews': 5,
+	'latestNews': 4,
 }
 
 def title(s): return s.replace('.md','')
@@ -26,7 +26,7 @@ def patch(s): # Reason: To have some whitespace between links (margin-bottom)
 
 def writeHtmlFile(filename, t, level, content=""):
 	t = title(t)
-	index = 1 + filename.rindex("\\")
+	index = 1 + filename.rindex("/")
 	short_md = filename[index:].replace('.html','.md')
 	long_md = filename.replace('.html','.md')
 	global file_count
@@ -44,11 +44,9 @@ def writeHtmlFile(filename, t, level, content=""):
 	res.append('<body>')
 
 	if os.path.exists(long_md):
-		res += [f'<div style="display:inline; font-size:50px;"><b>{t} </b></div>']
-		res += [f'<a href="{short_md}">md</a>']
+		res += [f'<h1><a style="color:#000; background-color:#aaa" href="{short_md}">{t}</a> </h1>']
 	else:
-		res += [f"<h1>{t}</h1>"]
-		# res += [f'<div style="font-size:50px;"><b>{t} </b></div>']
+		res += [f'<h1>{t}</h1>']
 
 	res += [content]
 
@@ -63,7 +61,7 @@ def writeHtmlFile(filename, t, level, content=""):
 def noExt(s):
 	s = s.replace("_", " ")
 	if settings['showExt']: return s
-	else: return s.replace(".pdf", "").replace(".md", "").replace(".xls", "")
+	else: return s[:s.rindex('.')]
 
 def getLink(f,level):
 	print('\t' * level + f.name)
@@ -71,8 +69,16 @@ def getLink(f,level):
 
 def getNews(directory=settings["rootFolder"] + "/files/news"):
 	files = os.listdir(directory)
-	files = files[: -settings["latestNews"]: -1]
-	res = [f"<div><a href='files/news/{f}'>{noExt(f)}</a></div>" for f in files]
+	all = files[::-1]
+	all = [f for f in all if not f.endswith('.html') and not f.endswith('.md')]
+
+	latest = all[:settings["latestNews"]]
+	res = [f'<div><a href="files/news/{f}">{noExt(f).replace("/files/news","")}</a></div>' for f in latest]
+	res += ['<div><a href="files/news/Alla Nyheter.html">Alla Nyheter</a></div>']
+
+	allNews = [f'<div><a href="{f}">{noExt(f)}</a></div>' for f in all]
+	writeHtmlFile(directory+'/Alla Nyheter.html', 'Alla Nyheter', 3, '\n'.join(allNews))
+
 	return "\n".join(res)
 
 def transpileDir(directory,level=0):
@@ -100,9 +106,9 @@ def transpileDir(directory,level=0):
 			elif f.name.endswith('index.md'):
 				indexHtml = transpileFile(f.path,f.name,level)
 			elif f.name.endswith('.md'):
-				filename = f.path.replace('.md', '.html')
+				filename = f.path.replace('.md', '.html').replace('\\','/')
 
-				index = 1 + filename.rindex("\\")
+				index = 1 + filename.rindex("/")
 				short_md = filename[index:].replace('.html', '.md')
 				writeHtmlFile(filename, f.name, level+1, transpileFile(f.path,f.name,level))
 				res += [f"<div><a href='{f.name.replace('.md', '.html')}'>{f.name.replace('.md', '')}</a></div>"]
@@ -112,7 +118,7 @@ def transpileDir(directory,level=0):
 				res += [f"<div><a href='{f.name}'>{noExt(f.name)}</a></div>"]
 		else:
 			if f.name != 'files':
-				res += [f"<div><a href='{f.name}\\index.html'>{f.name}</a></div>"]
+				res += [f"<div><a href='{f.name}/index.html'>{f.name}</a></div>"]
 				transpileDir(f,level+1)
 
 	if indexHtml == "":
@@ -121,7 +127,7 @@ def transpileDir(directory,level=0):
 		indexHtml = indexHtml.replace("CONTENT","\n".join(res))
 		indexHtml = indexHtml.replace("NEWS",news)
 
-	writeHtmlFile(path + '\\index.html', name, level+1, indexHtml)
+	writeHtmlFile(path + '/index.html', name, level+1, indexHtml)
 
 def transpileFile(long,short,level=0):
 	global md_bytes
@@ -139,6 +145,7 @@ def transpileFile(long,short,level=0):
 start = time.time_ns()
 news = getNews()
 transpileDir(settings['rootFolder'],0)
+transpileDir(settings['rootFolder'] + '/files/news',2)
 print()
 print(md_bytes,'=>',html_bytes,'bytes')
 print(file_count, 'files took', round((time.time_ns() - start)/10**6),'ms')

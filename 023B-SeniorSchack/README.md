@@ -18,7 +18,7 @@
             * Directory structure
             * .link file
 
-Here are some alternatives using directoru Information.
+Here are some alternatives using directory Information.
 [] indicates what the browser will display.
 
 ```
@@ -41,8 +41,9 @@ Information                                   [Information]
     Info.link (contains a link to Info.pdf)       [Info]
 ```
 
-* You can inspect the markdown file by clicking **markdown** in the right lower corner.
+* You can inspect the markdown file by clicking on the main header.
 The file name and location can be found by looking at the url in the browser.
+If the header is not clickable, then there is no markdown for that page.
 
 * makeAll.py transpiles all .md-files to .html files.
     * No md file is mandatory.
@@ -59,7 +60,7 @@ The file name and location can be found by looking at the url in the browser.
 
 * Extension: [Tables](https://python-markdown.github.io/extensions/tables/)
 
-* The hidden directory "files" can be used for storing files.
+* The hidden directory *files* can be used for storing files.
 
-* Latest news are stored in the files/news directory
+* Latest news are stored in the *files/news* directory
     * The number of shown items is set in settings.latestNews.
