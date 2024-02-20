@@ -22,6 +22,7 @@ def patch(s): # Reason: To have some whitespace between links (margin-bottom)
 	s = s.replace('</a></p>','</a></div>')
 	s = s.replace('TOUR', 'https://member.schack.se/ShowTournamentServlet?id')
 	s = s.replace('SENIOR','https://www.seniorschackstockholm.se')
+	s = s.replace('BB2','https://storage.googleapis.com/bildbanken2/index.html')
 	return s
 
 def writeHtmlFile(filename, t, level, content=""):
@@ -38,7 +39,7 @@ def writeHtmlFile(filename, t, level, content=""):
 	res.append('	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />')
 	res.append('	<head>')
 	res.append(f'		<title>{t}</title>')
-	res.append('		<link rel="icon" type="image/x-icon" href="favicon.ico">')
+	# res.append('		<link rel="icon" type="image/x-icon" href="favicon.ico">')
 	res.append('		<meta charset = "utf-8"/>')
 	res.append('		<link href="' + (level-1) * '../' + 'style.css" rel="stylesheet" type="text/css" >')
 	res.append('	</head>')

@@ -5,9 +5,9 @@ med många spännande schackpartier och utvecklande seminarier samt spännande s
 
 Vill du bli medlem?    
 Kom till klubblokalen eller kontakta någon av dessa medlemmar:  
-Tisdagar: [perovehesselborn@yahoo.se](https://storage.googleapis.com/bildbanken2/index.html?md5=9dF00086UF)   
-Onsdagar: [bosse.steiner@icloud.com](https://storage.googleapis.com/bildbanken2/index.html?md5=9O2FFwgn9Z) 073 332 00 32  
-Torsdagar: [Bjorn@Lowgren.eu](https://storage.googleapis.com/bildbanken2/index.html?md5=Ab2GMcW0iJ)  070 990 30 00
+Tisdagar: [perovehesselborn@yahoo.se](BB2?md5=9dF00086UF)   
+Onsdagar: [bosse.steiner@icloud.com](BB2?md5=9O2FFwgn9Z) 073 332 00 32  
+Torsdagar: [Bjorn@Lowgren.eu](BB2?md5=Ab2GMcW0iJ)  070 990 30 00
 
 ## Avgifter 
 
@@ -32,4 +32,4 @@ PRO-kurs  |      300:-|                |300:-
 
 ## Webmaster
 
-[Lars Johan Andersson](https://storage.googleapis.com/bildbanken2/index.html?md5=9tA9nxUm5e)
+[Lars Johan Andersson](BB2?md5=9tA9nxUm5e)

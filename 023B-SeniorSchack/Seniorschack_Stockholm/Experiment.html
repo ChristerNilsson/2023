@@ -3,17 +3,16 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 	<head>
 		<title>Experiment</title>
-		<link rel="icon" type="image/x-icon" href="favicon.ico">
 		<meta charset = "utf-8"/>
 		<link href="style.css" rel="stylesheet" type="text/css" >
 	</head>
 <body>
 <h1><a style="color:#000; background-color:#aaa" href="Experiment.md">Experiment</a> </h1>
 <h2>Bakgrund</h2>
-<p>Jag heter Christer Nilsson och har utvecklat bl a Monradprogrammet som användes flitigt under 90-talet av bl a Jonas Sandbom.<br />
+<p>Jag heter Christer Nilsson och har bl a utvecklat Monradprogrammet som användes flitigt under 90-talet av t ex Jonas Sandbom.<br />
 2023 tog jag även fram <a href="https://storage.googleapis.com/bildbanken2/index.html?query=Seniorschack">Bildbanken 2</a> i samarbete med Lars OA Hedlund.</p>
 <p>Bildbanken 2 består enbart av statiska filer, dvs det finns inget program som körs på någon server.<br />
-I BB2 är det katalogstrukturen som styr allt.</p>
+I Bildbanken 2 är det katalogstrukturen som styr allt.</p>
 <p>Med detta i bakhuvudet gör jag här ett försök att bygga upp en statisk hemsida utgående från katalogstrukturen.</p>
 <p>Några high lights:</p>
 <ul>
@@ -29,8 +28,70 @@ I BB2 är det katalogstrukturen som styr allt.</p>
 <li><a href="https://sv.wikipedia.org/wiki/RSS">RSS</a> på begäran.</li>
 <li>Open Source <a href="https://github.com/ChristerNilsson/2023/blob/main/023B-SeniorSchack/makeAll.py">Github</a></li>
 </ul>
-<h2>Matematiska formler</h2>
-<p>$\sqrt{3x-1}+(1+x)^2$</p>
+<h3>Jämförelse av kodvolym</h3>
+<ul>
+<li>Markdown utgör en tredjedel av html:s storlek.</li>
+<li>De största befintliga sidorna, Klubben.html och Arkivet.html tar sammanlagt 57 kb.<ul>
+<li>Dessa kräver noll bytes iom att länkarna kan skapas automatiskt utifrån mappnamn och filnamn.</li>
+</ul>
+</li>
+<li>Resterande 16 kb html, kan skapas med 7 kb markdownkod.</li>
+<li>Total reducering av kodvolym är alltså cirka 90%.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>namn</th>
+<th align="right">html</th>
+<th align="right">markdown</th>
+<th>enhet</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>index</td>
+<td align="right">10.3</td>
+<td align="right">3.0</td>
+<td></td>
+</tr>
+<tr>
+<td>program</td>
+<td align="right">5.5</td>
+<td align="right">1.8</td>
+<td></td>
+</tr>
+<tr>
+<td>klubben</td>
+<td align="right">22.4</td>
+<td align="right">0</td>
+<td></td>
+</tr>
+<tr>
+<td>arkivet</td>
+<td align="right">34.6</td>
+<td align="right">0</td>
+<td></td>
+</tr>
+<tr>
+<td>kontakt</td>
+<td align="right">0</td>
+<td align="right">1.4</td>
+<td></td>
+</tr>
+<tr>
+<td>ext länkar</td>
+<td align="right">0</td>
+<td align="right">0.9</td>
+<td></td>
+</tr>
+<tr>
+<td>totalt</td>
+<td align="right">72.9</td>
+<td align="right">7.1</td>
+<td>kbyte</td>
+</tr>
+</tbody>
+</table>
 <h2>Exempel på tabellhantering</h2>
 <table>
 <thead>
