@@ -70,7 +70,7 @@ def getLink(f,level):
 def getNews(directory=settings["rootFolder"] + "/files/news"):
 	files = os.listdir(directory)
 	all = files[::-1]
-	all = [f for f in all if not f.endswith('.html') and not f.endswith('.md')]
+	all = [f for f in all if not f.endswith('.md') and not f.endswith('index.html') and not f.endswith('Alla Nyheter.html')]
 
 	latest = all[:settings["latestNews"]]
 	res = [f'<div><a href="files/news/{f}">{noExt(f).replace("/files/news","")}</a></div>' for f in latest]
