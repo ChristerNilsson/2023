@@ -1,3 +1,5 @@
+Tisdagar 10.00-12.00
+
 ## Januari
 
 Ti 23 Bengt Hammar: Unga spelare i kandidatturneringen  

@@ -1,3 +1,5 @@
+Onsdagar 11.00
+
 ## Januari
 
 On 17 Rond 1  

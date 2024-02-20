@@ -1,3 +1,5 @@
+Torsdagar 11.00
+
 ## Januari
 
 To 18 Rond 1  

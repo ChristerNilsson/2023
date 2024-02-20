@@ -38,6 +38,7 @@ def writeHtmlFile(filename, t, level, content=""):
 	res.append('	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />')
 	res.append('	<head>')
 	res.append(f'		<title>{t}</title>')
+	res.append('		<link rel="icon" type="image/x-icon" href="favicon.ico">')
 	res.append('		<meta charset = "utf-8"/>')
 	res.append('		<link href="' + (level-1) * '../' + 'style.css" rel="stylesheet" type="text/css" >')
 	res.append('	</head>')

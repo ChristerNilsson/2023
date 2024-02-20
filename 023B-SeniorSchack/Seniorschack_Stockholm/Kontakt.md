@@ -1,7 +1,6 @@
-Seniorschack spelas på tisdagar, onsdagar och torsdagar i Schacksalongerna på [Ringvägen 9C](https://goo.gl/maps/QvjjjhTWNoS3iQt66) (**T-bana Zinkensdamm**),  
-samt på måndagar och fredagar på Rioträffen på [Sandhamnsgatan 4](https://maps.app.goo.gl/QcKuataRc74koJP39) (**T-bana Gärdet**).
+Seniorschack Stockholm är en mötesplats för schackintresserade seniorer.
 
-Där samlas schackintresserade seniorer till en trevlig och kamratlig samvaro  
+Du är välkommen till en trevlig och kamratlig samvaro 
 med många spännande schackpartier och utvecklande seminarier samt spännande simultanschack.  
 
 Vill du bli medlem?    

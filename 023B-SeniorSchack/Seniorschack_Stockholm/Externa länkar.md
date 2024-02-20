@@ -10,6 +10,8 @@
 
 [Chess-results SWE](https://chess-results.com/fed.aspx?lan=6&fed=SWE)
 
+[Dagens kombination](https://www.shredderchess.com/online/playshredder/gdailytactics.php?mylang=en&mysize=32)
+
 [Internet Chess Club](https://www.chessclub.com)
 
 [LiChess](https://lichess.org)
