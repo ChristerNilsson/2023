@@ -23,7 +23,7 @@ Några high lights:
 
 ### Jämförelse av kodvolym
 
-* Markdown utgör en tredjedel av html:s storlek.
+* Markdown utgör 40-50% av html:s storlek.
 * De största befintliga sidorna, Klubben.html och Arkivet.html tar sammanlagt 57 kb.
     * Dessa kräver noll bytes iom att länkarna kan skapas automatiskt utifrån mappnamn och filnamn.
 * Resterande 16 kb html, kan skapas med 7 kb markdownkod.
@@ -38,6 +38,31 @@ arkivet|34.6|0
 kontakt|0|1.4
 ext länkar|0|0.9
 totalt|72.9|7.1|kbyte
+
+### Veckans kombination
+
+Denna katalog ingår inte i jämförelsen, men här kan man spara 95%.
+Vi har cirka 66 filer om 12K, dvs 800kB. Ett antal identiska javascriptfunktioner ingår i varje fil.
+Pjäser och bräde är gemensamt.
+Det som skiljer är 
+
+* utplacering av pjäser.
+* namn på spelarna
+* lösningen
+
+Antar att dessa har några år på nacken iom att chess.com och lichess har liknande saker.
+
+### Dagens kombination 
+
+Är uppbyggd på liknande sätt, men ligger online.
+
+### Stor bild, 576 kilobyte!
+
+138 x 138 x 3 = 57 kB.  
+Borde vara 6 kb mtp komprimering.  
+Filen är ett hundra gånger för stor.  
+
+![](KM_SrS_24.jpg)
 
 ## Exempel på tabellhantering
  
