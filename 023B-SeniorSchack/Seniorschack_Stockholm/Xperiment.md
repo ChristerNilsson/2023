@@ -90,6 +90,68 @@ kontakt|0|1.4
 ext länkar|0|0.9
 totalt|72.9|7.1|kb
 
+### Markdown vs html
+
+purpose|markdown
+-------|---
+header |#
+header |##
+header |###
+bold   |```**text**```
+link   |```[text](url)```
+image  |```![text](url)```
+
+```
+purpose|markdown
+-------|---
+header |#
+header |##
+header |###
+bold   |```**text**```
+link   |```[text](url)```
+image  |```![text](url)```
+```
+
+Html codes:
+```
+<html> 
+  <head> 
+    <meta>
+    <link>
+    <script> </script>
+    <title> </title>
+    <style>
+    </style>
+  </head>
+  <body> 
+    <h1> </h1>
+    <h2> </h2>
+    <h3> </h3>
+    <a href=url> text </a>
+    <b> text </b>
+    <img href=url>> text </img>
+    <div> </div>
+    <p> </p>
+    <table> 
+      <thead> 
+        <th> 
+        </th> 
+      </thead>
+      <tr> 
+        <td> 
+        </td>
+      </tr>
+    </table> 
+    <font> </font>
+    <br>
+    <strong> </strong>
+    <hr>
+    <ol> </ol>
+      <li> </li>
+  </body>
+</html>
+```
+
 ### Veckans kombination
 
 This folder is not included in this comparison, but might save 95%.  
