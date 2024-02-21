@@ -10,7 +10,7 @@
 <h1><a style="color:#000; background-color:#aaa" href="Xperiment.md">Xperiment</a> </h1>
 <h2>Bakgrund</h2>
 <p>Jag heter Christer Nilsson och har bl a utvecklat Monradprogrammet som användes flitigt under 90-talet av t ex Jonas Sandbom.<br />
-2023 tog jag även fram <a href="https://storage.googleapis.com/bildbanken2/index.html?query=Seniorschack">Bildbanken 2</a> i samarbete med Lars OA Hedlund.</p>
+2023 tog jag även fram <a href="https://storage.googleapis.com/bildbank2/index.html?query=Seniorschack">Bildbanken 2</a> i samarbete med Lars OA Hedlund.</p>
 <p>Bildbanken 2 består enbart av statiska filer, dvs det finns inget program som körs på någon server.<br />
 I Bildbanken 2 är det katalogstrukturen som styr allt.</p>
 <p>Med detta i bakhuvudet gör jag här ett försök att bygga upp en statisk hemsida utgående från katalogstrukturen.</p>
@@ -27,6 +27,63 @@ I Bildbanken 2 är det katalogstrukturen som styr allt.</p>
 </li>
 <li><a href="https://sv.wikipedia.org/wiki/RSS">RSS</a> på begäran.</li>
 <li>Open Source <a href="https://github.com/ChristerNilsson/2023/blob/main/023B-SeniorSchack/makeAll.py">Github</a></li>
+</ul>
+<h2>Link</h2>
+<p>Files with extension .link contains a directory name, a markdown file name or an url.<br />
+The reason behind it's existence is to display a proper menu name and sort correctly.</p>
+<h2>Matrix</h2>
+<table>
+<thead>
+<tr>
+<th>From</th>
+<th>Dir</th>
+<th>.md</th>
+<th>.link</th>
+<th>other files</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dir</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>.md</td>
+<td>Yes</td>
+<td>Yes</td>
+<td></td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>.link</td>
+<td>Yes</td>
+<td>Yes</td>
+<td></td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>other files</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>.md: <code>[text](url)</code> =&gt; <code>&lt;a href=url&gt; text &lt;/a&gt;</code></li>
+<li>.link: Text file that contains a file path or an URL</li>
+<li>Other files: Can be .pdf, .txt and other files except .md and .link, or an URL</li>
+</ul>
+<hr />
+<ul>
+<li>.md can not refer to a .link file.  </li>
+<li>A .link file can not refer to another .link file.  </li>
+<li>Other files can not refer to anything.  </li>
+<li>In the produced .html files, .md and .link never occurs.</li>
 </ul>
 <h3>Jämförelse av kodvolym</h3>
 <ul>

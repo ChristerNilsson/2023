@@ -2,7 +2,7 @@
 ## Bakgrund
 
 Jag heter Christer Nilsson och har bl a utvecklat Monradprogrammet som användes flitigt under 90-talet av t ex Jonas Sandbom.  
-2023 tog jag även fram [Bildbanken 2](https://storage.googleapis.com/bildbanken2/index.html?query=Seniorschack) i samarbete med Lars OA Hedlund.
+2023 tog jag även fram [Bildbanken 2](https://storage.googleapis.com/bildbank2/index.html?query=Seniorschack) i samarbete med Lars OA Hedlund.
 
 Bildbanken 2 består enbart av statiska filer, dvs det finns inget program som körs på någon server.  
 I Bildbanken 2 är det katalogstrukturen som styr allt.
@@ -20,6 +20,29 @@ Några high lights:
     * Nya flikar skapas aldrig.
 * [RSS](https://sv.wikipedia.org/wiki/RSS) på begäran.
 * Open Source [Github](https://github.com/ChristerNilsson/2023/blob/main/023B-SeniorSchack/makeAll.py)
+
+## Link
+
+Files with extension .link contains a directory name, a markdown file name or an url.  
+The reason behind it's existence is to display a proper menu name and sort correctly.
+
+## Matrix
+
+From       |Dir|.md|.link|other files
+-----------|---|---|---|---
+Dir        |Yes|Yes|Yes|Yes
+.md        |Yes|Yes|   |Yes
+.link      |Yes|Yes|   |Yes
+other files|   |   |   |
+
+* .md: ```[text](url)``` => ```<a href=url> text </a>```
+* .link: Text file that contains a file path or an URL
+* Other files: Can be .pdf, .txt and other files except .md and .link, or an URL
+---
+* .md can not refer to a .link file.  
+* A .link file can not refer to another .link file.  
+* Other files can not refer to anything.  
+* In the produced .html files, .md and .link never occurs.
 
 ### Jämförelse av kodvolym
 
