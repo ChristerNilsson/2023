@@ -22,7 +22,7 @@ def patch(s): # Reason: To have some whitespace between links (margin-bottom)
 	s = s.replace('</a></p>','</a></div>')
 	s = s.replace('TOUR', 'https://member.schack.se/ShowTournamentServlet?id')
 	s = s.replace('SENIOR','https://www.seniorschackstockholm.se')
-	s = s.replace('BB2','https://storage.googleapis.com/bildbanken2/index.html')
+	s = s.replace('BB2','https://storage.googleapis.com/bildbank2/index.html')
 	return s
 
 def writeHtmlFile(filename, t, level, content=""):
