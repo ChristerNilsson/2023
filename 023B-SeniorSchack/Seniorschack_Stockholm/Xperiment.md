@@ -97,9 +97,8 @@ purpose|markdown
 header |#
 header |##
 header |###
-bold   |```**text**```
-link   |```[text](url)```
-image  |```![text](url)```
+bold   |**text**
+link   |[text](url)
 
 ```
 purpose|markdown
@@ -107,9 +106,9 @@ purpose|markdown
 header |#
 header |##
 header |###
-bold   |```**text**```
-link   |```[text](url)```
-image  |```![text](url)```
+bold   |**text**
+link   |[text](url)
+image  |![text](url)
 ```
 
 Html codes:
