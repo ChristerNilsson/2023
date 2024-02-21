@@ -15,16 +15,22 @@ Några high lights:
 * Anpassad för mobiler och äldre.
 * De senaste Nyheterna visas direkt på startsidan.
 * Markdown kan ses för en sida genom att klicka på rubriken.
-* Alfabetisk eller kronologisk sortering.
-* Bakåt-knappen fungerar som på iPhone och Androider och är obligatorisk.
-    * Nya flikar skapas aldrig.
+* Alfabetisk sortering av menyalternativen.
+* Kronologisk sortering av Nyheter.
+* Bakåt-knappen används alltid för att lämna en sida.
+* Nya flikar skapas aldrig.
 * [RSS](https://sv.wikipedia.org/wiki/RSS) på begäran.
-* Open Source [Github](https://github.com/ChristerNilsson/2023/blob/main/023B-SeniorSchack/makeAll.py)
+* Open Source på [Github](https://github.com/ChristerNilsson/2023/blob/main/023B-SeniorSchack/makeAll.py)
 
-## Link
+## .md
 
-Files with extension .link contains a directory name, a markdown file name or an url.  
-The reason behind it's existence is to display a proper menu name and sort correctly.
+This is a Markdown a file and is translated by makeAll.py to an .html file with the same name.
+
+## .link
+
+Files with this extension may contain a directory name, a markdown filename, a filename or an url.  
+A .link file can be replaced by an .md file, but the user would have to use one extra click.  
+You could say, the .link file acts as a shortcut.
 
 ## Matrix
 
@@ -44,15 +50,37 @@ other files|   |   |   |
 * Other files can not refer to anything.  
 * In the produced .html files, .md and .link never occurs.
 
-### Jämförelse av kodvolym
+## General advice
 
-* Markdown utgör 40-50% av html:s storlek.
-* De största befintliga sidorna, Klubben.html och Arkivet.html tar sammanlagt 57 kb.
-    * Dessa kräver noll bytes iom att länkarna kan skapas automatiskt utifrån mappnamn och filnamn.
-* Resterande 16 kb html, kan skapas med 7 kb markdownkod.
-* Total reducering av kodvolym är alltså cirka 90%.
+* Avoid .html
+* Avoid .md
+* Avoid .link
+* Give all directories and files nice, short names, acceptable as menu names.
+    * For ```/files/news```, start all file names with a date, using the format YYYY-MM-DD.
+* style.css can be used to customize your pages.
+    * font
+    * font size
+    * colours
+    * link decoration
+    * paddings and margins
 
-namn|html|markdown|enhet
+Consider markdown to be used for:
+* text
+* links
+* decoration
+* tables
+* specifying your own sort order of a menu.
+* adding html when markdown is too limited.
+
+### Code volume comparison
+
+* Markdown size is normally 40 to 50 % of html size.
+* The largest sample pages, Klubben.html and Arkivet.html takes 57 kb.
+    * These can be replaced with zero code as the links are automatically created using folder and file names.
+* The last 16 kb html, can be defined using 7 kb markdown code.
+* Total code volume reduction is around 90%.
+
+name|html|markdown|unit
 ---|---:|---:|---
 index|10.3|3.0
 program|5.5|1.8
@@ -60,34 +88,32 @@ klubben|22.4|0
 arkivet|34.6|0
 kontakt|0|1.4
 ext länkar|0|0.9
-totalt|72.9|7.1|kbyte
+totalt|72.9|7.1|kb
 
 ### Veckans kombination
 
-Denna katalog ingår inte i jämförelsen, men här kan man spara 95%.
-Vi har cirka 66 filer om 12K, dvs 800kB. Ett antal identiska javascriptfunktioner ingår i varje fil.
-Pjäser och bräde är gemensamt.
-Det som skiljer är 
+This folder is not included in this comparison, but might save 95%.  
+We have 66 files with a size of 12 kb each, in total 800 kb.  
+A number of identical javascript functions are included in every file.  
 
-* utplacering av pjäser.
-* namn på spelarna
-* lösningen
-
-Antar att dessa har några år på nacken iom att chess.com och lichess har liknande saker.
+Differences:  
+* positions
+* players
+* solution
 
 ### Dagens kombination 
 
-Är uppbyggd på liknande sätt, men ligger online.
+Is constructed in a similar way, but is online.
 
-### Stor bild, 576 kilobyte!
+### Large picture, 576 kb!
 
-138 x 138 x 3 = 57 kB.  
-Borde vara 6 kb mtp komprimering.  
-Filen är ett hundra gånger för stor.  
+138 x 138 x 3 = 57 kb.  
+Should be 6 kb compressed.  
+This file is one hundred times too large.  
 
 ![](KM_SrS_24.jpg)
 
-## Exempel på tabellhantering
+# Table examples
  
  År |    Segrare
 ----|--------------
@@ -95,7 +121,7 @@ Filen är ett hundra gånger för stor.
 2021|[Olle Ålgars (Stockholms Veteranmästare 2021)](SENIOR/htmfiler/resultat_veteran_HT21.pdf)
 
 
-# Nyheter
+## News
 
 Datum|Evenemang
 -----------|------------------------------------------------------------------------------
@@ -105,7 +131,7 @@ Datum|Evenemang
 2024-02-15 |[En liten lathund för att hitta information om Seniorschacks KM på Chess-Results](SENIOR/htmfiler/Chess-Results.pdf)
 2024-02-08 |[Frirondsblixten](files/Frirondsblixten.pdf)
 
-# Meny
+## Menu
 
 ||
 |------------------------------------------------------------------------------|

@@ -20,17 +20,19 @@ I Bildbanken 2 är det katalogstrukturen som styr allt.</p>
 <li>Anpassad för mobiler och äldre.</li>
 <li>De senaste Nyheterna visas direkt på startsidan.</li>
 <li>Markdown kan ses för en sida genom att klicka på rubriken.</li>
-<li>Alfabetisk eller kronologisk sortering.</li>
-<li>Bakåt-knappen fungerar som på iPhone och Androider och är obligatorisk.<ul>
+<li>Alfabetisk sortering av menyalternativen.</li>
+<li>Kronologisk sortering av Nyheter.</li>
+<li>Bakåt-knappen används alltid för att lämna en sida.</li>
 <li>Nya flikar skapas aldrig.</li>
-</ul>
-</li>
 <li><a href="https://sv.wikipedia.org/wiki/RSS">RSS</a> på begäran.</li>
-<li>Open Source <a href="https://github.com/ChristerNilsson/2023/blob/main/023B-SeniorSchack/makeAll.py">Github</a></li>
+<li>Open Source på <a href="https://github.com/ChristerNilsson/2023/blob/main/023B-SeniorSchack/makeAll.py">Github</a></li>
 </ul>
-<h2>Link</h2>
-<p>Files with extension .link contains a directory name, a markdown file name or an url.<br />
-The reason behind it's existence is to display a proper menu name and sort correctly.</p>
+<h2>.md</h2>
+<p>This is a Markdown a file and is translated by makeAll.py to an .html file with the same name.</p>
+<h2>.link</h2>
+<p>Files with this extension may contain a directory name, a markdown filename, a filename or an url.<br />
+A .link file can be replaced by an .md file, but the user would have to use one extra click.<br />
+You could say, the .link file acts as a shortcut.</p>
 <h2>Matrix</h2>
 <table>
 <thead>
@@ -85,23 +87,48 @@ The reason behind it's existence is to display a proper menu name and sort corre
 <li>Other files can not refer to anything.  </li>
 <li>In the produced .html files, .md and .link never occurs.</li>
 </ul>
-<h3>Jämförelse av kodvolym</h3>
+<h2>General advice</h2>
 <ul>
-<li>Markdown utgör 40-50% av html:s storlek.</li>
-<li>De största befintliga sidorna, Klubben.html och Arkivet.html tar sammanlagt 57 kb.<ul>
-<li>Dessa kräver noll bytes iom att länkarna kan skapas automatiskt utifrån mappnamn och filnamn.</li>
+<li>Avoid .html</li>
+<li>Avoid .md</li>
+<li>Avoid .link</li>
+<li>Give all directories and files nice, short names, acceptable as menu names.<ul>
+<li>For <code>/files/news</code>, start all file names with a date, using the format YYYY-MM-DD.</li>
 </ul>
 </li>
-<li>Resterande 16 kb html, kan skapas med 7 kb markdownkod.</li>
-<li>Total reducering av kodvolym är alltså cirka 90%.</li>
+<li>style.css can be used to customize your pages.<ul>
+<li>font</li>
+<li>font size</li>
+<li>colours</li>
+<li>link decoration</li>
+<li>paddings and margins</li>
+</ul>
+</li>
+</ul>
+<p>Consider markdown to be used for:
+* text
+* links
+* decoration
+* tables
+* specifying your own sort order of a menu.
+* adding html when markdown is too limited.</p>
+<h3>Code volume comparison</h3>
+<ul>
+<li>Markdown size is normally 40 to 50 % of html size.</li>
+<li>The largest sample pages, Klubben.html and Arkivet.html takes 57 kb.<ul>
+<li>These can be replaced with zero code as the links are automatically created using folder and file names.</li>
+</ul>
+</li>
+<li>The last 16 kb html, can be defined using 7 kb markdown code.</li>
+<li>Total code volume reduction is around 90%.</li>
 </ul>
 <table>
 <thead>
 <tr>
-<th>namn</th>
+<th>name</th>
 <th align="right">html</th>
 <th align="right">markdown</th>
-<th>enhet</th>
+<th>unit</th>
 </tr>
 </thead>
 <tbody>
@@ -145,29 +172,26 @@ The reason behind it's existence is to display a proper menu name and sort corre
 <td>totalt</td>
 <td align="right">72.9</td>
 <td align="right">7.1</td>
-<td>kbyte</td>
+<td>kb</td>
 </tr>
 </tbody>
 </table>
 <h3>Veckans kombination</h3>
-<p>Denna katalog ingår inte i jämförelsen, men här kan man spara 95%.
-Vi har cirka 66 filer om 12K, dvs 800kB. Ett antal identiska javascriptfunktioner ingår i varje fil.
-Pjäser och bräde är gemensamt.
-Det som skiljer är </p>
-<ul>
-<li>utplacering av pjäser.</li>
-<li>namn på spelarna</li>
-<li>lösningen</li>
-</ul>
-<p>Antar att dessa har några år på nacken iom att chess.com och lichess har liknande saker.</p>
+<p>This folder is not included in this comparison, but might save 95%.<br />
+We have 66 files with a size of 12 kb each, in total 800 kb.<br />
+A number of identical javascript functions are included in every file.  </p>
+<p>Differences:<br />
+* positions
+* players
+* solution</p>
 <h3>Dagens kombination</h3>
-<p>Är uppbyggd på liknande sätt, men ligger online.</p>
-<h3>Stor bild, 576 kilobyte!</h3>
-<p>138 x 138 x 3 = 57 kB.<br />
-Borde vara 6 kb mtp komprimering.<br />
-Filen är ett hundra gånger för stor.  </p>
+<p>Is constructed in a similar way, but is online.</p>
+<h3>Large picture, 576 kb!</h3>
+<p>138 x 138 x 3 = 57 kb.<br />
+Should be 6 kb compressed.<br />
+This file is one hundred times too large.  </p>
 <p><img alt="" src="KM_SrS_24.jpg" /></p>
-<h2>Exempel på tabellhantering</h2>
+<h1>Table examples</h1>
 <table>
 <thead>
 <tr>
@@ -186,7 +210,7 @@ Filen är ett hundra gånger för stor.  </p>
 </tr>
 </tbody>
 </table>
-<h1>Nyheter</h1>
+<h2>News</h2>
 <table>
 <thead>
 <tr>
@@ -217,7 +241,7 @@ Filen är ett hundra gånger för stor.  </p>
 </tr>
 </tbody>
 </table>
-<h1>Meny</h1>
+<h2>Menu</h2>
 <table>
 <thead>
 <tr>
