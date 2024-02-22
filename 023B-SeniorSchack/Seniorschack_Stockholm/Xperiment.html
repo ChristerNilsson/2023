@@ -8,7 +8,7 @@
 	</head>
 <body>
 <h1><a style="color:#000; background-color:#aaa" href="Xperiment.md">Xperiment</a> </h1>
-<h2>Bakgrund</h2>
+<p>## Bakgrund</p>
 <p>Jag heter Christer Nilsson och har bl a utvecklat Monradprogrammet som användes flitigt under 90-talet av t ex Jonas Sandbom.<br />
 2023 tog jag även fram <a href="https://storage.googleapis.com/bildbank2/index.html?query=Seniorschack">Bildbanken 2</a> i samarbete med Lars OA Hedlund.</p>
 <p>Bildbanken 2 består enbart av statiska filer, dvs det finns inget program som körs på någon server.<br />
@@ -28,20 +28,22 @@ I Bildbanken 2 är det katalogstrukturen som styr allt.</p>
 <li>Open Source på <a href="https://github.com/ChristerNilsson/2023/blob/main/023B-SeniorSchack/makeAll.py">Github</a></li>
 </ul>
 <h2>.md</h2>
-<p>This is a Markdown a file and is translated by makeAll.py to an .html file with the same name.</p>
+<p>This is a <strong>markdown</strong> file and is translated by <em>makeAll.py</em> to an <strong>.html</strong> file with the same name.</p>
 <h2>.link</h2>
-<p>Files with this extension may contain a directory name, a markdown filename, a filename or an url.<br />
-A .link file can be replaced by an .md file, but the user would have to use one extra click.<br />
-You could say, the .link file acts as a shortcut.</p>
-<h2>Matrix</h2>
+<p>Files with this extension may contain a directory name, an html filename, a filename or an url.<br />
+A <strong>.link</strong> file can be replaced by an <strong>.md file</strong>,<br />
+but the user would see an extra menu level<br />
+and thus have to use one extra <em>click</em>.<br />
+You could say, the .link file acts as a shortcut.  </p>
+<h2>From/To Matrix</h2>
 <table>
 <thead>
 <tr>
-<th>From</th>
+<th>From/To</th>
 <th>Dir</th>
 <th>.md</th>
 <th>.link</th>
-<th>other files</th>
+<th>url</th>
 </tr>
 </thead>
 <tbody>
@@ -67,7 +69,7 @@ You could say, the .link file acts as a shortcut.</p>
 <td>Yes</td>
 </tr>
 <tr>
-<td>other files</td>
+<td>url</td>
 <td></td>
 <td></td>
 <td></td>
@@ -75,25 +77,35 @@ You could say, the .link file acts as a shortcut.</p>
 </tr>
 </tbody>
 </table>
+<p><strong>Yes</strong>: a clickable link will be produced in the resulting html file.</p>
 <ul>
 <li>.md: <code>[text](url)</code> =&gt; <code>&lt;a href=url&gt; text &lt;/a&gt;</code></li>
-<li>.link: Text file that contains a file path or an URL</li>
-<li>Other files: Can be .pdf, .txt and other files except .md and .link, or an URL</li>
+<li>.link: Text file contains a url or file path</li>
+<li>url: Can also be any file except .md and .link</li>
 </ul>
 <hr />
 <ul>
-<li>.md can not refer to a .link file.  </li>
-<li>A .link file can not refer to another .link file.  </li>
-<li>Other files can not refer to anything.  </li>
-<li>In the produced .html files, .md and .link never occurs.</li>
+<li>.md can not refer to a .link.</li>
+<li>.link can not refer to another .link.</li>
+<li>In the produced .html file, .md and .link never occurs as targets.</li>
 </ul>
 <h2>General advice</h2>
 <ul>
-<li>Avoid .html</li>
-<li>Avoid .md</li>
-<li>Avoid .link</li>
-<li>Give all directories and files nice, short names, acceptable as menu names.<ul>
-<li>For <code>/files/news</code>, start all file names with a date, using the format YYYY-MM-DD.</li>
+<li>Start with the folders</li>
+<li>Add files to your folders</li>
+<li>Add .link files to use urls</li>
+<li>Add an index.md file to show text, images and tables.</li>
+<li>Add an index.md file if you prefer another sort order<ul>
+<li>e.g. if your files start with a week day or a month name<ul>
+<li>fri mon sat sun thu tue wed</li>
+<li>apr aug dec feb jan jun jul mar may nov oct sep</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Add html code to your .md files if necessary.</li>
+<li>Give all folders and files nice, short names, acceptable as menu names.<ul>
+<li>For the <code>/files/news</code> folder, start all file names with a date, using the format YYYY-MM-DD.</li>
 </ul>
 </li>
 <li>style.css can be used to customize your pages.<ul>
@@ -105,13 +117,16 @@ You could say, the .link file acts as a shortcut.</p>
 </ul>
 </li>
 </ul>
-<p>Consider markdown to be used for:
-* text
-* links
-* decoration
-* tables
-* specifying your own sort order of a menu.
-* adding html when markdown is too limited.</p>
+<h2>files</h2>
+<p>This folder contains files you don't want to be processed.</p>
+<h3>Keywords</h3>
+<ul>
+<li><strong>CONTENT</strong> is used as a placeholder that will be replaced by folder names, .md names, .link names and other file names stored in the <em>current</em> folder.</li>
+<li><strong>NEWS</strong> is used as a placeholder that will be replaced by foldernames, markdown names, link names and other filenames stored in the <strong>files/news</strong> folder.<ul>
+<li>Only the newest files will be displayed, as specified by the setting <em>latestNews</em> = 5.</li>
+</ul>
+</li>
+</ul>
 <h3>Code volume comparison</h3>
 <ul>
 <li>Markdown size is normally 40 to 50 % of html size.</li>
@@ -199,69 +214,67 @@ You could say, the .link file acts as a shortcut.</p>
 </tr>
 <tr>
 <td>bold</td>
-<td><strong>text</strong></td>
+<td><code>**text**</code></td>
+</tr>
+<tr>
+<td>italics</td>
+<td><code>*text*</code></td>
 </tr>
 <tr>
 <td>link</td>
-<td><a href="url">text</a></td>
+<td><code>[text](url)</code></td>
+</tr>
+<tr>
+<td>image</td>
+<td><code>![text](url)</code></td>
+</tr>
+<tr>
+<td>bullet</td>
+<td><code>* item</code></td>
 </tr>
 </tbody>
 </table>
-<p><code>purpose|markdown
--------|---
-header |#
-header |##
-header |###
-bold   |**text**
-link   |[text](url)
-image  |![text](url)</code></p>
-<p>Html codes:
-```</p>
-<html> 
-  <head> 
-    <meta>
-    <link>
-    <script> </script>
-    <title> </title>
-    <style>
-    </style>
-  </head>
-  <body> 
-    <h1> </h1>
-    <h2> </h2>
-    <h3> </h3>
-    <a href=url> text </a>
-    <b> text </b>
-    <img href=url>> text </img>
-    <div> </div>
-    <p> </p>
-    <table> 
-      <thead> 
-        <th> 
-        </th> 
-      </thead>
-      <tr> 
-        <td> 
-        </td>
-      </tr>
-    </table> 
-    <font> </font>
-    <br>
-    <strong> </strong>
-    <hr>
-    <ol> </ol>
-      <li> </li>
-  </body>
-</html>
-<p>```</p>
+<p>Common HTML codes:</p>
+<ul>
+<li><code>&lt;a&gt;&lt;/a&gt;</code></li>
+<li><code>&lt;b&gt;&lt;/b&gt;</code></li>
+<li><code>&lt;body&gt;&lt;/body&gt;</code></li>
+<li><code>&lt;br&gt;&lt;/br&gt;</code></li>
+<li><code>&lt;div&gt;&lt;/div&gt;</code></li>
+<li><code>&lt;font&gt;&lt;/font&gt;</code></li>
+<li><code>&lt;h1&gt;&lt;/h1&gt;</code></li>
+<li><code>&lt;h2&gt;&lt;/h2&gt;</code></li>
+<li><code>&lt;h3&gt;&lt;/h3&gt;</code></li>
+<li><code>&lt;head&gt;&lt;/head&gt;</code></li>
+<li><code>&lt;hr&gt;</code></li>
+<li><code>&lt;html&gt;&lt;/html&gt;</code></li>
+<li><code>&lt;img&gt;&lt;/img&gt;</code></li>
+<li><code>&lt;li&gt;&lt;/li&gt;</code></li>
+<li><code>&lt;link&gt;&lt;/link&gt;</code></li>
+<li><code>&lt;meta&gt;&lt;/meta&gt;</code></li>
+<li><code>&lt;ol&gt;&lt;/ol&gt;</code></li>
+<li><code>&lt;p&gt;&lt;/p&gt;</code></li>
+<li><code>&lt;script&gt;&lt;/script&gt;</code></li>
+<li><code>&lt;strong&gt;&lt;/strong&gt;</code></li>
+<li><code>&lt;style&gt;&lt;/style&gt;</code></li>
+<li><code>&lt;table&gt;&lt;/table&gt;</code></li>
+<li><code>&lt;td&gt;&lt;/td&gt;</code></li>
+<li><code>&lt;th&gt;&lt;/th&gt;</code></li>
+<li><code>&lt;thead&gt;&lt;/thead&gt;</code></li>
+<li><code>&lt;title&gt;&lt;/title&gt;</code></li>
+<li><code>&lt;tr&gt;&lt;/tr&gt;</code></li>
+<li><code>&lt;ul&gt;&lt;/ul&gt;</code></li>
+</ul>
 <h3>Veckans kombination</h3>
 <p>This folder is not included in this comparison, but might save 95%.<br />
 We have 66 files with a size of 12 kb each, in total 800 kb.<br />
 A number of identical javascript functions are included in every file.  </p>
-<p>Differences:<br />
-* positions
-* players
-* solution</p>
+<p>Differences:</p>
+<ul>
+<li>positions</li>
+<li>players</li>
+<li>solution</li>
+</ul>
 <h3>Dagens kombination</h3>
 <p>Is constructed in a similar way, but is online.</p>
 <h3>Large picture, 576 kb!</h3>

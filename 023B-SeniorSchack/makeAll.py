@@ -1,5 +1,6 @@
 import os
 import time
+#import marko
 import markdown
 from markdown.extensions.tables import TableExtension
 
@@ -140,7 +141,10 @@ def transpileFile(long,short,level=0):
 		print('\t' * (level + 1) + short, f'({len(md)} bytes) =>', short.replace('.md', '.html'))
 		file_count += 1
 		md_bytes += len(md)
+
+		#html = marko.convert(md)
 		html = markdown.markdown(md,extensions=[TableExtension(use_align_attribute=True)])
+
 		html = patch(html)
 	return html
 

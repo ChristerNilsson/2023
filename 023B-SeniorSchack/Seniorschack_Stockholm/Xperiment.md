@@ -1,5 +1,4 @@
- 
-## Bakgrund
+ ## Bakgrund
 
 Jag heter Christer Nilsson och har bl a utvecklat Monradprogrammet som användes flitigt under 90-talet av t ex Jonas Sandbom.  
 2023 tog jag även fram [Bildbanken 2](https://storage.googleapis.com/bildbank2/index.html?query=Seniorschack) i samarbete med Lars OA Hedlund.
@@ -24,39 +23,48 @@ Några high lights:
 
 ## .md
 
-This is a Markdown a file and is translated by makeAll.py to an .html file with the same name.
+This is a **markdown** file and is translated by *makeAll.py* to an **.html** file with the same name.
 
 ## .link
 
-Files with this extension may contain a directory name, a markdown filename, a filename or an url.  
-A .link file can be replaced by an .md file, but the user would have to use one extra click.  
-You could say, the .link file acts as a shortcut.
+Files with this extension may contain a directory name, an html filename, a filename or an url.  
+A **.link** file can be replaced by an **.md file**,  
+but the user would see an extra menu level  
+and thus have to use one extra *click*.  
+You could say, the .link file acts as a shortcut.  
 
-## Matrix
+## From/To Matrix
 
-From       |Dir|.md|.link|other files
------------|---|---|---|---
-Dir        |Yes|Yes|Yes|Yes
-.md        |Yes|Yes|   |Yes
-.link      |Yes|Yes|   |Yes
-other files|   |   |   |
+From/To|Dir|.md|.link|url
+-------|---|---|-----|---
+Dir    |Yes|Yes|Yes  |Yes
+.md    |Yes|Yes|     |Yes
+.link  |Yes|Yes|     |Yes
+url    |   |   |     |
+
+**Yes**: a clickable link will be produced in the resulting html file.
 
 * .md: ```[text](url)``` => ```<a href=url> text </a>```
-* .link: Text file that contains a file path or an URL
-* Other files: Can be .pdf, .txt and other files except .md and .link, or an URL
+* .link: Text file contains a url or file path
+* url: Can also be any file except .md and .link
 ---
-* .md can not refer to a .link file.  
-* A .link file can not refer to another .link file.  
-* Other files can not refer to anything.  
-* In the produced .html files, .md and .link never occurs.
+* .md can not refer to a .link.
+* .link can not refer to another .link.
+* In the produced .html file, .md and .link never occurs as targets.
 
 ## General advice
 
-* Avoid .html
-* Avoid .md
-* Avoid .link
-* Give all directories and files nice, short names, acceptable as menu names.
-    * For ```/files/news```, start all file names with a date, using the format YYYY-MM-DD.
+* Start with the folders
+* Add files to your folders
+* Add .link files to use urls
+* Add an index.md file to show text, images and tables.
+* Add an index.md file if you prefer another sort order
+    * e.g. if your files start with a week day or a month name
+        * fri mon sat sun thu tue wed
+        * apr aug dec feb jan jun jul mar may nov oct sep
+* Add html code to your .md files if necessary.
+* Give all folders and files nice, short names, acceptable as menu names.
+    * For the ```/files/news``` folder, start all file names with a date, using the format YYYY-MM-DD.
 * style.css can be used to customize your pages.
     * font
     * font size
@@ -64,13 +72,15 @@ other files|   |   |   |
     * link decoration
     * paddings and margins
 
-Consider markdown to be used for:
-* text
-* links
-* decoration
-* tables
-* specifying your own sort order of a menu.
-* adding html when markdown is too limited.
+## files
+
+This folder contains files you don't want to be processed.
+
+### Keywords
+
+* **CONTENT** is used as a placeholder that will be replaced by folder names, .md names, .link names and other file names stored in the *current* folder.
+* **NEWS** is used as a placeholder that will be replaced by foldernames, markdown names, link names and other filenames stored in the **files/news** folder.
+    * Only the newest files will be displayed, as specified by the setting *latestNews* = 5.
 
 ### Code volume comparison
 
@@ -97,59 +107,42 @@ purpose|markdown
 header |#
 header |##
 header |###
-bold   |**text**
-link   |[text](url)
+bold   |```**text**```
+italics|```*text*```
+link   |``` [text](url)```
+image  |```![text](url)```
+bullet |```* item```
 
-```
-purpose|markdown
--------|---
-header |#
-header |##
-header |###
-bold   |**text**
-link   |[text](url)
-image  |![text](url)
-```
+Common HTML codes:
 
-Html codes:
-```
-<html> 
-  <head> 
-    <meta>
-    <link>
-    <script> </script>
-    <title> </title>
-    <style>
-    </style>
-  </head>
-  <body> 
-    <h1> </h1>
-    <h2> </h2>
-    <h3> </h3>
-    <a href=url> text </a>
-    <b> text </b>
-    <img href=url>> text </img>
-    <div> </div>
-    <p> </p>
-    <table> 
-      <thead> 
-        <th> 
-        </th> 
-      </thead>
-      <tr> 
-        <td> 
-        </td>
-      </tr>
-    </table> 
-    <font> </font>
-    <br>
-    <strong> </strong>
-    <hr>
-    <ol> </ol>
-      <li> </li>
-  </body>
-</html>
-```
+* ```<a></a>```
+* ```<b></b>```
+* ```<body></body>```
+* ```<br></br>```
+* ```<div></div>```
+* ```<font></font>```
+* ```<h1></h1>```
+* ```<h2></h2>```
+* ```<h3></h3>```
+* ```<head></head>```
+* ```<hr>```
+* ```<html></html>```
+* ```<img></img>```
+* ```<li></li>```
+* ```<link></link>```
+* ```<meta></meta>```
+* ```<ol></ol>```
+* ```<p></p>```
+* ```<script></script>```
+* ```<strong></strong>```
+* ```<style></style>```
+* ```<table></table>```
+* ```<td></td>```
+* ```<th></th>```
+* ```<thead></thead>```
+* ```<title></title>```
+* ```<tr></tr>```
+* ```<ul></ul>```
 
 ### Veckans kombination
 
@@ -157,7 +150,8 @@ This folder is not included in this comparison, but might save 95%.
 We have 66 files with a size of 12 kb each, in total 800 kb.  
 A number of identical javascript functions are included in every file.  
 
-Differences:  
+Differences:
+
 * positions
 * players
 * solution
