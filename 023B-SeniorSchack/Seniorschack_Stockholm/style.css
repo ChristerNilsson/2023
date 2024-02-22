@@ -14,9 +14,7 @@ a {
     background-color:gray;
 }
 
-div {
-    margin-bottom:5px;
-}
+div {margin-bottom:5px}
 
 table, th, td { 
     border: 1px solid black; 
@@ -29,3 +27,12 @@ th {
     padding-left:5px; 
     padding-right:5px; 
 }
+
+red {color: red}
+green {color: green}
+blue {color: blue}
+
+/* p {
+    margin-top:-20px;
+    margin-bottom:-20px;
+} */

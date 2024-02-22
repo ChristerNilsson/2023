@@ -4,11 +4,12 @@
 	<head>
 		<title>Xperiment</title>
 		<meta charset = "utf-8"/>
+		<link href="../style.css" rel="stylesheet" type="text/css" >
 		<link href="style.css" rel="stylesheet" type="text/css" >
 	</head>
 <body>
-<h1><a style="color:#000; background-color:#aaa" href="Xperiment.md">Xperiment</a> </h1>
-<p>## Bakgrund</p>
+<h1><a style="color:#000; background-color:#aaa" href="index.md">Xperiment</a> </h1>
+<h2>Bakgrund</h2>
 <p>Jag heter Christer Nilsson och har bl a utvecklat Monradprogrammet som användes flitigt under 90-talet av t ex Jonas Sandbom.<br />
 2023 tog jag även fram <a href="https://storage.googleapis.com/bildbank2/index.html?query=Seniorschack">Bildbanken 2</a> i samarbete med Lars OA Hedlund.</p>
 <p>Bildbanken 2 består enbart av statiska filer, dvs det finns inget program som körs på någon server.<br />
@@ -29,12 +30,13 @@ I Bildbanken 2 är det katalogstrukturen som styr allt.</p>
 </ul>
 <h2>.md</h2>
 <p>This is a <strong>markdown</strong> file and is translated by <em>makeAll.py</em> to an <strong>.html</strong> file with the same name.</p>
+<p><div><a href='Xamples.html'>Xamples</a></div></p>
 <h2>.link</h2>
 <p>Files with this extension may contain a directory name, an html filename, a filename or an url.<br />
 A <strong>.link</strong> file can be replaced by an <strong>.md file</strong>,<br />
 but the user would see an extra menu level<br />
 and thus have to use one extra <em>click</em>.<br />
-You could say, the .link file acts as a shortcut.  </p>
+You could say, the .link file acts as a shortcut.</p>
 <h2>From/To Matrix</h2>
 <table>
 <thead>
@@ -95,8 +97,10 @@ You could say, the .link file acts as a shortcut.  </p>
 <li>Add files to your folders</li>
 <li>Add .link files to use urls</li>
 <li>Add an index.md file to show text, images and tables.</li>
-<li>Add an index.md file if you prefer another sort order<ul>
-<li>e.g. if your files start with a week day or a month name<ul>
+<li>Add an index.md file if you prefer another sort order
+<ul>
+<li>e.g. if your files start with a week day or a month name
+<ul>
 <li>fri mon sat sun thu tue wed</li>
 <li>apr aug dec feb jan jun jul mar may nov oct sep</li>
 </ul>
@@ -104,16 +108,24 @@ You could say, the .link file acts as a shortcut.  </p>
 </ul>
 </li>
 <li>Add html code to your .md files if necessary.</li>
-<li>Give all folders and files nice, short names, acceptable as menu names.<ul>
+<li>Give all folders and files nice, short names, acceptable as menu names.
+<ul>
 <li>For the <code>/files/news</code> folder, start all file names with a date, using the format YYYY-MM-DD.</li>
 </ul>
 </li>
-<li>style.css can be used to customize your pages.<ul>
+<li>style.css can be used to customize your pages.
+<ul>
 <li>font</li>
 <li>font size</li>
 <li>colours</li>
 <li>link decoration</li>
 <li>paddings and margins</li>
+<li>style.css can be defined in every folder.
+<ul>
+<li>Sheets closer to the leaf overrides sheets closer to the root.</li>
+<li>Try changing color of the links in this folder: <code>a {color:green}</code></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -121,16 +133,18 @@ You could say, the .link file acts as a shortcut.  </p>
 <p>This folder contains files you don't want to be processed.</p>
 <h3>Keywords</h3>
 <ul>
-<li><strong>CONTENT</strong> is used as a placeholder that will be replaced by folder names, .md names, .link names and other file names stored in the <em>current</em> folder.</li>
-<li><strong>NEWS</strong> is used as a placeholder that will be replaced by foldernames, markdown names, link names and other filenames stored in the <strong>files/news</strong> folder.<ul>
-<li>Only the newest files will be displayed, as specified by the setting <em>latestNews</em> = 5.</li>
+<li><strong>CON_TENT</strong> is used as a placeholder that will be replaced by folder names, .md names, .link names and other file names stored in the <em>current</em> folder. Don't forget to remove the underscore.</li>
+<li><strong>PO_STS</strong> is used as a placeholder that will be replaced by foldernames, markdown names, link names and other filenames stored in the <strong>files/posts</strong> folder.
+<ul>
+<li>Only the latest files will be displayed, as specified by the setting <em>latestPosts</em> = 5.</li>
 </ul>
 </li>
 </ul>
 <h3>Code volume comparison</h3>
 <ul>
 <li>Markdown size is normally 40 to 50 % of html size.</li>
-<li>The largest sample pages, Klubben.html and Arkivet.html takes 57 kb.<ul>
+<li>The largest sample pages, Klubben.html and Arkivet.html takes 57 kb.
+<ul>
 <li>These can be replaced with zero code as the links are automatically created using folder and file names.</li>
 </ul>
 </li>
@@ -141,96 +155,53 @@ You could say, the .link file acts as a shortcut.  </p>
 <thead>
 <tr>
 <th>name</th>
-<th align="right">html</th>
-<th align="right">markdown</th>
+<th style="text-align:right">html</th>
+<th style="text-align:right">markdown</th>
 <th>unit</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>index</td>
-<td align="right">10.3</td>
-<td align="right">3.0</td>
+<td style="text-align:right">10.3</td>
+<td style="text-align:right">3.0</td>
 <td></td>
 </tr>
 <tr>
 <td>program</td>
-<td align="right">5.5</td>
-<td align="right">1.8</td>
+<td style="text-align:right">5.5</td>
+<td style="text-align:right">1.8</td>
 <td></td>
 </tr>
 <tr>
 <td>klubben</td>
-<td align="right">22.4</td>
-<td align="right">0</td>
+<td style="text-align:right">22.4</td>
+<td style="text-align:right">0</td>
 <td></td>
 </tr>
 <tr>
 <td>arkivet</td>
-<td align="right">34.6</td>
-<td align="right">0</td>
+<td style="text-align:right">34.6</td>
+<td style="text-align:right">0</td>
 <td></td>
 </tr>
 <tr>
 <td>kontakt</td>
-<td align="right">0</td>
-<td align="right">1.4</td>
+<td style="text-align:right">0</td>
+<td style="text-align:right">1.4</td>
 <td></td>
 </tr>
 <tr>
 <td>ext länkar</td>
-<td align="right">0</td>
-<td align="right">0.9</td>
+<td style="text-align:right">0</td>
+<td style="text-align:right">0.9</td>
 <td></td>
 </tr>
 <tr>
 <td>totalt</td>
-<td align="right">72.9</td>
-<td align="right">7.1</td>
+<td style="text-align:right">72.9</td>
+<td style="text-align:right">7.1</td>
 <td>kb</td>
-</tr>
-</tbody>
-</table>
-<h3>Markdown vs html</h3>
-<table>
-<thead>
-<tr>
-<th>purpose</th>
-<th>markdown</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>header</td>
-<td>#</td>
-</tr>
-<tr>
-<td>header</td>
-<td>##</td>
-</tr>
-<tr>
-<td>header</td>
-<td>###</td>
-</tr>
-<tr>
-<td>bold</td>
-<td><code>**text**</code></td>
-</tr>
-<tr>
-<td>italics</td>
-<td><code>*text*</code></td>
-</tr>
-<tr>
-<td>link</td>
-<td><code>[text](url)</code></td>
-</tr>
-<tr>
-<td>image</td>
-<td><code>![text](url)</code></td>
-</tr>
-<tr>
-<td>bullet</td>
-<td><code>* item</code></td>
 </tr>
 </tbody>
 </table>
@@ -268,7 +239,7 @@ You could say, the .link file acts as a shortcut.  </p>
 <h3>Veckans kombination</h3>
 <p>This folder is not included in this comparison, but might save 95%.<br />
 We have 66 files with a size of 12 kb each, in total 800 kb.<br />
-A number of identical javascript functions are included in every file.  </p>
+A number of identical javascript functions are included in every file.</p>
 <p>Differences:</p>
 <ul>
 <li>positions</li>
@@ -280,82 +251,8 @@ A number of identical javascript functions are included in every file.  </p>
 <h3>Large picture, 576 kb!</h3>
 <p>138 x 138 x 3 = 57 kb.<br />
 Should be 6 kb compressed.<br />
-This file is one hundred times too large.  </p>
-<p><img alt="" src="KM_SrS_24.jpg" /></p>
-<h1>Table examples</h1>
-<table>
-<thead>
-<tr>
-<th>År</th>
-<th>Segrare</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>2021</td>
-<td><a href="https://www.seniorschackstockholm.se/htmfiler/resultat_HT21.pdf">Hans Rånby (Seniorseriemästare hösten 2021)</a></td>
-</tr>
-<tr>
-<td>2021</td>
-<td><a href="https://www.seniorschackstockholm.se/htmfiler/resultat_veteran_HT21.pdf">Olle Ålgars (Stockholms Veteranmästare 2021)</a></td>
-</tr>
-</tbody>
-</table>
-<h2>News</h2>
-<table>
-<thead>
-<tr>
-<th>Datum</th>
-<th>Evenemang</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>2024-03-04</td>
-<td><a href="files/Inbjudan_Stockholmsmästerskapet_2024.pdf">Stockholmsmästerskapet 2024</a></td>
-</tr>
-<tr>
-<td>2024-03-01</td>
-<td><a href="files/Ny_rating.pdf">Ny rating</a></td>
-</tr>
-<tr>
-<td>2024-02-17</td>
-<td><a href="files/Inbjudan-Robert-Spångberg-memorial-2024.pdf">Robert Spångbergs Minnesturnering 2024</a></td>
-</tr>
-<tr>
-<td>2024-02-15</td>
-<td><a href="https://www.seniorschackstockholm.se/htmfiler/Chess-Results.pdf">En liten lathund för att hitta information om Seniorschacks KM på Chess-Results</a></td>
-</tr>
-<tr>
-<td>2024-02-08</td>
-<td><a href="files/Frirondsblixten.pdf">Frirondsblixten</a></td>
-</tr>
-</tbody>
-</table>
-<h2>Menu</h2>
-<table>
-<thead>
-<tr>
-<th></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><a href="files/Inbjudan_Stockholmsmästerskapet_2024.pdf">Stockholmsmästerskapet 2024</a></td>
-</tr>
-<tr>
-<td><a href="files/Ny_rating.pdf">Ny rating</a></td>
-</tr>
-<tr>
-<td><a href="files/Inbjudan-Robert-Spångberg-memorial-2024.pdf">Robert Spångbergs Minnesturnering 2024</a></td>
-</tr>
-<tr>
-<td><a href="https://www.seniorschackstockholm.se/htmfiler/Chess-Results.pdf">En liten lathund för att hitta information om Seniorschacks KM på Chess-Results</a></td>
-</tr>
-<tr>
-<td><a href="files/Frirondsblixten.pdf">Frirondsblixten</a></td>
-</tr>
-</tbody>
-</table>
+This file is one hundred times too large.</p>
+<p><img src="KM_SrS_24.jpg" alt="" /></p>
+
 </body>
 </html>

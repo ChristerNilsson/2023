@@ -5,9 +5,12 @@ med många spännande schackpartier och utvecklande seminarier samt spännande s
 
 Vill du bli medlem?    
 Kom till klubblokalen eller kontakta någon av dessa medlemmar:  
-Tisdagar: [perovehesselborn@yahoo.se](BB2?md5=9dF00086UF)   
-Onsdagar: [bosse.steiner@icloud.com](BB2?md5=9O2FFwgn9Z) 073 332 00 32  
-Torsdagar: [Bjorn@Lowgren.eu](BB2?md5=Ab2GMcW0iJ)  070 990 30 00
+
+Dag|Ansvarig|Telefon
+---|--------|-------
+Tisdagar|[perovehesselborn@yahoo.se](BB2?md5=9dF00086UF)|
+Onsdagar|[bosse.steiner@icloud.com](BB2?md5=9O2FFwgn9Z)|073 332 00 32  
+Torsdagar|[Bjorn@Lowgren.eu](BB2?md5=Ab2GMcW0iJ)|070 990 30 00
 
 ## Avgifter 
 

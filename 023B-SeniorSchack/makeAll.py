@@ -1,8 +1,15 @@
 import os
 import time
-#import marko
-import markdown
-from markdown.extensions.tables import TableExtension
+
+# import marko
+# import markdown
+# from markdown.extensions.tables import TableExtension
+
+from markdown_it import MarkdownIt
+from mdit_py_plugins.front_matter import front_matter_plugin
+from mdit_py_plugins.footnote import footnote_plugin
+
+mdit = MarkdownIt('commonmark', {'breaks':True,'html':True}).enable('table') #.enable('sub').enable('sup')
 
 # Todo: RSS
 
@@ -13,17 +20,20 @@ html_bytes = 0
 settings = {
 	'rootFolder': "Seniorschack_Stockholm",
 	'showExt': False,
-	'latestNews': 4,
+	'latestPosts': 4,
 }
+
+ROOT = settings['rootFolder']
 
 def title(s): return s.replace('.md','')
 
-def patch(s): # Reason: To have some whitespace between links (margin-bottom)
-	s = s.replace('<p><a href=','<div><a href=')
+def patch(s):
+	s = s.replace('<p><a href=','<div><a href=') # Reason: To have some whitespace between links (margin-bottom)
 	s = s.replace('</a></p>','</a></div>')
 	s = s.replace('TOUR', 'https://member.schack.se/ShowTournamentServlet?id')
 	s = s.replace('SENIOR','https://www.seniorschackstockholm.se')
 	s = s.replace('BB2','https://storage.googleapis.com/bildbank2/index.html')
+	s = s.replace('ROOT',ROOT)
 	return s
 
 def writeHtmlFile(filename, t, level, content=""):
@@ -42,7 +52,8 @@ def writeHtmlFile(filename, t, level, content=""):
 	res.append(f'		<title>{t}</title>')
 	# res.append('		<link rel="icon" type="image/x-icon" href="favicon.ico">')
 	res.append('		<meta charset = "utf-8"/>')
-	res.append('		<link href="' + (level-1) * '../' + 'style.css" rel="stylesheet" type="text/css" >')
+	for i in reversed(range(level)):
+		res.append('		<link href="' + i * '../' + 'style.css" rel="stylesheet" type="text/css" >')
 	res.append('	</head>')
 	res.append('<body>')
 
@@ -70,17 +81,17 @@ def getLink(f,level):
 	print('\t' * level + f.name)
 	with open(f.path,encoding='utf8') as f: return patch(f.read().strip())
 
-def getNews(directory=settings["rootFolder"] + "/files/news"):
+def getPosts(directory=settings["rootFolder"] + "/files/posts"):
 	files = os.listdir(directory)
 	all = files[::-1]
-	all = [f for f in all if not f.endswith('.md') and not f.endswith('index.html') and not f.endswith('Alla Nyheter.html')]
+	all = [f for f in all if not f.endswith('.md') and not f.endswith('index.html') and not f.endswith('Alla poster.html')]
 
-	latest = all[:settings["latestNews"]]
-	res = [f'<div><a href="files/news/{f}">{noExt(f).replace("/files/news","")}</a></div>' for f in latest]
-	res += ['<div><a href="files/news/Alla Nyheter.html">Alla Nyheter</a></div>']
+	latest = all[:settings["latestPosts"]]
+	res = [f'<div><a href="files/posts/{f}">{noExt(f).replace("/files/posts","")}</a></div>' for f in latest]
+	res += ['<div><a href="files/posts/Alla poster.html">Alla poster</a></div>']
 
-	allNews = [f'<div><a href="{f}">{noExt(f)}</a></div>' for f in all]
-	writeHtmlFile(directory+'/Alla Nyheter.html', 'Alla Nyheter', 3, '\n'.join(allNews))
+	allPosts = [f'<div><a href="{f}">{noExt(f)}</a></div>' for f in all]
+	writeHtmlFile(directory+'/Alla poster.html', 'Alla poster', 3, '\n'.join(allPosts))
 
 	return "\n".join(res)
 
@@ -128,7 +139,7 @@ def transpileDir(directory,level=0):
 		indexHtml = "\n".join(res)
 	else:
 		indexHtml = indexHtml.replace("CONTENT","\n".join(res))
-		indexHtml = indexHtml.replace("NEWS",news)
+		indexHtml = indexHtml.replace("POSTS",posts)
 
 	writeHtmlFile(path + '/index.html', name, level+1, indexHtml)
 
@@ -143,15 +154,16 @@ def transpileFile(long,short,level=0):
 		md_bytes += len(md)
 
 		#html = marko.convert(md)
-		html = markdown.markdown(md,extensions=[TableExtension(use_align_attribute=True)])
+		# html = markdown.markdown(md,extensions=[TableExtension(use_align_attribute=True)])
 
+		html = mdit.render(md)
 		html = patch(html)
 	return html
 
 start = time.time_ns()
-news = getNews()
-transpileDir(settings['rootFolder'],0)
-transpileDir(settings['rootFolder'] + '/files/news',2)
+posts = getPosts()
+transpileDir(ROOT,0)
+transpileDir(ROOT + '/files/posts',2)
 print()
 print(md_bytes,'=>',html_bytes,'bytes')
 print(file_count, 'files took', round((time.time_ns() - start)/10**6),'ms')

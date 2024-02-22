@@ -1,7 +1,7 @@
  ## Bakgrund
 
 Jag heter Christer Nilsson och har bl a utvecklat Monradprogrammet som användes flitigt under 90-talet av t ex Jonas Sandbom.  
-2023 tog jag även fram [Bildbanken 2](https://storage.googleapis.com/bildbank2/index.html?query=Seniorschack) i samarbete med Lars OA Hedlund.
+2023 tog jag även fram [Bildbanken 2](BB2?query=Seniorschack) i samarbete med Lars OA Hedlund.
 
 Bildbanken 2 består enbart av statiska filer, dvs det finns inget program som körs på någon server.  
 I Bildbanken 2 är det katalogstrukturen som styr allt.
@@ -24,6 +24,8 @@ Några high lights:
 ## .md
 
 This is a **markdown** file and is translated by *makeAll.py* to an **.html** file with the same name.
+
+CONTENT
 
 ## .link
 
@@ -71,6 +73,9 @@ url    |   |   |     |
     * colours
     * link decoration
     * paddings and margins
+    * style.css can be defined in every folder.
+        * Sheets closer to the leaf overrides sheets closer to the root.
+        * Try changing color of the links in this folder: ```a {color:green}```
 
 ## files
 
@@ -78,9 +83,9 @@ This folder contains files you don't want to be processed.
 
 ### Keywords
 
-* **CONTENT** is used as a placeholder that will be replaced by folder names, .md names, .link names and other file names stored in the *current* folder.
-* **NEWS** is used as a placeholder that will be replaced by foldernames, markdown names, link names and other filenames stored in the **files/news** folder.
-    * Only the newest files will be displayed, as specified by the setting *latestNews* = 5.
+* **CON_TENT** is used as a placeholder that will be replaced by folder names, .md names, .link names and other file names stored in the *current* folder. Don't forget to remove the underscore.
+* **PO_STS** is used as a placeholder that will be replaced by foldernames, markdown names, link names and other filenames stored in the **files/posts** folder.
+    * Only the latest files will be displayed, as specified by the setting *latestPosts* = 5.
 
 ### Code volume comparison
 
@@ -100,18 +105,6 @@ kontakt|0|1.4
 ext länkar|0|0.9
 totalt|72.9|7.1|kb
 
-### Markdown vs html
-
-purpose|markdown
--------|---
-header |#
-header |##
-header |###
-bold   |```**text**```
-italics|```*text*```
-link   |``` [text](url)```
-image  |```![text](url)```
-bullet |```* item```
 
 Common HTML codes:
 
@@ -144,6 +137,7 @@ Common HTML codes:
 * ```<tr></tr>```
 * ```<ul></ul>```
 
+
 ### Veckans kombination
 
 This folder is not included in this comparison, but might save 95%.  
@@ -168,30 +162,4 @@ This file is one hundred times too large.
 
 ![](KM_SrS_24.jpg)
 
-# Table examples
- 
- År |    Segrare
-----|--------------
-2021|[Hans Rånby (Seniorseriemästare hösten 2021)](SENIOR/htmfiler/resultat_HT21.pdf)
-2021|[Olle Ålgars (Stockholms Veteranmästare 2021)](SENIOR/htmfiler/resultat_veteran_HT21.pdf)
 
-
-## News
-
-Datum|Evenemang
------------|------------------------------------------------------------------------------
-2024-03-04 |[Stockholmsmästerskapet 2024](files/Inbjudan_Stockholmsmästerskapet_2024.pdf)
-2024-03-01 |[Ny rating](files/Ny_rating.pdf)
-2024-02-17 |[Robert Spångbergs Minnesturnering 2024](files/Inbjudan-Robert-Spångberg-memorial-2024.pdf)
-2024-02-15 |[En liten lathund för att hitta information om Seniorschacks KM på Chess-Results](SENIOR/htmfiler/Chess-Results.pdf)
-2024-02-08 |[Frirondsblixten](files/Frirondsblixten.pdf)
-
-## Menu
-
-||
-|------------------------------------------------------------------------------|
-|[Stockholmsmästerskapet 2024](files/Inbjudan_Stockholmsmästerskapet_2024.pdf)|
-|[Ny rating](files/Ny_rating.pdf)|
-|[Robert Spångbergs Minnesturnering 2024](files/Inbjudan-Robert-Spångberg-memorial-2024.pdf)|
-|[En liten lathund för att hitta information om Seniorschacks KM på Chess-Results](SENIOR/htmfiler/Chess-Results.pdf)|
-|[Frirondsblixten](files/Frirondsblixten.pdf)|

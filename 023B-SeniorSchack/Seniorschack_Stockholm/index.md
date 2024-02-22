@@ -4,5 +4,5 @@ CONTENT
 
 ## Nyheter
  
-NEWS
+POSTS
  
