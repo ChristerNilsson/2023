@@ -14,9 +14,10 @@ a {
     background-color:gray;
 }
 
-div {margin-bottom:5px}
+div {margin:5px}
 
 table, th, td { 
+    background-color: yellow;
     border: 1px solid black; 
     border-collapse: collapse; 
     font-family:monospace; 
@@ -31,8 +32,3 @@ th {
 red {color: red}
 green {color: green}
 blue {color: blue}
-
-/* p {
-    margin-top:-20px;
-    margin-bottom:-20px;
-} */

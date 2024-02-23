@@ -60,3 +60,13 @@ e<sup>iπ</sup> = -1
 </p>  
 
 *(This is not a part of markdown, but it is possible to use.)*
+
+### Keyboard Shortcuts in Chrome
+
+Action|Key
+---|---
+Open focused link|Enter
+Go Back|Alt + Left
+Go Forward|Alt + Right
+Move Focus Forward|Tab
+Move Focus Backward|Shift + Tab
