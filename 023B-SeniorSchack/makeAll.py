@@ -1,17 +1,8 @@
 import os
 import time
-
-# import marko
-# import markdown
-# from markdown.extensions.tables import TableExtension
-
 from markdown_it import MarkdownIt
-from mdit_py_plugins.front_matter import front_matter_plugin
-from mdit_py_plugins.footnote import footnote_plugin
 
-mdit = MarkdownIt('commonmark', {'breaks':True,'html':True}).enable('table') #.enable('sub').enable('sup')
-
-# Todo: RSS
+mdit = MarkdownIt('commonmark', {'breaks':True,'html':True}).enable('table')
 
 file_count = 0
 md_bytes = 0
@@ -95,8 +86,7 @@ def getPosts(directory=settings["rootFolder"] + "/files/posts"):
 
 	return "\n".join(res)
 
-def makeMenu(href,title):
-	return [title, href] # f"<div><a href='{href}'>{title}</a></div>"]
+def makeMenu(href,title): return [title, href]
 
 def transpileDir(directory, level=0):
 
@@ -113,12 +103,11 @@ def transpileDir(directory, level=0):
 
 	name = name.replace("_", " ")
 
-	hash = {}
-	hash['.md'] = []
-	hash['.html'] = []
-	hash['.link'] = []
-	hash['directory'] = []
-	hash['others'] = []
+	hash_md = []
+	hash_html = []
+	hash_link = []
+	hash_directory = []
+	hash_others = []
 
 	indexHtml = ""
 	for f in os.scandir(path):
@@ -132,26 +121,26 @@ def transpileDir(directory, level=0):
 
 	for f in os.scandir(path):
 		if os.path.isfile(f):
-			if f.name.endswith('.md'): hash['.md'].append(f)
-			elif f.name.endswith('.html'): hash['.html'].append(f)
-			elif f.name.endswith('.link'): hash['.link'].append(f)
-			elif f.name not in ['favicon.ico','style.css']: hash['others'].append(f)
+			if f.name.endswith('.md'): hash_md.append(f)
+			elif f.name.endswith('.html'): hash_html.append(f)
+			elif f.name.endswith('.link'): hash_link.append(f)
+			elif f.name not in ['favicon.ico','style.css']: hash_others.append(f)
 			else: pass
 		else:
-			if f.name != 'files': hash['directory'].append(f)
+			if f.name != 'files': hash_directory.append(f)
 
 	res = []
-	for f in hash['.html']: # Lägg in i menyn
+	for f in hash_html: # Lägg in i menyn
 		if f.name != 'index.html': res += [[noExt(f.name), f.name]]
 
-	for f in hash['.link']:  # Lägg in i menyn
-		res += [[noExt(f.name),getLink(f, level + 1)]] # [f"<div><a href='{getLink(f, level + 1)}'>{noExt(f.name)}</a></div>"]
+	for f in hash_link:  # Lägg in i menyn
+		res += [[noExt(f.name),getLink(f, level + 1)]]
 
-	for f in hash['others']:  # Lägg in i menyn
-		res += [[noExt(f.name), f.name]] #f"<div><a href='{f.name}'>{noExt(f.name)}</a></div>"]
+	for f in hash_others:  # Lägg in i menyn
+		res += [[noExt(f.name), f.name]]
 
-	for f in hash['directory']:  # Lägg in i menyn
-		res += [[f.name, f.name]]  #[f"<div><a href='{f.name}'>{f.name}</a></div>"]
+	for f in hash_directory:  # Lägg in i menyn
+		res += [[f.name, f.name]]
 		transpileDir(f, level + 1)
 
 	res.sort()
@@ -165,23 +154,6 @@ def transpileDir(directory, level=0):
 		indexHtml = indexHtml.replace("POSTS", posts)
 	writeHtmlFile(path + '/index.html', name, level+1, indexHtml)
 
-# for f in os.scandir(path):
-# 		if os.path.isfile(f):
-# 			if f.name.endswith('.html') or f.name.endswith('.css') or f.name.endswith('.ico') or f.name.endswith('.jpg'):
-# 				pass
-# 			elif f.name.endswith('index.md'):
-# 				indexHtml = transpileFile(f.path,f.name,level)
-# 			elif f.name.endswith('.md'):
-# 				filename = f.path.replace('.md', '.html').replace('\\','/')
-# 				index = 1 + filename.rindex("/")
-# 				short_md = filename[index:].replace('.html', '.md')
-# 				writeHtmlFile(filename, f.name, level+1, transpileFile(f.path,f.name,level))
-# 				res += [f"<div><a href='{f.name.replace('.md', '.html')}'>{f.name.replace('.md', '')}</a></div>"]
-# 		else:
-# 			if f.name != 'files':
-# 				res += [f"<div><a href='{f.name}/index.html'>{f.name}</a></div>"]
-# 				transpileDir(f,level+1)
-
 def transpileFile(long,short,level=0):
 	global md_bytes
 	global file_count
@@ -191,10 +163,6 @@ def transpileFile(long,short,level=0):
 		print('\t' * (level + 1) + short, f'({len(md)} bytes) =>', short.replace('.md', '.html'))
 		file_count += 1
 		md_bytes += len(md)
-
-		#html = marko.convert(md)
-		# html = markdown.markdown(md,extensions=[TableExtension(use_align_attribute=True)])
-
 		html = mdit.render(md)
 		html = patch(html)
 	return html
