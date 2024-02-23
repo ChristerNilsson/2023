@@ -83,6 +83,6 @@ This folder contains files you don't want to be processed.
 
 ### Keywords
 
-* **CON_TENT** is used as a placeholder that will be replaced by folder names, .md names, .link names and other file names stored in the *current* folder. Don't forget to remove the underscore.
+* **CON_TENT** is used as a placeholder that will be replaced by folder names, .md names, .link names and other file names stored in the *current* folder.
 * **PO_STS** is used as a placeholder that will be replaced by foldernames, markdown names, link names and other filenames stored in the **files/posts** folder.
     * Only the latest files will be displayed, as specified by the setting *latestPosts* = 5.

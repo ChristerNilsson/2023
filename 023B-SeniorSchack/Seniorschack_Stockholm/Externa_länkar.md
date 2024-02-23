@@ -31,5 +31,3 @@
 [Sveriges Schackförbund](https://schack.se)
 
 [Syzygy - sju pjäser](https://syzygy-tables.info)
-
-[XXX](xxx.link)

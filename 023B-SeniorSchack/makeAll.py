@@ -25,7 +25,7 @@ settings = {
 
 ROOT = settings['rootFolder']
 
-def title(s): return s.replace('.md','')
+def title(s): return s.replace('.md','').replace('_',' ')
 
 def patch(s):
 	s = s.replace('<p><a href=','<div><a href=') # Reason: To have some whitespace between links (margin-bottom)
@@ -95,7 +95,10 @@ def getPosts(directory=settings["rootFolder"] + "/files/posts"):
 
 	return "\n".join(res)
 
-def transpileDir(directory,level=0):
+def makeMenu(href,title):
+	return [title, href] # f"<div><a href='{href}'>{title}</a></div>"]
+
+def transpileDir(directory, level=0):
 
 	if type(directory) is str:
 		path = directory
@@ -109,39 +112,75 @@ def transpileDir(directory,level=0):
 	if name == 'files' or name.endswith('.css'): return
 
 	name = name.replace("_", " ")
-	res = []
+
+	hash = {}
+	hash['.md'] = []
+	hash['.html'] = []
+	hash['.link'] = []
+	hash['directory'] = []
+	hash['others'] = []
 
 	indexHtml = ""
+	for f in os.scandir(path):
+		if os.path.isfile(f) and f.name.endswith('.md'):
+			if f.name != 'index.md':
+				html = transpileFile(f.path, f.name, level)
+				filename = f.path.replace('.md', '.html').replace('\\', '/')
+				writeHtmlFile(filename, f.name, level + 1, html)
+			else:
+				if f.name != 'files': indexHtml = transpileFile(f.path, f.name, level)
 
 	for f in os.scandir(path):
 		if os.path.isfile(f):
-			if f.name.endswith('.html') or f.name.endswith('.css') or f.name.endswith('.ico') or f.name.endswith('.jpg'):
-				pass
-			elif f.name.endswith('index.md'):
-				indexHtml = transpileFile(f.path,f.name,level)
-			elif f.name.endswith('.md'):
-				filename = f.path.replace('.md', '.html').replace('\\','/')
-
-				index = 1 + filename.rindex("/")
-				short_md = filename[index:].replace('.html', '.md')
-				writeHtmlFile(filename, f.name, level+1, transpileFile(f.path,f.name,level))
-				res += [f"<div><a href='{f.name.replace('.md', '.html')}'>{f.name.replace('.md', '')}</a></div>"]
-			elif f.name.endswith('.link'):
-				res += [f"<div><a href='{getLink(f,level+1)}'>{f.name.replace('.link', '')}</a></div>"]
-			else:
-				res += [f"<div><a href='{f.name}'>{noExt(f.name)}</a></div>"]
+			if f.name.endswith('.md'): hash['.md'].append(f)
+			elif f.name.endswith('.html'): hash['.html'].append(f)
+			elif f.name.endswith('.link'): hash['.link'].append(f)
+			elif f.name not in ['favicon.ico','style.css']: hash['others'].append(f)
+			else: pass
 		else:
-			if f.name != 'files':
-				res += [f"<div><a href='{f.name}/index.html'>{f.name}</a></div>"]
-				transpileDir(f,level+1)
+			if f.name != 'files': hash['directory'].append(f)
 
+	res = []
+	for f in hash['.html']: # Lägg in i menyn
+		if f.name != 'index.html': res += [[noExt(f.name), f.name]]
+
+	for f in hash['.link']:  # Lägg in i menyn
+		res += [[noExt(f.name),getLink(f, level + 1)]] # [f"<div><a href='{getLink(f, level + 1)}'>{noExt(f.name)}</a></div>"]
+
+	for f in hash['others']:  # Lägg in i menyn
+		res += [[noExt(f.name), f.name]] #f"<div><a href='{f.name}'>{noExt(f.name)}</a></div>"]
+
+	for f in hash['directory']:  # Lägg in i menyn
+		res += [[f.name, f.name]]  #[f"<div><a href='{f.name}'>{f.name}</a></div>"]
+		transpileDir(f, level + 1)
+
+	res.sort()
+	res = [f"<div><a href='{href}'>{title}</a></div>" for [title,href] in res]
+
+	# Skapa index.html
 	if indexHtml == "":
 		indexHtml = "\n".join(res)
 	else:
-		indexHtml = indexHtml.replace("CONTENT","\n".join(res))
-		indexHtml = indexHtml.replace("POSTS",posts)
-
+		indexHtml = indexHtml.replace("CONTENT", "\n".join(res))
+		indexHtml = indexHtml.replace("POSTS", posts)
 	writeHtmlFile(path + '/index.html', name, level+1, indexHtml)
+
+# for f in os.scandir(path):
+# 		if os.path.isfile(f):
+# 			if f.name.endswith('.html') or f.name.endswith('.css') or f.name.endswith('.ico') or f.name.endswith('.jpg'):
+# 				pass
+# 			elif f.name.endswith('index.md'):
+# 				indexHtml = transpileFile(f.path,f.name,level)
+# 			elif f.name.endswith('.md'):
+# 				filename = f.path.replace('.md', '.html').replace('\\','/')
+# 				index = 1 + filename.rindex("/")
+# 				short_md = filename[index:].replace('.html', '.md')
+# 				writeHtmlFile(filename, f.name, level+1, transpileFile(f.path,f.name,level))
+# 				res += [f"<div><a href='{f.name.replace('.md', '.html')}'>{f.name.replace('.md', '')}</a></div>"]
+# 		else:
+# 			if f.name != 'files':
+# 				res += [f"<div><a href='{f.name}/index.html'>{f.name}</a></div>"]
+# 				transpileDir(f,level+1)
 
 def transpileFile(long,short,level=0):
 	global md_bytes
