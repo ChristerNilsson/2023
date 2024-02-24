@@ -1,30 +1,17 @@
-Onsdagar 11.00
-
-## Januari
-
-On 17 Rond 1  
-On 24 Rond 2  
-On 31 Rond 3 för klass 1   
-On 31 Uppskjutna partier för klass 2–4  
-
-## Februari
-
-On 07 Rond 4 för klass 1, rond 3 för klass 2–4  
-On 14 Rond 5 för klass 1, rond 4 för klass 2–4  
-On 21 Rond 6 för klass 1, rond 5 för klass 2–4  
-On 28 Uppskjutna partier för alla klasser  
-
-## Mars
-
-On 06 Rond 7 för klass 1, rond 6 för klass 2–4  
-On 13 Rond 8 för klass 1, rond 7 för klass 2–4  
-On 20 Rond 9 för klass 1, rond 8 för klass 2–4  
-On 27 Rond 10 för klass 1  
-On 27 Uppskjutna partier för klass 2–4  
-
-## April
-
-On 03 Rond 11 för klass 1, rond 9 för klass 2–4  
-On 10 Rond 12 för klass 1, rond 10 för klass 2–4  
-On 17 Uppskjutna partier för alla klasser  
-On 24 Sista ronden för alla klasser  
+Onsdagar 11.00|Klass 1|Klass 2-4
+:-:|-|-
+Januari 17|Rond 1|Rond 1 
+Januari 24|Rond 2|Rond 2
+Januari 31|Rond 3|Uppskjutna
+Februari 07|Rond 4|Rond 3
+Februari 14|Rond 5|Rond 4
+Februari 21|Rond 6|Rond 5
+Februari 28|Uppskjutna|Uppskjutna
+Mars 06|Rond 7|Rond 6
+Mars 13|Rond 8|Rond 7
+Mars 20|Rond 9|Rond 8
+Mars 27|Rond 10|Uppskjutna
+April 03|Rond 11|Rond 9
+April 10|Rond 12|Rond 10
+April 17|Uppskjutna|Uppskjutna
+April 24|Rond 13|Rond 11

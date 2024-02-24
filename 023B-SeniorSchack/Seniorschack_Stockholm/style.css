@@ -1,7 +1,6 @@
 body {
     color:black; 
-    background-color: 
-    darkgray; 
+    background-color: darkgray; 
     font-family:monospace; 
     font-size:24px;
 }
@@ -11,22 +10,31 @@ a {
     padding-right:5px; 
     text-decoration:none; 
     color:yellow; 
-    background-color:gray;
+    /* border: 1px solid darkgray;  */
+    background-color: gray;
 }
 
 div {margin:5px}
 
-table, th, td { 
-    background-color: yellow;
-    border: 1px solid black; 
-    border-collapse: collapse; 
-    font-family:monospace; 
+table { 
+    font-family:monospace;
     font-size:24px;
 }
 
+/* tr:nth-child(even) {background-color: #888;}
+tr:nth-child(odd) {background-color: #999;} */
+
 th {
+    border: 1px solid darkgray; 
+    /* background-color: white; */
+    color:black;
     padding-left:5px; 
     padding-right:5px; 
+}
+
+td {    
+    border: 1px solid gray; 
+    background-color: gray;
 }
 
 red {color: red}
