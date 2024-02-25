@@ -70,13 +70,13 @@ def trn2html(filename):
                         matrix[indexW][rond] = ""
                         matrix[indexB][rond] = ""
 
-    res = []
-    res.append("<table><thead><tr>")
-    res.append("<th style='text-align:center'>Nr</th>")
-    res.append("<th>Namn</th>")
-    res.append("".join([f"<th style='width:36px'>{i+1}</th>" for i in range(rounds)]))
-    res.append("</thead><tbody>")
-
+    res = [
+        "<table><thead><tr>",
+        "<th style='text-align:center'>Nr</th>",
+        "<th>Namn</th>",
+        "".join([f"<th style='width:36px'>{i+1}</th>" for i in range(rounds)]),
+        "</thead><tbody>"
+    ]
     for j in range(n):
         res.append("<tr>")
         res.append(f"<td style='text-align:center'>{j+1}</td>")
