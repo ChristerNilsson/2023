@@ -37,6 +37,10 @@ td {
     background-color: gray;
 }
 
+sup {
+    font-size:16px;
+}
+
 red {color: red}
 green {color: green}
 blue {color: blue}

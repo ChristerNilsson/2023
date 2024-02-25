@@ -1,16 +1,13 @@
 Maila era partilänkar till mig, så publicerar jag dem här.  
 
+### Instruktioner
+
+1. Starta [Lichess Analysis](LICHESS/analysis)
+2. Mata in dragen.
+3. Klicka på diagrammet om du har tid. ([Computer Analysis](files/Screenshot_2024-02-24.png))
+4. Spara ditt parti med hamburgaren + **Study**.
+5. Maila mig på formatet: `Klass 4 Rond 4 Christer Nilsson - Brita Trybom 1 - 0 https://lichess.org/study/pYjvo5dL/lggFnOo1`
+
 CONTENT
-
-## 2024
-
-### [Klass 4](https://member.schack.se/ShowTournamentServlet?id=13633)
-
-Nr|Namn|1|2|3|4
-:-:|----|:--:|:--:|:--:|:--:
-1|Christer Nilsson|•|[1](LICHESS/study/pYjvo5dL/yw4fL9Ow)|[1](LICHESS/study/pYjvo5dL/albYqV3T)|[1](LICHESS/study/pYjvo5dL/lggFnOo1)
-2|Roland Windahl|[0](LICHESS/study/pYjvo5dL/yw4fL9Ow)|•||
-3|Brita Trybom|[0](LICHESS/study/pYjvo5dL/albYqV3T)||•|
-4|Kjell Linde|[0](LICHESS/study/pYjvo5dL/lggFnOo1)|||•
 
 #### [Fler partier](SENIOR/htmfiler/partier.htm)
