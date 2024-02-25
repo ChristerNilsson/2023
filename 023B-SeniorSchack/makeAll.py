@@ -2,7 +2,7 @@ from datetime import datetime
 import os
 import time
 from markdown_it import MarkdownIt
-from trn2md import trn2md
+from trn2html import trn2html
 
 mdit = MarkdownIt('commonmark', {'breaks':True,'html':True}).enable('table')
 
@@ -18,7 +18,7 @@ settings = {
 
 ROOT = settings['rootFolder']
 
-def title(s): return s.replace('.md','').replace('_',' ')
+def title(s): return s.replace('.md','').replace('_',' ').replace('.trn','')
 
 def patch(s):
 	s = s.replace('<p><a href=','<div><a href=') # Reason: To have some whitespace between links (margin-bottom)
@@ -114,7 +114,9 @@ def transpileDir(directory, level=0):
 	indexHtml = ""
 	for f in os.scandir(path):
 		if os.path.isfile(f) and f.name.endswith('.trn'):
-			trn2md(f.path)
+			filename = f.path.replace('.trn', '.html').replace('\\', '/')
+			data = trn2html(f.path)
+			writeHtmlFile(filename, f.name, level+1, data)
 
 	for f in os.scandir(path):
 		if os.path.isfile(f) and f.name.endswith('.md'):
@@ -130,6 +132,7 @@ def transpileDir(directory, level=0):
 			if f.name.endswith('.md'): hash_md.append(f)
 			elif f.name.endswith('.html'): hash_html.append(f)
 			elif f.name.endswith('.link'): hash_link.append(f)
+			elif f.name.endswith('.trn'): pass
 			elif f.name not in ['favicon.ico','style.css']: hash_others.append(f)
 			else: pass
 		else:

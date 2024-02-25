@@ -1,11 +1,8 @@
-
-# def sup(s): return f"<sup>{s}</sup>"
-
 def sup(s,r,cp): return f"<div class={cp}>{s}</div><div class=rfrresult>{r}</div>"
 
-def a(title,url): return title if url == "" else f"[{title}]({url})"
+def a(title,url): return title if url == "" else f"<a href='{url}'>{title}</a>"
 
-def trn2md(filename):
+def trn2html(filename):
     state = 0
     players = {}
     names = []
@@ -73,14 +70,21 @@ def trn2md(filename):
                         matrix[indexW][rond] = ""
                         matrix[indexB][rond] = ""
 
-    md = [str(j+1) + "|" + names[j] + "|" + "|".join([matrix[j][i] for i in range(rounds)]) for j in range(n)]
-    with open(filename.replace('.trn','.md'), "w", encoding="utf-8") as g:
-        s = "Nr|Namn"
-        t = ":-:|-"
-        for i in range(rounds):
-            s += "|" + str(i+1)
-            t += '|-'
-        g.write(s+"\n")
-        g.write(t+"\n")
-        for line in md:
-            g.write(line + "\n")
+    res = []
+    res.append("<table><thead><tr>")
+    res.append("<th style='text-align:center'>Nr</th>")
+    res.append("<th>Namn</th>")
+    res.append("".join([f"<th style='width:36px'>{i+1}</th>" for i in range(rounds)]))
+    res.append("</thead><tbody>")
+
+    for j in range(n):
+        res.append("<tr>")
+        res.append(f"<td style='text-align:center'>{j+1}</td>")
+        res.append(f"<td style='width:auto;'>{names[j]}</td>")
+        res.append("\n".join([f"<td>{matrix[j][i]}</td>" for i in range(rounds)]))
+        res.append("</tr>")
+
+    res.append("</tbody></table>")
+
+    return "\n".join(res)
+
