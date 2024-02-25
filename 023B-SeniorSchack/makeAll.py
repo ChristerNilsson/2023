@@ -2,6 +2,7 @@ from datetime import datetime
 import os
 import time
 from markdown_it import MarkdownIt
+from trn2md import trn2md
 
 mdit = MarkdownIt('commonmark', {'breaks':True,'html':True}).enable('table')
 
@@ -71,7 +72,7 @@ def noExt(s):
 	else: return s[:s.rindex('.')]
 
 def getLink(f,level):
-	print('\t' * level + f.name)
+	# print('\t' * level + f.name)
 	with open(f.path,encoding='utf8') as f: return patch(f.read().strip())
 
 def tablify(posts,dir):
@@ -98,7 +99,7 @@ def transpileDir(directory, level=0):
 		path = directory.path
 		name = directory.name
 
-	print('\t'*level + name)
+	# print('\t'*level + name)
 
 	if name == 'files' or name.endswith('.css'): return
 
@@ -111,6 +112,10 @@ def transpileDir(directory, level=0):
 	hash_others = []
 
 	indexHtml = ""
+	for f in os.scandir(path):
+		if os.path.isfile(f) and f.name.endswith('.trn'):
+			trn2md(f.path)
+
 	for f in os.scandir(path):
 		if os.path.isfile(f) and f.name.endswith('.md'):
 			if f.name != 'index.md':
@@ -125,13 +130,13 @@ def transpileDir(directory, level=0):
 			if f.name.endswith('.md'): hash_md.append(f)
 			elif f.name.endswith('.html'): hash_html.append(f)
 			elif f.name.endswith('.link'): hash_link.append(f)
-			elif f.name.endswith('.trn'): pass
 			elif f.name not in ['favicon.ico','style.css']: hash_others.append(f)
 			else: pass
 		else:
 			if f.name != 'files': hash_directory.append(f)
 
 	res = []
+
 	for f in hash_html: # Lägg in i menyn
 		if f.name != 'index.html': res += [[noExt(f.name), f.name]]
 
@@ -165,7 +170,7 @@ def transpileFile(long,short,level=0):
 
 	with open(long,encoding='utf8') as f:
 		md = f.read()
-		print('\t' * (level + 1) + short, f'({len(md)} bytes) =>', short.replace('.md', '.html'))
+		# print('\t' * (level + 1) + short, f'({len(md)} bytes) =>', short.replace('.md', '.html'))
 		file_count += 1
 		md_bytes += len(md)
 		html = mdit.render(md)
