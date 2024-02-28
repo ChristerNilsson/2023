@@ -1,7 +1,9 @@
-Maila era partilänkar till mig, så publicerar jag dem här.  
-
+Maila era partilänkar till mig, så publicerar jag dem här.
 [Instruktioner](Instruktioner.html)
-{{ title}}{% for item in items %}{% endfor %}
+
+Om ni använder följande blankett, och ger den till mig, åtar jag mig att mata in dragen i Lichess.
+[Schackprotokoll](../files/Protocol_5L.jpg)
+
 ### 2024
 
 [Klass 1](Klass_1.html)
