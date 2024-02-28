@@ -1,7 +1,7 @@
 Maila era partilänkar till mig, så publicerar jag dem här.  
 
 [Instruktioner](Instruktioner.html)
-
+{{ title}}{% for item in items %}{% endfor %}
 ### 2024
 
 [Klass 1](Klass_1.html)
