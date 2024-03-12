@@ -4,13 +4,19 @@ import {enterFullscreen} from '../js/utils.js'
 import {Button} from '../js/button.js'
 
 copyPGNToClipboard = (txt) ->
-    global.textarea = document.createElement 'textarea'
-    global.textarea.textContent = txt
-    global.textarea.style.position = 'fixed'
-    document.body.appendChild global.textarea
-    global.textarea.select()
-    document.execCommand 'copy'
-    document.body.removeChild global.textarea
+
+	textarea = document.getElementById 'pgn'
+	textarea.hidden = false
+	textarea.value = txt
+	textarea.select()
+	document.execCommand 'copy'
+	textarea.hidden = true
+
+	# global.textarea = document.createElement 'textarea'
+	# global.textarea.textContent = txt
+	# global.textarea.style.position = 'fixed'
+	# document.body.appendChild global.textarea
+	# document.body.removeChild global.textarea
 
 analyze = (url) =>
 
@@ -25,11 +31,12 @@ analyze = (url) =>
 	# textarea.textContent = global.chess.pgn()
 
 	date = new Date().toISOString().slice(0,10).replace(/-/g,'.')
-	copyPGNToClipboard '[Date "'+ date + '"]\n' + global.chess.pgn()
+	# copyPGNToClipboard '[Date "'+ date + '"]\n' + global.chess.pgn()
+	copyPGNToClipboard global.chess.pgn()
 
 	# window.location.href = 'https://lichess.org/paste'
-	# window.location.href = 'https://lichess.org/study/pYjvo5dL'
-	# window.open "mailto:janchrister.nilsson@gmail.com?subject=pgn&body=" + encodeURIComponent(global.chess.pgn()), "_blank"
+	#window.location.href = 'https://lichess.org/study/pYjvo5dL'
+	window.open 'https://lichess.org/study/pYjvo5dL', "_blank"
 
 	# encodedPGN = encodeURIComponent pgnString
 
