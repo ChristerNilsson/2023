@@ -6,14 +6,11 @@ import _ from 'https://cdn.skypack.dev/lodash'
 
 range = _.range
 
-copyPGNToClipboard = (txt) ->
 
-	textarea = document.getElementById 'pgn'
-	textarea.hidden = false
-	textarea.value = txt
-	textarea.select()
-	document.execCommand 'copy'
-	textarea.blur()
+	# copyPGNToClipboard '[Date "'+ date + '"]\n' + global.chess.pgn()
+
+
+	# textarea.blur()
 	# textarea.hidden = true
 
 	# global.textarea = document.createElement 'textarea'
@@ -35,12 +32,8 @@ analyze = (url) =>
 	# textarea.textContent = global.chess.pgn()
 
 	date = new Date().toISOString().slice(0,10).replace(/-/g,'.')
-	# copyPGNToClipboard '[Date "'+ date + '"]\n' + global.chess.pgn()
-	arr = global.chess.pgn().split ' '
-	for i in range arr.length
-		arr[i] += if i%3==2 then "\n" else " "
 
-	copyPGNToClipboard arr.join ''
+	copyPGNToClipboard()
 
 	# window.location.href = 'https://lichess.org/paste'
 	#window.location.href = 'https://lichess.org/study/pYjvo5dL'

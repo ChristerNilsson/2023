@@ -53,6 +53,7 @@ export class Board
 
 				# är detta ett korrekt drag? I så fall, utför det
 				if g.chess.move {from:uci.slice(0,2), to:uci.slice(2,4), promotion:'q'}
+					g.copyPGNToClipboard()
 					@clickedSquares = []
 					console.log g.chess
 					global.audio.play()

@@ -25,6 +25,19 @@ export global = {
 	my:null, # y-marginal
 	setMy:null,
 	textarea:null,
+	copyPGNToClipboard: () ->
+		arr = global.chess.pgn().split ' '
+		for i in range arr.length
+			arr[i] += if i%3==2 then "\n" else " "
+		
+		textarea = document.getElementById 'pgn'
+		# textarea.hidden = false
+		textarea.value = arr.join('').trim()
+		textarea.select()
+		document.execCommand 'copy'
+		textarea.blur()
+
+
 
 }
 
