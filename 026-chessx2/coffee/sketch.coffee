@@ -26,19 +26,9 @@ fullScreen = => enterFullscreen()
 showDialogue = -> if global.dialogues.length > 0 then (_.last global.dialogues).show()
 
 window.setup = =>
-
-	# createCanvas innerWidth,innerHeight
-
+	createCanvas innerWidth,innerHeight
 	button = document.getElementById 'analyze'
-	button.addEventListener 'click', () -> 
-		# textarea = document.getElementById 'pgn'
-		# textarea.hidden = false
-		global.copyPGNToClipboard()
-		# textarea.value = global.chess.pgn()
-		# textarea.select()
-		# console.log textarea
-		# document.execCommand 'copy'
-		# textarea.blur()
+	button.addEventListener 'click', () -> global.copyPGNToClipboard()
 
 	[global.size, global.setSize] = signal round min(innerWidth,innerHeight)/18
 	[global.mx, global.setMx] = signal round (innerWidth - 8 * global.size())/2

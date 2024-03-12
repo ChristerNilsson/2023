@@ -31,11 +31,11 @@ export global = {
 			arr[i] += if i%3==2 then "\n" else " "
 		
 		textarea = document.getElementById 'pgn'
-		# textarea.hidden = false
+		#textarea.hidden = false
 		textarea.value = arr.join('').trim()
 		textarea.select()
 		document.execCommand 'copy'
-		textarea.blur()
+		#textarea.blur()
 
 
 
