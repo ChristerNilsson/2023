@@ -29,6 +29,11 @@ window.setup = =>
 
 	createCanvas innerWidth,innerHeight
 
+	global.textarea = document.createElement 'textarea'
+	# textarea.style.position = 'fixed'
+	global.textarea.textContent = "PGN"
+	document.body.appendChild global.textarea
+
 	[global.size, global.setSize] = signal round min(innerWidth,innerHeight)/18
 	[global.mx, global.setMx] = signal round (innerWidth - 8 * global.size())/2
 	[global.my, global.setMy] = signal round (innerHeight - 17 * global.size())/2

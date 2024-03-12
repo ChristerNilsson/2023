@@ -24,6 +24,7 @@ export global = {
 	setMx:null,
 	my:null, # y-marginal
 	setMy:null,
+	textarea:null,
 
 }
 
