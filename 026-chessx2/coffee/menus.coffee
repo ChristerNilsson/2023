@@ -26,7 +26,7 @@ analyze = (url) =>
 	copyPGNToClipboard '[Date "'+ date + '"]\n' + global.chess.pgn()
 	# window.location.href = 'https://lichess.org/paste'
 	#window.location.href = 'https://lichess.org/study/pYjvo5dL'
-	window.open 'https://lichess.org/study/pYjvo5dL', '_blank'
+	window.open 'https://lichess.org/study/pYjvo5dL' # , '_blank'
 
 	# encodedPGN = encodeURIComponent pgnString
 
