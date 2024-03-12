@@ -3,14 +3,14 @@ import {Dialogue} from '../js/dialogue.js'
 import {enterFullscreen} from '../js/utils.js'
 import {Button} from '../js/button.js'
 
-copyPGNToClipboard = (pgn) ->
+copyPGNToClipboard = (txt) ->
     textarea = document.createElement 'textarea'
-    textarea.textContent = pgn
+    textarea.textContent = txt
     textarea.style.position = 'fixed'
     document.body.appendChild textarea
     textarea.select()
     document.execCommand 'copy'
-    document.body.removeChild textarea
+    # document.body.removeChild textarea
 
 analyze = (url) =>
 
@@ -22,11 +22,12 @@ analyze = (url) =>
 	# [Black "Spelare2"]
 	# [Result "1-0"]
 
-	date = new Date().toISOString().slice(0,10).replace(/-/g,'.')
-	copyPGNToClipboard '[Date "'+ date + '"]\n' + global.chess.pgn()
+	#date = new Date().toISOString().slice(0,10).replace(/-/g,'.')
+	#copyPGNToClipboard '[Date "'+ date + '"]\n' + global.chess.pgn()
+
 	# window.location.href = 'https://lichess.org/paste'
 	#window.location.href = 'https://lichess.org/study/pYjvo5dL'
-	window.open 'https://lichess.org/study/pYjvo5dL' # , '_blank'
+	window.open "mailto:janchrister.nilsson@gmail.com?subject=pgn&body=" + encodeURIComponent global.chess.pgn()
 
 	# encodedPGN = encodeURIComponent pgnString
 
