@@ -3,6 +3,15 @@ import {Dialogue} from '../js/dialogue.js'
 import {enterFullscreen} from '../js/utils.js'
 import {Button} from '../js/button.js'
 
+copyPGNToClipboard = (pgn) ->
+    textarea = document.createElement 'textarea'
+    textarea.textContent = pgn
+    textarea.style.position = 'fixed'
+    document.body.appendChild textarea
+    textarea.select()
+    document.execCommand 'copy'
+    document.body.removeChild textarea
+
 analyze = (url) =>
 
 	# [Event "Exempelturnering"]
@@ -14,19 +23,22 @@ analyze = (url) =>
 	# [Result "1-0"]
 
 	date = new Date().toISOString().slice(0,10).replace(/-/g,'.')
-	console.log date
-	pgnString = '[Date "'+ date + '"]\n' + global.chess.pgn()
-	encodedPGN = encodeURIComponent pgnString
+	copyPGNToClipboard '[Date "'+ date + '"]\n' + global.chess.pgn()
+	# window.location.href = 'https://lichess.org/paste'
+	#window.location.href = 'https://lichess.org/study/pYjvo5dL'
+	window.open 'https://lichess.org/study/pYjvo5dL', '_blank'
 
-	fetch 'https://lichess.org/api/import', {method: 'POST',headers: {'Content-Type': 'application/x-www-form-urlencoded'},body: "pgn=" + encodedPGN}
-		.then (response) ->
-			console.log "Statuskod: #{response.status}"
-			response.json()
-		.then (data) ->
-			console.log data
-			window.open data.url, "_blank"
-		.catch (error) ->
-			console.error error
+	# encodedPGN = encodeURIComponent pgnString
+
+	# fetch 'https://lichess.org/api/import', {method: 'POST',headers: {'Content-Type': 'application/x-www-form-urlencoded'},body: "pgn=" + encodedPGN}
+	# 	.then (response) ->
+	# 		console.log "Statuskod: #{response.status}"
+	# 		response.json()
+	# 	.then (data) ->
+	# 		console.log data
+	# 		window.open data.url, "_blank"
+	# 	.catch (error) ->
+	# 		console.error error
 
 newGame = =>
 	global.chess.reset()
@@ -50,9 +62,9 @@ setIncrement = (increment) ->
 
 export menu0 = -> # Main Menu
 	global.dialogue = new Dialogue()
-	global.dialogue.add 'Full Screen', ->
-		enterFullscreen()
-		global.dialogues.clear()
+	# global.dialogue.add 'Full Screen', ->
+	# 	enterFullscreen()
+	# 	global.dialogues.clear()
 	global.dialogue.add 'Analyze', ->
 		analyze "https://lichess.org/paste"
 		global.dialogues.clear()
@@ -67,7 +79,7 @@ export menu0 = -> # Main Menu
 		global.dialogues.clear()
 	global.dialogue.add 'Clock', -> menu1()
 	global.dialogue.add 'Help', ->
-		window.open "https://github.com/ChristerNilsson/2023-026-chessx2#chess-2x", "_blank"
+		window.open "https://github.com/ChristerNilsson/2023/tree/main/026-chessx2#chess-2x", "_blank"
 		global.dialogues.clear()
 
 	global.dialogue.clock ' ',true
