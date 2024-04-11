@@ -1,11 +1,11 @@
 12
-an|Anders Nystrand
-cn|Christer Nilsson
-tp|Thomas Paulin
 bg|Bengt Granath
-rw|Roland Windahl
-cr|Carl Rollenhagen
+cn|Christer Nilsson
+an|Anders Nystrand
+tp|Thomas Paulin
 vr|Vida Radon
+cr|Carl Rollenhagen
+rw|Roland Windahl
 es|Elfia Salejeva
 kl|Kjell Linde
 bt|Brita Trybom
@@ -38,7 +38,7 @@ R4
 antp|½-½
 crvr|½-½
 cnbt|1-0|https://lichess.org/study/pYjvo5dL/albYqV3T
-esbg
+esbg|0-1
 rwkl|1-0
 wome|0-0
 R5
@@ -70,23 +70,23 @@ anes|1-0
 bttp|0-1
 wocr|0-0
 R9
-merw
-bgkl
+merw|0-0
+bgkl|½-½
 escn
-vrbt
-cran
-tpwo
+vrbt|1-0
+cran|½-½
+tpwo|0-0
 R10
-klme
-rwes
-btbg
-cncr
-tpvr
-woan
+klme|0-0
+rwes|0-1
+btbg|0-1
+cncr|1-0|https://lichess.org/study/pYjvo5dL/VHoCqpqV
+tpvr|½-½
+woan|0-0
 R11
 eskl
-mebt
+mebt|0-0
 crrw
 bgtp|1-0
 ancn
-vrwo
+vrwo|0-0
