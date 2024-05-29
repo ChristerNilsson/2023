@@ -1,4 +1,21 @@
-WORK IN PROGRESS!
+# Swiss Tournament Handler
+
+The URL is the database.
+
+## Keys
+
+Enter = Jump between Tables and Result
+ArrowUp/ArrowDown = Select Table
+0 space 1 q 2 w 3 e 4 r 5 t 6 y 7 u 8 = Enter result
+ArrowLeft/ArrowRight = Change result
+Home = Jump to first table
+End = Jump to last table
+
+## No Mouse or touch interface!
+
+## Always print paper forms for entering results.
+
+This is your ultimate backup!  
 
 [Try it!](https://christernilsson.github.io/2023/044-Monrad)
 
@@ -6,7 +23,7 @@ WORK IN PROGRESS!
 ```
 http://127.0.0.1:5500?TOUR=Klass_1
 &DATE=2024-05-28
-&ROUNDS=4
+&ROUNDS=6
 &ROUND=0
 &NAME=Lennart_B._Johansson|Göran_Björkdahl|Henrik_Strömbäck|Onni_Aikio|Tor_Liljeström|Lars-Åke_Pettersson|Leonid_Stolov|Peteris_Silins|Kjell_Persson|Jouko_Lehvonen|Lars_Owe_Andersson|Dan_Israel|Lars-Erik_Åberg|Görgen_Antonsson
 &ELO=1825|1800|1775|1750|1725|1700|1675|1650|1625|1600|1575|1550|1525|1500
