@@ -2,6 +2,20 @@ WORK IN PROGRESS!
 
 [Try it!](https://christernilsson.github.io/2023/044-Monrad)
 
+14 players:  
+```
+http://127.0.0.1:5500?TOUR=Klass_1
+&DATE=2024-05-28
+&ROUNDS=4
+&ROUND=0
+&NAME=Lennart_B._Johansson|Göran_Björkdahl|Henrik_Strömbäck|Onni_Aikio|Tor_Liljeström|Lars-Åke_Pettersson|Leonid_Stolov|Peteris_Silins|Kjell_Persson|Jouko_Lehvonen|Lars_Owe_Andersson|Dan_Israel|Lars-Erik_Åberg|Görgen_Antonsson
+&ELO=1825|1800|1775|1750|1725|1700|1675|1650|1625|1600|1575|1550|1525|1500
+```
+
+&OPP=1,5,2|0,6,3|3,11,0|2,8,1|5,13,12|4,0,6|7,1,5|6,10,9|9,3,11|8,12,7|11,7,13|10,2,8|13,9,4|12,4,10
+&COL=WBB|BWB|WBW|BWW|WBB|BWB|WBW|BWB|WBW|BWW|WBW|BWB|WBW|BWB
+&RES=221|020|221|022|201|002|000|220|001|222|200|001|201|022
+
 64 players:  
 ```
 https://christernilsson.github.io/2023/044-Monrad

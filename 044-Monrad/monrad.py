@@ -9,7 +9,6 @@ def random():
 	seed += 1
 	return (((math.sin(seed)/2+0.5)*10000)%100)/100
 
-
 # sys.setrecursionlimit(8000)
 
 # Klarar upp till 1950 spelare.
@@ -32,7 +31,7 @@ def save(name):
 #for name in 'Adam Bert Curt Dana Erik Fina Gorm Hans'.split(" "): save(name)
 for i in range(16): save(i)
 
-N = len(persons)
+N = 16 # len(persons)
 R = int(round(1.5*math.log2(N))) # antal ronder
 if N < 10: R=3
 R = 1
@@ -80,10 +79,15 @@ def lotta(ids):
 			if getMet(a, b): continue
 			mandatory = persons[a]["mandatory"] + persons[b]["mandatory"]
 			if abs(mandatory) == 2: continue # Spelarna kan inte ha samma färg.
-			arr.append([a+1, b+1, 1000 - abs(score(a) - score(b))])
-	#print(len(arr))
+			arr.append([a+1, b+1, 1000 - abs(score(a) - score(b)) - 0 * abs(mandatory)])
+
+	#start = time.time_ns()
 	z = mwmatching.maxWeightMatching(arr)
+	#print(len(arr), (time.time_ns()-start)/10**6,'ms')
+
 	z = z[1:N+1]
+	#print(z)
+	if z==[] or z.count(-1) > 0: return []
 	res = []
 	for i in range(N):
 		if i < z[i]-1:
@@ -161,7 +165,8 @@ def visaResultat(rond,ids):
 		T1 = p["T1"]
 		T2 = str(p["T2"])
 		T3 = p["T3"]
-		sRonder = ' '.join([str(1+inv[p['opps'][i]]) + färg(p['color'][i])[0] + prRes(p['result'][i]) for i in range(rond+1)])
+#		sRonder = ' '.join([str(1+inv[p['opps'][i]]) + färg(p['color'][i])[0] + prRes(p['result'][i]) for i in range(rond+1)])
+		sRonder = ' '.join([str(1+inv[p['opps'][i]]) + färg(p['color'][i])[0] + prRes(p['result'][i]) for i in range(rond)])
 		print(1+inv[p['id']],'  ',p['name'],sRonder, '',prRes(sum(p['result'])),' ',prRes(T1),T2,'',prRes(T3),antal(p,1),antal(p,-1))
 
 def setT1(p,q):
@@ -190,49 +195,79 @@ def calcTB(rond):
 		p['T2'] = p['result'].count(2) # Antal vinster
 		p['T3']= sum([sum(persons[i]['result']) for i in p['opps']]) # Buchholz: summan av motståndarnas poäng
 
-for rond in range(2):
+def compact(person):
+	print({'id':person['id'], 'opps':person['opps'], 'color':person['color'], 'result':person['result']})
 
-	nameList = list(range(len(persons)))
-	nameList.sort(key=lambda p: persons[p]['name'])
+def freq(arr):
+	res = {}
+	for item in arr:
+		if item in res:
+			res[item] += 1
+		else:
+			res[item] = 1
+	return res
 
-	for p in persons:
-		colorSum = sum(p["color"])
-		latest = sum(p["color"][-1:])
-		latest2 = sum(p["color"][-2:])
+def allRounds():
+	global persons
+	persons = []
+	for i in range(N): save(i)
 
-		p["mandatory"] = 0
-		if colorSum <= -1 or latest2 == -2: p["mandatory"] =  1
-		if colorSum >=  1 or latest2 ==  2: p["mandatory"] = -1
-		p["colorComp"] = [colorSum,latest] # fundera på ordningen här.
+	ronder = 0
+	while True:
+		if ronder==6:return ronder
+		nameList = list(range(len(persons)))
+		nameList.sort(key=lambda p: persons[p]['name'])
 
-	ids = list(range(N))
-	ids.sort(key=lambda p: score(p),reverse=True)
+		for p in persons:
+			colorSum = sum(p["color"])
+			latest = sum(p["color"][-1:])
+			latest2 = sum(p["color"][-2:])
 
-	ids = lotta(ids)
-	if len(ids)==0:
-		print("Denna rond kan inte lottas! (Troligen för många ronder)")
-		break
+			p["mandatory"] = 0
+			if colorSum <= -1 or latest2 == -2: p["mandatory"] =  1
+			if colorSum >=  1 or latest2 ==  2: p["mandatory"] = -1
+			p["colorComp"] = [colorSum,latest] # fundera på ordningen här.
 
-	colorize(ids)
+		ids = list(range(N))
+		ids.sort(key=lambda p: score(p),reverse=True)
 
-	#print(ids)
-	#visaNamnlista(rond,ids)
-	#visaBordslista(rond,ids)
+		ids = lotta(ids)
+		if len(ids) < N:
+			#print("Denna rond kan inte lottas! (Troligen för många ronder)")
+			#print(ronder)
+			for person in persons:
+				# 	print(abs(sum(person['color'])))
+				compact(person)
+			return ronder
+		else:
 
-	for i in range(N//2):
-		a = ids[2*i]
-		b = ids[2*i+1]
-		persons[a]['opps'].append(b)
-		persons[b]['opps'].append(a)
-		x = random()
-		if x < 0.1:   res = [1,1]
-		elif x < 0.5: res = [0,2]
-		else:         res = [2,0]
-		persons[a]['result'].append(res[0])
-		persons[b]['result'].append(res[1])
+			colorize(ids)
 
+			#print(ids)
+			#visaNamnlista(rond,ids)
+			#visaBordslista(rond,ids)
+
+			for i in range(N//2):
+				a = ids[2*i]
+				b = ids[2*i+1]
+				persons[a]['opps'].append(b)
+				persons[b]['opps'].append(a)
+				x = random()
+				if x < 0.1:   res = [1,1]
+				elif x < 0.5: res = [0,2]
+				else:         res = [2,0]
+				persons[a]['result'].append(res[0])
+				persons[b]['result'].append(res[1])
+		ronder += 1
 	#visaLottning(ids)
-	#if rond==R-1: visaResultat(rond,ids)
+
+ronder = []
+for i in range(1):
+	print(i)
+	ronder.append(allRounds())
+print(min(ronder), max(ronder), sum(ronder)/len(ronder), freq(ronder))
+
+visaResultat(6,list(range(16)))
 
 print()
 print(round((time.time_ns() - start)/10**6,3), "ms")

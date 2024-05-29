@@ -4,14 +4,14 @@ import json
 
 lines = []
 
-def prnt(a,b='',c='',d='',e='',f=''):
-	s = ''
-	if b!='': s += ' ' + json.dumps(b).replace(' ','')
-	if c!='': s += ' ' + json.dumps(c).replace(' ','')
-	if d!='': s += ' ' + json.dumps(d).replace(' ','')
-	if e!='': s += ' ' + json.dumps(e).replace(' ','')
-	if f!='': s += ' ' + json.dumps(f).replace(' ','')
-	lines.append(a + ' :' + s + "\n")
+def prnt(a,b='',c='',d='',e='',f=''): return
+	# s = ''
+	# if b!='': s += ' ' + json.dumps(b).replace(' ','')
+	# if c!='': s += ' ' + json.dumps(c).replace(' ','')
+	# if d!='': s += ' ' + json.dumps(d).replace(' ','')
+	# if e!='': s += ' ' + json.dumps(e).replace(' ','')
+	# if f!='': s += ' ' + json.dumps(f).replace(' ','')
+	# lines.append(a + ' :' + s + "\n")
 
 def maxWeightMatching(edges, maxcardinality=False):
 
@@ -331,11 +331,11 @@ def maxWeightMatching(edges, maxcardinality=False):
 
 	for t in range(nvertex):
 
-		label[:] = (2 * nvertex) * [ 0 ]
-		bestedge[:] = (2 * nvertex) * [ -1 ]
+		label = (2 * nvertex) * [ 0 ]
+		bestedge = (2 * nvertex) * [ -1 ]
 		blossombestedges[nvertex:] = nvertex * [ None ]
-		allowedge[:] = nedge * [ False ]
-		queue[:] = [ ]
+		allowedge = nedge * [ False ]
+		queue = []
 
 		for v in range(nvertex):
 			if mate[v] == -1 and label[inblossom[v]] == 0:
@@ -459,8 +459,8 @@ def maxWeightMatching(edges, maxcardinality=False):
 		if mate[v] >= 0:
 			mate[v] = endpoint[mate[v]]
 
-	with open('python.txt','w') as f:
-		for line in lines:
-			f.write(line)
+	# with open('python.txt','w') as f:
+	# 	for line in lines:
+	# 		f.write(line)
 
 	return mate
