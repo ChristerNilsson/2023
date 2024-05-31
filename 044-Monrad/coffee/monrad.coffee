@@ -1,28 +1,62 @@
-# --- TODO ---
-# Parkera spelare
-# Hjälptexter
-# Ge perfekt felmeddelande för fel i URL-en.
-# Välj Monrad eller Swiss i URL-en
-# Ange färg för första bordet i URL-en
+# LOW ########################################
+# Återinför scorepoints vid GAMES == 1
+
+# TODO #######################################
+# Inför Swiss
 # Hantera kontrollinmatning av resultat
-# Hantera 2 till 8 partier per team/person
-# Hantera WW, LB etc i URL-en
-# Print bordslista
+# Hantera frirond
+# Skriv ut URL i samband med lottning till egen fil.
+
+# Ge perfekt felmeddelande för fel i URL-en. (EASY)
+#   Fel antal ronder i Color, Result
+#   Fel antal ELO
+
+# Välj Monrad eller Swiss i URL-en (LOW)
+# Parkera spelare
+
 # localStorage (i princip urlen)
-# Repetition av piltangenter
 # Hastighetsjämförelser (javafo, swiss-manager, min kod, monrad, swiss)
+
+# Testa på Mac. (klippbordet)
+
+# DONE #########################################
+# Alfabetisk Namnlista? Namn Bord Färg
+# Print bordslista
+# Hantera 1 till 8 partier per team/person GAMES=1 (default)
+
+# NOT TODO #####################################
+# Repetition av piltangenter (NIX, går för fort)
+# Två kolumner vid många spelare
+# Backa en eller flera ronder? (Kan göras mha sparade URL:er)
+# Ange färg för första bordet i URL-en (EASY) FIRST=WHITE, FIRST=BLACK (default)
+
+HELP = """
+How to use the Schwisch Chess Tournament Program:
+	Enter = Switch between Tables and Result
+	Home = Select First Table
+	Up   = Select Previous Table
+	Down = Select Next Table
+	End  = Select Last Table
+	0 = Enter a Loss for White Player
+	space = Enter a Draw
+	1 = Enter a Win for White Player
+	P = Perform Pairing
+	S = Make text smaller
+	L = Make text larger
+	? = Show this Help Page
+	H = Show Help for constructing the URL
+""".split '\n'
+
+ASCII = '0123456789abcdefg'
 
 N = 0 # number of players
 ROUNDS = 0 # number of rounds
 DY = 75 # vertical line distance
+DY = 40 # vertical line distance
 
-# Fairer scoring, optional
-WW = 0.9 # Win White (1)
-LB = 0.1 # Lose Black (0)
-WB = 1.0 # Win Black (1)
-LW = 0.0 # Lose White (0)
-DW = 0.4 # Draw White (0.5)
-DB = 0.6 # Draw Black (0.5)
+TOUR = ''
+GAMES = 1
+FIRST = 'black'
 
 print = console.log
 range = _.range
@@ -33,17 +67,14 @@ currentTable = 0
 persons = [] # stabil, sorterad på id
 pairings = [] # varierar med varje rond
 
-state = 0 # 0=Tables 1=Result
-round = 1 
+state = 0 # 0=Tables 1=Result 2=Help
+ROUND = 1 
 resultat = [] # 012 sorterad på id
 antal = 0 
 
 showType = (a) -> if typeof a == 'string' then "'#{a}'" else a
-
 assert = (a,b) -> if not _.isEqual a,b then print "Assert failure: #{showType a} != #{showType b}"
 
-buttons = [[],[],[],[],[]]
-released = true
 message = '' #This is a tutorial tournament. Use it or edit the URL'
 
 myRound = (x,decs) -> 
@@ -57,10 +88,10 @@ fetchURL = (url = location.search) ->
 	res = {}
 	urlParams = new URLSearchParams url
 	persons = []
-	title = urlParams.get('TOUR').replace '_',' '
+	TOUR = urlParams.get('TOUR').replace '_',' '
 	datum = urlParams.get('DATE') or ""
 	ROUNDS = parseInt urlParams.get('ROUNDS')
-	round = parseInt urlParams.get('ROUND')
+	ROUND = parseInt urlParams.get('ROUND')
 
 	res.NAME = urlParams.get('NAME').replaceAll('_',' ').split '|'
 	res.ELO = urlParams.get('ELO').split '|'
@@ -74,7 +105,12 @@ fetchURL = (url = location.search) ->
 		print "Error: Number of players must be 64 or less!"
 		return
 
-	if res.OPP and res.COL and res.RES
+	GAMES = if urlParams.get 'GAMES' then parseInt urlParams.get 'GAMES' else 1
+	FIRST = if urlParams.get 'FIRST' then urlParams.get 'FIRST' else 'black'
+
+	print {GAMES,FIRST}
+
+	if ROUND > 0
 
 		res.OPP = urlParams.get('OPP').split '|'
 		res.COL = urlParams.get('COL').split '|'
@@ -93,6 +129,7 @@ fetchURL = (url = location.search) ->
 				print "Error: Illegal number of rounds for player #{res.NAME[i]}!"
 				return
 			persons.push {id:i, name: res.NAME[i], col:res.COL[i], res:res.RES[i], bal:0, opp:res.OPP[i], T:[0,0,0], elo:res.ELO[i] }
+		calcScore()
 
 	else
 		if N % 2 == 1
@@ -115,32 +152,21 @@ copyToClipboard = (text) ->
 		.then => message = 'Urlen har kopierats till klippbordet 2'
 		.catch (err) => message 'Kopiering till klippbordet misslyckades'
 
-class Button
-	constructor : (@prompt,@fill,@click) ->
-		@active = true
-		@align = CENTER
-	setExtent : (@x,@y,@w,@h) ->
-	draw : ->
-		if not @active then return
-		textAlign @align,CENTER
-		if @prompt == 'next'
-			fill 'black'
-			rectMode CENTER
-			rect @x,@y, @w,@h
-		fill @fill
-		text @prompt,@x, @y + 0.5
-	inside : (mx,my) -> @x-@w/2 <= mx <= @x+@w/2 and @y-@h/2 <= my <= @y+@h/2 and @active
-
 createURL = ->
-	res = "https://christernilsson.github.io/2023/044-Monrad"
-	res += "?TOUR=" + "Wasa SK KM blixt"
-	res += "&DATE=" + "2023-11-25"
-	res += "&NAME=" + (_.map persons, (person) -> person.name.replaceAll " ","_").join "|"
-	if persons[0].opp.length> 0
-		res += "&OPP=" + (_.map persons, (person) -> (_.map person.opp, (opp) -> str(opp)).join ",").join "|"
-		res += "&COL=" + (_.map persons, (person) -> person.col).join "|"
-		res += "&RES=" + (_.map persons, (person) -> person.res).join "|"
-	res
+	res = []
+	#res.push "https://christernilsson.github.io/2023/044-Monrad"
+	res.push "http://127.0.0.1:5500"
+	res.push "?TOUR=" + TOUR
+	res.push "&DATE=" + "2023-11-25"
+	res.push "&ROUNDS=" + ROUNDS
+	res.push "&ROUND=" + ROUND
+	res.push "&NAME=" + (_.map persons, (person) -> person.name.replaceAll " ","_").join "|"
+	res.push "&ELO=" + (_.map persons, (person) -> person.elo).join "|"
+	#if persons[0].opp.length> 0
+	res.push "&OPP=" + (_.map persons, (person) -> (_.map person.opp, (opp) -> str(opp)).join ",").join "|"
+	res.push "&COL=" + (_.map persons, (person) -> person.col).join "|"
+	res.push "&RES=" + (_.map persons, (person) -> person.res).join "|"
+	res.join '\n'
 
 sum = (s) ->
 	res = 0
@@ -159,20 +185,13 @@ assert 0, sumBW 'BWBWWB'
 assert -6, sumBW 'BBBBBB'
 assert 6, sumBW 'WWWWWW'
 
-scorex = (person) ->
-	res = 0
-	colors = person.col
-	scores = person.res
-	n = scores.length
-	for i in range round
-		s = scores[i] + colors[i] 
-		if s == '0W' then res += LW # lose as white
-		if s == '0B' then res += LB # lose as black
-		if s == '1W' then res += DW # draw as white
-		if s == '1B' then res += DB # draw as blakc
-		if s == '2W' then res += WW # win as white
-		if s == '2B' then res += WB # win as black
-	res
+scorex = (res) ->
+	result = 0
+	for i in range ROUND
+		index = ASCII.indexOf res[i]
+		if index >= 0 then result += parseInt index
+	result / 2
+	# print('scorex',round,res,result)
 
 getMet = (a,b) -> b.id in persons[a.id].opp
 
@@ -192,10 +211,10 @@ pair = (persons,pairing=[]) ->
 	antal += 1
 	a  = persons[0]
 	for b in persons
-		if a == b then continue # you can not meet yourself
-		if getMet a,b then continue # a and b mst not have met before
+		if a == b then continue # you cannot meet yourself
+		if getMet a,b then continue # a and b must not have met before
 		mandatory = a.mandatory + b.mandatory
-		if 2 == Math.abs mandatory then continue # Players can not haave the same color
+		if 2 == Math.abs mandatory then continue # Players can not have the same color
 		newPersons = (p for p in persons when p not in [a,b])
 		newPairing = pairing.concat [a,b]
 		result = pair newPersons,newPairing
@@ -213,8 +232,43 @@ adjustForColors = (pairings) ->
 			res.push pairings[2*i] # B
 	res
 
+downloadFile = (txt,filename) ->
+	blob = new Blob [txt], { type: 'text/plain' }
+	url = URL.createObjectURL blob
+	a = document.createElement 'a'
+	a.href = url
+	a.download = filename
+	document.body.appendChild a
+	a.click()
+	document.body.removeChild a
+	URL.revokeObjectURL url
+
+makeTableFile = (header) ->
+	res = []
+
+	players = ([pairings[i],i] for i in range N)
+	players = _.sortBy players, (p) -> p[0].name
+	players = ("#{_.pad((1+i//2).toString()+'WB'[i%2] ,5)} #{p.name}" for [p,i] in players)
+
+	res.push "NAMES" + header
+	res.push ""
+	res.push "Table Name"
+	for p in players
+		res.push p
+	res.push "\f"
+
+	res.push "TABLES" + header
+	res.push ""
+	res.push "Table White".padEnd(6+25) + _.pad("",20) + 'Black'.padEnd(25)
+	for i in range N//2
+		a = pairings[2*i]
+		b = pairings[2*i+1]
+		res.push ""
+		res.push _.pad(i+1,6) + a.name.padEnd(25) + _.pad("|____| - |____|",20) +  b.name.padEnd(25)
+	res.join "\n"	
+
 lotta = ->
-	print 'Lottning av rond ',round
+	print 'Lottning av rond ',ROUND
 	print persons
 	for p in persons
 		if p.res.length != p.col.length then return
@@ -230,12 +284,12 @@ lotta = ->
 		p.colorComp = [colorSum,latest] # fundera på ordningen här.
 
 	calcScore()
-	if round == 0
+	if ROUND == 0
 		pairings = persons
 		print 'pairings',pairings
-		round = 1
+		ROUND = 1
 	else
-		round += 1
+		ROUND += 1
 		pairings = _.sortBy persons, ['score']
 		pairings = pairings.reverse()
 		start = new Date()
@@ -243,7 +297,7 @@ lotta = ->
 
 		pairings = pair pairings
 		print 'pairings',pairings
-		print round, "#{antal} #{new Date() - start} milliseconds"
+		print ROUND, "#{antal} #{new Date() - start} milliseconds"
 
 	colorize pairings
 	pairings = adjustForColors pairings
@@ -255,20 +309,36 @@ lotta = ->
 
 	state = 0
 
+	timestamp = new Date().toLocaleString 'se-SE'
+	downloadFile makeTableFile(" for " + TOUR + " in Round #{ROUND}    #{timestamp}"), TOUR + " Round #{ROUND}.txt"
+	downloadFile createURL(), "URL for " + TOUR + " Round #{ROUND}.txt"
+
 	print {'pairings after pairing',pairings}
 
+# Beror på GAMES som varierar mellan 1 och 8
+prBoth = (score) ->
+	a = ASCII.indexOf score
+	b = 2 * GAMES - a
+	ax = prRes score
+	bx = prRes ASCII[b]
+	if ax.length == 1 then ax = ' ' + ax
+	if bx.length == 1 then bx = bx + ' '
+	ax + ' - ' + bx
+
 prRes = (score) ->
-	score = parseInt score
-	if score == 1 then return '½'
+	score = ASCII.indexOf score
 	a = "#{score // 2}"
+	if a == "0" then a=""
 	b = if score % 2 == 1 then '½' else ''
-	a + b
-assert '0', prRes '0'
-assert '½', prRes '1'
-assert '1', prRes '2'
-assert '1½', prRes 3
-assert '10', prRes 20
-assert '10½', prRes 21
+	if a+b == "" then return '0'
+	a+b
+assert '0',  prRes '0'
+assert '½',  prRes '1'
+assert '1',  prRes '2'
+assert '1½', prRes '3'
+assert '4',  prRes '8'
+assert '5',  prRes 'a'
+assert '5½', prRes 'b'
 
 invert = (arr) ->
 	res = []
@@ -280,7 +350,8 @@ assert [3,2,0,1], invert [2,3,1,0]
 
 calcScore = ->
 	for person in persons
-		person.score = scorex person
+		person.score = scorex person.res
+	print('calcScore',persons)
 
 setT0 = (p,q) ->
 	if q in persons[p].opp
@@ -324,7 +395,7 @@ txtT = (value, w, align=window.CENTER) ->
 		rt = _.repeat ' ',diff//2
 		res = lt + value + rt
 	res
-assert "Sven      ", txtT "Sven",10
+assert "   Sven   ", txtT "Sven",10
 
 showHeader = (header) ->
 	y = DY/2
@@ -332,7 +403,7 @@ showHeader = (header) ->
 	s = ''
 	s += txtT "#{title} #{datum}" ,30, window.LEFT
 	s += ' ' + txtT header, 22, window.CENTER
-	s += ' ' + txtT 'Round ' + round, 30, window.RIGHT
+	s += ' ' + txtT 'Round ' + ROUND, 30, window.RIGHT
 	fill 'black'
 	text s,10,y
 
@@ -361,17 +432,21 @@ showTables = ->
 		y += DY*0.5
 		a = pairings[2*i  ] # White
 		b = pairings[2*i+1] # Black
-		pa = myRound scorex(a), 1
-		pb = myRound scorex(b), 1
-		ar = if a.res.length==a.col.length then prRes _.last(a.res) else " "
-		br = if b.res.length==b.col.length then prRes _.last(b.res) else " "
+		# pa = myRound scorex(a.res), 1
+		# pb = myRound scorex(b.res), 1
+		pa = myRound a.score, 1
+		pb = myRound b.score, 1
+		both = if a.res.length == a.col.length then prBoth _.last(a.res) else "   -   "
+
 		nr = i+1
 		s = ""
 		s += txtT nr.toString(), 2, window.RIGHT
 		s += ' ' + txtT pa, 5
 		s += ' ' + txtT a.elo, 4
 		s += ' ' + txtT a.name, 25, window.LEFT
-		s += ' ' + txtT ar + ' - ' + br,7, window.CENTER
+
+		s += ' ' + txtT both,7, window.CENTER
+
 		s += ' ' + txtT b.name, 25, window.LEFT
 		s += ' ' + txtT b.elo, 4
 		s += ' ' + txtT pb, 5, window.CENTER
@@ -380,11 +455,11 @@ showTables = ->
 
 lightbulb = (color, x, y, result, opponent) ->
 	push()
+	print 'lightbulb',result
 	fill 'red gray green'.split(' ')[result]
 	rectMode CENTER
 	rect x,y,0.8*DY,0.45*DY
 	fill {B:'black', W:'white'}[color]
-	#textSize DY * 0.5
 	noStroke()
 	strokeWeight = 0
 	txt 1+opponent,x,y+1,CENTER
@@ -393,12 +468,12 @@ lightbulb = (color, x, y, result, opponent) ->
 showResult = ->
 	showHeader 'Result'
 	if pairings.length == 0
-		txt "This round can't be paired! (Too many rounds)",width/2,height/2,CENTER
+		txt "This ROUND can't be paired! (Too many rounds)",width/2,height/2,CENTER
 		return
 
 	noStroke()
 	calcT()
-	calcScore()
+	# calcScore()
 
 	temp = _.sortBy persons, ['score', 'T']
 	temp = temp.reverse()
@@ -431,7 +506,7 @@ showResult = ->
 		s += ' ' + txtT person.elo,       4, window.LEFT
 		s += ' ' + txtT person.name,     25, window.LEFT
 		s += ' ' + txtT '', 3*ROUNDS, window.CENTER
-		score = scorex person
+		score = person.score # scorex person.res
 		score = myRound score,1
 		s += ' ' + txtT score,             5, window.RIGHT
 		s += ' ' + txtT prRes(person.T[0]),2,window.CENTER
@@ -439,15 +514,11 @@ showResult = ->
 		s += ' ' + txtT prRes(person.T[2]),2,window.CENTER
 		text s,10,y
 
-		for r in range round
+		#print('round',round)
+		for r in range ROUND-1
 			x = DY * (10.5 + 0.9*r)
+			print r,person.col[r][0], x, y, person.res[r], inv[person.opp[r]]
 			lightbulb person.col[r][0], x, y, person.res[r], inv[person.opp[r]]
-
-window.windowResized = ->
-	# DY = 30 # mw 50
-	# createCanvas windowWidth-30,windowHeight
-	# if state == 0 then resizeCanvas windowWidth, DY * (N//2+2)
-	# if state == 1 then resizeCanvas windowWidth, DY * (N+2)
 
 if location.search == ''
 	title = 'Tutorial Tournament'
@@ -459,246 +530,53 @@ else
 	fetchURL()
 	pairings = persons
 
+showHelp = ->
+	textAlign LEFT
+	for i in range HELP.length
+		text HELP[i],100,50+50*i
+
+window.windowResized = -> 
+	resizeCanvas windowWidth-4,windowHeight-4
+	xdraw()
+
 window.setup = ->
 	createCanvas windowWidth-4,windowHeight-4
 	textFont 'Courier New'
 	textAlign CENTER,CENTER
 	lotta()
+	state = 0
+	xdraw()
 
-window.draw = ->
+xdraw = ->
 	background 'gray'
 	textSize DY * 0.5
 	if state == 0 then showTables()
-	else if state == 1 then showResult()
+	if state == 1 then showResult()
+	if state == 2 then showHelp()
 
 window.keyPressed = ->
-	print keyCode,key
-	if key == 'ArrowUp' then currentTable = (currentTable - 1) %% 7
-	if key == 'ArrowDown' then currentTable = (currentTable + 1) %% 7
+	if key == 'Home' then currentTable = 0
+	if key == 'ArrowUp' then currentTable = (currentTable - 1) %% (N//2)
+	if key == 'ArrowDown' then currentTable = (currentTable + 1) %% (N//2)
+	if key == 'End' then currentTable = (N//2) - 1
 	index = 2*currentTable
 	a = pairings[index]
 	b = pairings[index+1]
-	if key == '0' 
-		if a.res.length < a.col.length then a.res += '0'
-		if b.res.length < b.col.length then b.res += '2'
-	if key == ' ' 
-		if a.res.length < a.col.length then a.res += '1'
-		if b.res.length < b.col.length then b.res += '1'
-	if key == '1' 
-		if a.res.length < a.col.length then a.res += '2'
-		if b.res.length < b.col.length then b.res += '0'
-	if key in '1 0' then currentTable = (currentTable + 1) %% 7
+	if key in '0 1q2w3e4r5t6y7u8'
+		index = '0 1q2w3e4r5t6y7u8'.indexOf key
+		if index <= 2 * GAMES
+			if a.res.length < a.col.length then a.res += ASCII[index]
+			if b.res.length < b.col.length then b.res += ASCII[2*GAMES - index]
+			currentTable = (currentTable + 1) %% (N//2)
 	if key == 'Enter'
 		state = 1 - state
 		if state == 1
 			calcT()
-			calcScore()
-			temp = _.sortBy persons, ['score', 'T']
-			temp = temp.reverse()
-			print temp
-	if key in 'lL' then lotta()
-	if key == '=' 
-		DY += 1
-		print DY
-	if key == '-'
-		DY -= 1
-		print DY
-
-
-
-#############################
-
-# start = new Date()
-# #for round in range 0 # N//2
-# lotta()
-# print 'persons',persons
-# print "#{new Date() - start} milliseconds"
-
-# calcT()
-# temp = _.sortBy persons, ['score', 'T']
-# temp = temp.reverse()
-# print temp
-
-#######################################
-
-# selectRounds = (n) -> # antal ronder ska vara cirka 150% av antalet matcher i en cup. Samt jämnt.
-# 	res = Math.floor 1.50 * Math.log2 n
-# 	res += res % 2
-# 	if 2*res > n then res -= 1
-# 	if n==4 then res = 2
-# 	res
-# assert 2, selectRounds 4
-# assert 3, selectRounds 6
-# assert 4, selectRounds 10
-# assert 6, selectRounds 12
-# assert 6, selectRounds 24
-# assert 8, selectRounds 26
-# assert 8, selectRounds 60
-# assert 10, selectRounds 64
-
-	# for i in range N//2
-		# a = pairings[2*i+0]
-		# b = pairings[2*i+1]
-		# z = random()
-		# if z < 0.1 then res = 1
-		# else if z < 0.5 then res =  0
-		# else res = 2
-		# a.res += res.toString()
-		# b.res += (2-res).toString()
-
-# N = 16
-# for i in range N
-# 	persons.push { id:i, name:i, col:"", res:"", score:0, opp:[], T:[0,0,0] }
-
-# showNames = ->
-# 	showHeader 'Names'
-# 	textSize 0.5 * DY
-# 	txt 'Table Name',mw(  5),DY*1.5,LEFT
-# 	txt 'Table Name',mw(505),DY*1.5,LEFT
-# 	for person,i in pairings
-# 		x = mw(500) * (person.id // (N//2))
-# 		y = DY * (2.5 + person.id % (N//2))
-# 		bord = 1 + i//2
-# 		fill if 'B' == _.last person.col then 'black' else 'white'
-# 		txt bord,0.75*DY+x,y,RIGHT
-# 		txt person.name,DY+x,y,LEFT
-
-# 	buttons[3][0].active = false
-
-# seed = 14 # Math.random()
-# random = ->
-# 	seed++
-# 	(((Math.sin(seed)/2+0.5)*10000)%100)/100
-
-# lotta_inner = (pairings) -> # personer sorterade
-# 	# denna funktion anpassar till maxWeightMatching
-# 	arr = []
-# 	#print 'aaa',pairings
-# 	for a in pairings
-# 		for b in pairings
-# 			if a.id >= b.id then continue
-# 			if getMet a, b then continue
-# 			mandatory = a.mandatory + b.mandatory
-# 			if Math.abs(mandatory) == 2 then continue # Spelarna kan inte ha samma färg.
-# 			arr.push([a.id+1, b.id+1, 1000 - Math.abs(scorex(a) - scorex(b))])
-# 	print('arr',arr)
-# 	z = maxWeightMatching arr
-# 	print 'z',z
-# 	z = z.slice 1 #[1:N+1]
-# 	res = []
-# 	for i in range N
-# 		if i < z[i]-1 then res.concat [i,z[i]-1]
-# 	# res är ej sorterad i bordsordning ännu
-
-# 	#print 'adam',res
-
-# 	result = []
-# 	for i in range(N//2)
-# 		ia = res[2*i]
-# 		ib = res[2*i+1]
-# 		a = persons[ia]
-# 		b = persons[ib]
-# 		lst = [scorex(a),scorex(b)]
-# 		lst.sort(reverse=True)
-# 		result.append([lst,ia,ib])
-# 	result.sort(reverse=True)
-
-# 	resultat = []
-# 	for i in range(N//2)
-# 		[_,ia,ib] = result[i]
-# 		resultat.concat [ia,ib]
-# 		# a = persons[ia]
-# 		# b = persons[ib]
-# 		# pa = scorex(a) # sum(a['result'])/2
-# 		# pb = scorex(b) # sum(b['result'])/2
-# 		# print('',i+1,' ',pa,a["name"],'         ',b["name"],' ',pb)
-# 	resultat
-
-# moveAllButtons = ->
-# 	buttons[2][0].setExtent mw(950),0.45*DY, mw(60),0.55*DY
-# 	buttons[3][0].setExtent mw(950),0.45*DY, mw(60),0.55*DY
-# 	buttons[4][0].setExtent mw(950),0.45*DY, mw(60),0.55*DY
-
-# 	for i in range N//2
-# 		y = DY * (i+2.5)
-# 		buttons[3][3*i+1].setExtent mw(200),y, mw(200),30
-# 		buttons[3][3*i+2].setExtent mw(500),y, mw(200),30
-# 		buttons[3][3*i+3].setExtent mw(600),y, mw(200),30
-
-# updateAllButtons = ->
-# 	for i in range N//2
-# 		white = pairings[2*i+0]
-# 		black = pairings[2*i+1]
-# 		buttons[3][3*i+1].prompt = white.name
-# 		buttons[3][3*i+1].align = LEFT
-# 		buttons[3][3*i+2].prompt = '-'
-# 		buttons[3][3*i+3].prompt = black.name
-# 		buttons[3][3*i+3].align = LEFT
-
-# createAllButtons = ->
-
-# 	buttons = [[],[],[],[],[]]
-
-# 	buttons[2].push new Button 'next', 'yellow', ->
-# 		state = 3
-# 		print('state',state)
-
-# 		updateAllButtons()
-
-# 	buttons[3] = []
-# 	buttons[3].push new Button 'next', 'yellow', ->
-# 		state = 4
-# 		print('state',state)
-
-# 		transferResult()
-# 		windowResized()
-# 	for i in range N//2
-# 		n = buttons[3].length
-# 		do (n) ->
-# 			buttons[3].push new Button 'white','white',     -> setPrompt buttons[3][n+1], '1 - 0'
-# 			buttons[3].push new Button '-',    'lightgray', -> setPrompt buttons[3][n+1], '½ - ½'
-# 			buttons[3].push new Button 'black', 'black',    -> setPrompt buttons[3][n+1], '0 - 1'
-
-# 	buttons[4].push new Button 'next', 'yellow', ->
-# 		resizeCanvas windowWidth, DY * (N//2+2)
-# 		s = createURL()
-# 		print s
-# 		copyToClipboard s
-# 		if rond < ROUNDS-1
-# 			rond += 1
-# 			for person in persons
-# 				person.score = scorex person
-# 			print persons
-# 			lotta()
-# 			print {pairings}
-# 	print "#{buttons[3].length + 2} buttons created"
-
-# window.mousePressed = (event) ->
-# 	event.preventDefault()
-# 	if not released then return
-# 	released = false
-# 	for button in buttons[state]
-# 		if button.inside mouseX,mouseY then button.click()
-# 	false
-
-# window.mouseReleased = (event) ->
-# 	event.preventDefault()
-# 	released = true
-# 	false
-
-# setPrompt = (button,prompt) -> 
-# 	button.prompt = if button.prompt == prompt then '-' else prompt
-# 	for button in buttons[3].slice 1
-# 		if button.prompt == '-'
-# 			buttons[3][0].active = false
-# 			return
-# 	buttons[3][0].active = true
-
-# transferResult = ->
-# 	for i in range N//2
-# 		button = buttons[3][2+3*i]
-# 		white = {'1 - 0': 2,'½ - ½': 1,'0 - 1': 0}[button.prompt]
-# 		pairings[2*i+0].res += "012"[white]
-# 		pairings[2*i+1].res += "012"[2-white]
-# 		button.prompt = '-'
-
+			#calcScore()
+			#temp = _.sortBy persons, ['score', 'T']
+			#temp = temp.reverse()
+			#print temp
+	if key in 'pP' then lotta()
+	if key in 'lL' then DY += 1
+	if key in 'sS' then DY -= 1
+	xdraw()

@@ -25,6 +25,8 @@ http://127.0.0.1:5500?TOUR=Klass_1
 &DATE=2024-05-28
 &ROUNDS=6
 &ROUND=0
+&GAMES=1
+&FIRST=black
 &NAME=Lennart_B._Johansson|Göran_Björkdahl|Henrik_Strömbäck|Onni_Aikio|Tor_Liljeström|Lars-Åke_Pettersson|Leonid_Stolov|Peteris_Silins|Kjell_Persson|Jouko_Lehvonen|Lars_Owe_Andersson|Dan_Israel|Lars-Erik_Åberg|Görgen_Antonsson
 &ELO=1825|1800|1775|1750|1725|1700|1675|1650|1625|1600|1575|1550|1525|1500
 ```
@@ -35,10 +37,12 @@ http://127.0.0.1:5500?TOUR=Klass_1
 
 64 players:  
 ```
-https://christernilsson.github.io/2023/044-Monrad
-?T=Wasa_SK
-&D=2023-11-28
-&N=AA|AB|AC|AD|AE|AF|AG|AH|BA|BB|BC|BD|BE|BF|BG|BH|CA|CC|CC|CD|CE|CF|CG|CH|DA|DD|DC|DD|DE|DF|DG|DH|EA|EE|EC|ED|EE|EF|EG|EH|FA|FF|FC|FD|FE|FF|FG|FH|GA|GB|GC|GD|GE|GF|GG|GH|HA|HB|HC|HD|HE|HF|HG|HH
+http://127.0.0.1:5500?TOUR=Wasa_SK
+&DATE=2023-11-28
+&ROUNDS=6
+&ROUND=0
+&NAME=AA|AB|AC|AD|AE|AF|AG|AH|BA|BB|BC|BD|BE|BF|BG|BH|CA|CC|CC|CD|CE|CF|CG|CH|DA|DD|DC|DD|DE|DF|DG|DH|EA|EE|EC|ED|EE|EF|EG|EH|FA|FF|FC|FD|FE|FF|FG|FH|GA|GB|GC|GD|GE|GF|GG|GH|HA|HB|HC|HD|HE|HF|HG|HH
+&ELO=1825|1800|1775|1750|1725|1700|1675|1650|1625|1600|1575|1550|1525|1500|1725|1700|1675|1650|1625|1600|1575|1550|1525|1500|1725|1700|1675|1650|1625|1600|1575|1550|1525|1500|1725|1700|1675|1650|1625|1600|1575|1550|1525|1500|1725|1700|1675|1650|1625|1600|1575|1550|1525|1500|1725|1700|1675|1650|1625|1600|1575|1550|1525|1500
 ```
 ### Monrad
 
@@ -68,10 +72,10 @@ Click Next to start the next round.
 	Edit the URL above.  
 	Add the names of the players.  
 
-	* N contains then names, separated with |. Mandatory.
-	* H contains the header of the tournament. Optional
-	* D contains the Date. Optional
-	* R contains the number of rounds. Optional
+	* NAME contains then names, separated with |. Mandatory.
+	* TOUR contains the header of the tournament. Optional
+	* DATE contains the Date. Optional
+	* ROUNDS contains the number of rounds. Optional
 		* Default: minimum number of rounds if the tournament was a cup, plus 50%.
 		* One round added to make the number of rounds even.
 		* If you want a different number of rounds, just put it in the URL.
@@ -86,27 +90,27 @@ Click Next to start the next round.
 	* Z states the team size. Default: Z=1. Maximum 8.
 
 	The following parameters are internal and handled by the program:
-	* O contains the opponents
-	* C contains the colours, B & W
-	* S contains the scores, 0, 1 or 2 for victory.
+	* OPP contains the opponents
+	* COL contains the colours, B & W
+	* RES contains the scores, 0, 1 or 2 for victory.
 
 ### Saving the tournament
 	* The updated URL contains all information to display the result page.
-	* The URL is available on the clipboard. Windows:ok, Apple:no (thanks to EU and GDPR)
-	* No tournament will be stored on the server.
+	* The URL is available on the clipboard.
+	* No data will be stored on the server. All data is in the URL.
 
 ### Sample URL
 Eight players, four rounds  
 Just copy and paste it into your browser. Oneliner not needed.  
 ```
 https://christernilsson.github.io/2023/044-Monrad
-?N=CARLSEN_Christer|BENGTSSON_Bertil|HARALDSSON_Helge|ERIKSSON_Erik|ANDERSSON_Anders|DANIELSSON_Daniel|GREIDER_Göran|FRANSSON_Ferdinand
-&H=Wasa SK KM blixt
-&D=2023-11-25
-&O=1356|0437|3765|2014|5173|4602|7520|6241
-&C=WBWB|BWWB|WBWB|BWBW|WBWB|BWBW|WBBW|BWBW
-&S=2111|0200|1222|1122|0020|2010|2201|0002
-&T=WD1
+?NAME=CARLSEN_Christer|BENGTSSON_Bertil|HARALDSSON_Helge|ERIKSSON_Erik|ANDERSSON_Anders|DANIELSSON_Daniel|GREIDER_Göran|FRANSSON_Ferdinand
+&TOUR=Wasa SK KM blixt
+&DATE=2023-11-25
+&OPP=1,3,5,6|0,4,3,7|3,7,6,5|2,0,1,4|5,1,7,3|4,6,0,2|7,5,2,0|6,2,4,1
+&COL=WBWB|BWWB|WBWB|BWBW|WBWB|BWBW|WBBW|BWBW
+&RES=2111|0200|1222|1122|0020|2010|2201|0002
+&TIE=WD1
 ```
 
 # Table of number of rounds (R) given number of players (N).
@@ -141,7 +145,6 @@ R: 2 3 4  4  6  6  8  8 10
 	* Right Arrow: Increase White with ½. Wraps.
 * Use Up and Down to select game. Wraps
 * Also: Home End PgUp PgDn
-* Letters: Search the next Player starting with the letter.
 
 # Kontroller av URL.
 * Antal spelare skall överensstämma i N, O, C och R
