@@ -210,3 +210,39 @@
 # 		text @prompt,@x, @y + 0.5
 # 	inside : (mx,my) -> @x-@w/2 <= mx <= @x+@w/2 and @y-@h/2 <= my <= @y+@h/2 and @active
 
+# colorize = (persons) ->
+# 	for i in range persons.length//2
+# 		pa = persons[2*i]
+# 		pb = persons[2*i+1]
+# 		pac = 'B W'[pa.mandatory+1]
+# 		pbc = 'B W'[pb.mandatory+1]
+# 		if pac == pbc
+# 			if pa.colorComp <= pb.colorComp then pac = 'W' else pac = 'B'
+# 		pa.col += pac
+# 		pb.col += if pac=='W' then 'B'  else 'W'
+
+		# for p in @players
+			# colorSum = sumBW p.col
+			# latest = if p.col.length== 0 then '' else _.last p.col
+			# latest2 = if p.col.length < 2 then '' else sumBW _.slice p.col, p.col.length - 2
+
+			# p.mandatory = 0
+			# if colorSum <= -1 or latest2 == -2 then p.mandatory =  1
+			# if colorSum >=  1 or latest2 ==  2 then p.mandatory = -1
+			# p.colorComp = [colorSum,latest] # fundera på ordningen här.
+
+		#calcScore()
+
+# sumBW = (s) ->
+# 	res = 0
+# 	for item in s
+# 		res += if item=='B' then -1 else 1
+# 	res
+# assert 0, sumBW ''
+# assert 0, sumBW 'BWBWWB'
+# assert -6, sumBW 'BBBBBB'
+# assert 6, sumBW 'WWWWWW'
+
+#assert 0, scorex [],0
+#assert 2.5, scorex [0,1,2,2],4
+
