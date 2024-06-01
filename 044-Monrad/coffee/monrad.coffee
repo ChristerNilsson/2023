@@ -68,12 +68,43 @@ persons = [] # stabil, sorterad på id
 pairings = [] # varierar med varje rond
 
 state = 0 # 0=Tables 1=Result 2=Help
-ROUND = 1 
+ROUND = 0
 resultat = [] # 012 sorterad på id
-antal = 0 
 
 showType = (a) -> if typeof a == 'string' then "'#{a}'" else a
 assert = (a,b) -> if not _.isEqual a,b then print "Assert failure: #{showType a} != #{showType b}"
+
+ok = (p0, p1) -> p0 != p1 and p0.id not in p1.opp and abs(p0.bal + p1.bal) <= 1 # eller 2
+other = (col) -> if col == 'b' then 'w' else 'b'
+balans = (col) -> if col == 'w' then 1 else -1
+
+flip = (p0,p1) -> # p0 byter färg, p0 anpassar sig
+	col0 = _.last p0.col
+	col1 = col0
+	col0 = other col0
+	p0.col += col0
+	p1.col += col1
+	p0.bal += balans col0
+	p1.bal += balans col1
+
+assignColors = (p0,p1) ->
+	if p0.col.length == 0
+		col1 = "bw"[p0.id % 2]
+		col0 = other col1 # "bw"[1 - p0.id % 2]
+		p0.col += col0
+		p1.col += col1
+		# bal = 1 if col0 == 'w' else -1
+		p0.bal += balans col0
+		p1.bal += balans col1
+	else
+		bal = p0.bal + p1.bal
+		if bal == 0
+			flip p0,p1
+		else if 2 == abs bal
+			if 2 == abs p0.bal
+				flip p0,p1
+			else
+				flip p1,p0
 
 message = '' #This is a tutorial tournament. Use it or edit the URL'
 
@@ -83,6 +114,27 @@ myRound = (x,decs) ->
 	s
 assert "2.0", myRound 1.99,1
 assert "0.6", myRound 0.6,1
+
+ints2strings = (ints) -> "#{ints}"
+assert "1,2,3", ints2strings [1,2,3]
+assert "1", ints2strings [1]
+assert "", ints2strings []
+
+res2string = (ints) -> (i.toString() for i in ints).join ''
+assert "123", res2string [1,2,3]
+assert "1", res2string [1]
+assert "", res2string []
+
+# string2ints = (s) -> 
+# 	print s
+# 	print s.split(",")
+# 	res = _.map s.split(","), (item) -> parseInt item
+# 	print res
+# 	res
+#assert [], string2ints ""
+#assert [1], string2ints "1"
+#assert [1,2], string2ints "1,2"
+# assert [1,2,3], string2ints "1,2,3"
 
 fetchURL = (url = location.search) ->
 	res = {}
@@ -120,22 +172,27 @@ fetchURL = (url = location.search) ->
 			return
 		R = res.RES[0].length
 
-		res.OPP = _.map res.OPP, (r) -> _.map r.split(',') #, (ch) -> ALFABET.indexOf ch
-		res.COL = _.map res.COL, (r) -> _.map r, (ch) -> {B:-1,W:1}[ch]
+		print('a',res)
+		res.OPP = _.map res.OPP, (r) -> _.map r.split(','), (s) -> parseInt s
+		#res.COL = _.map res.COL, (r) -> _.map r, (ch) -> {B:-1,W:1}[ch]
 		res.RES = _.map res.RES, (r) -> _.map r, (ch) -> parseInt ch
+		#res.RES = _.map res.RES, string2ints 
+		print('b',res)
 
 		for i in range N
 			if R != res.OPP[i].length != res.COL[i].length != res.RES[i].length
 				print "Error: Illegal number of rounds for player #{res.NAME[i]}!"
 				return
 			persons.push {id:i, name: res.NAME[i], col:res.COL[i], res:res.RES[i], bal:0, opp:res.OPP[i], T:[0,0,0], elo:res.ELO[i] }
+		print(persons)
 		calcScore()
+		print(persons)
 
 	else
 		if N % 2 == 1
 			res.NAME.push '-frirond-'
 			N += 1
-		persons = _.map range(N), (i) -> {id:i, name: res.NAME[i], elo: res.ELO[i], col:'', res:'', bal:0, opp:[], T:[]}
+		persons = _.map range(N), (i) -> {id:i, name: res.NAME[i], elo: res.ELO[i], col:'', res:[], bal:0, opp:[], T:[]}
 	print persons
 
 copyToClipboard = (text) ->
@@ -156,16 +213,16 @@ createURL = ->
 	res = []
 	#res.push "https://christernilsson.github.io/2023/044-Monrad"
 	res.push "http://127.0.0.1:5500"
-	res.push "?TOUR=" + TOUR
+	res.push "?TOUR=" + TOUR.replace ' ','_'
 	res.push "&DATE=" + "2023-11-25"
 	res.push "&ROUNDS=" + ROUNDS
 	res.push "&ROUND=" + ROUND
 	res.push "&NAME=" + (_.map persons, (person) -> person.name.replaceAll " ","_").join "|"
 	res.push "&ELO=" + (_.map persons, (person) -> person.elo).join "|"
 	#if persons[0].opp.length> 0
-	res.push "&OPP=" + (_.map persons, (person) -> (_.map person.opp, (opp) -> str(opp)).join ",").join "|"
+	res.push "&OPP=" + (_.map persons, (person) -> (_.map person.opp, ints2strings)).join "|"
 	res.push "&COL=" + (_.map persons, (person) -> person.col).join "|"
-	res.push "&RES=" + (_.map persons, (person) -> person.res).join "|"
+	res.push "&RES=" + (_.map persons, (person) -> res2string person.res).join "|"
 	res.join '\n'
 
 sum = (s) ->
@@ -185,36 +242,22 @@ assert 0, sumBW 'BWBWWB'
 assert -6, sumBW 'BBBBBB'
 assert 6, sumBW 'WWWWWW'
 
-scorex = (res) ->
+scorex = (res,r=ROUND-1) ->
+	print 'scorex',res,r
 	result = 0
-	for i in range ROUND
-		index = ASCII.indexOf res[i]
-		if index >= 0 then result += parseInt index
+	for i in range r
+		result += res[i]
 	result / 2
-	# print('scorex',round,res,result)
+assert 0, scorex [],0
+assert 2.5, scorex [0,1,2,2],4
 
 getMet = (a,b) -> b.id in persons[a.id].opp
 
-colorize = (persons) ->
-	for i in range persons.length//2
-		pa = persons[2*i]
-		pb = persons[2*i+1]
-		pac = 'B W'[pa.mandatory+1]
-		pbc = 'B W'[pb.mandatory+1]
-		if pac == pbc
-			if pa.colorComp <= pb.colorComp then pac = 'W' else pac = 'B'
-		pa.col += pac
-		pb.col += if pac=='W' then 'B'  else 'W'
-
 pair = (persons,pairing=[]) ->
 	if pairing.length == N then return pairing
-	antal += 1
 	a  = persons[0]
 	for b in persons
-		if a == b then continue # you cannot meet yourself
-		if getMet a,b then continue # a and b must not have met before
-		mandatory = a.mandatory + b.mandatory
-		if 2 == Math.abs mandatory then continue # Players can not have the same color
+		if not ok a,b then continue
 		newPersons = (p for p in persons when p not in [a,b])
 		newPairing = pairing.concat [a,b]
 		result = pair newPersons,newPairing
@@ -233,6 +276,7 @@ adjustForColors = (pairings) ->
 	res
 
 downloadFile = (txt,filename) ->
+	print 'filename',filename
 	blob = new Blob [txt], { type: 'text/plain' }
 	url = URL.createObjectURL blob
 	a = document.createElement 'a'
@@ -269,6 +313,7 @@ makeTableFile = (header) ->
 
 lotta = ->
 	print 'Lottning av rond ',ROUND
+	document.title = 'Round ' + (ROUND+1)
 	print persons
 	for p in persons
 		if p.res.length != p.col.length then return
@@ -278,10 +323,10 @@ lotta = ->
 		latest = if p.col.length== 0 then '' else _.last p.col
 		latest2 = if p.col.length < 2 then '' else sumBW _.slice p.col, p.col.length - 2
 
-		p.mandatory = 0
-		if colorSum <= -1 or latest2 == -2 then p.mandatory =  1
-		if colorSum >=  1 or latest2 ==  2 then p.mandatory = -1
-		p.colorComp = [colorSum,latest] # fundera på ordningen här.
+		# p.mandatory = 0
+		# if colorSum <= -1 or latest2 == -2 then p.mandatory =  1
+		# if colorSum >=  1 or latest2 ==  2 then p.mandatory = -1
+		# p.colorComp = [colorSum,latest] # fundera på ordningen här.
 
 	calcScore()
 	if ROUND == 0
@@ -293,23 +338,26 @@ lotta = ->
 		pairings = _.sortBy persons, ['score']
 		pairings = pairings.reverse()
 		start = new Date()
-		antal = 0
 
 		pairings = pair pairings
-		print 'pairings',pairings
-		print ROUND, "#{antal} #{new Date() - start} milliseconds"
+		# print 'pairings',pairings
+		print ROUND, "#{new Date() - start} milliseconds"
 
-	colorize pairings
+	# colorize pairings
+	# assignColors pairings
+
 	pairings = adjustForColors pairings
 	for i in range N//2
 		a = pairings[2*i]
 		b = pairings[2*i+1]
 		a.opp.push b.id
 		b.opp.push a.id
+		assignColors a,b
 
 	state = 0
 
 	timestamp = new Date().toLocaleString 'se-SE'
+	print "ROUND",ROUND
 	downloadFile makeTableFile(" for " + TOUR + " in Round #{ROUND}    #{timestamp}"), TOUR + " Round #{ROUND}.txt"
 	downloadFile createURL(), "URL for " + TOUR + " Round #{ROUND}.txt"
 
@@ -454,12 +502,13 @@ showTables = ->
 		text s,10,y
 
 lightbulb = (color, x, y, result, opponent) ->
+	# print 'lightbulb',color, x, y, result, opponent
 	push()
-	print 'lightbulb',result
+	# print 'lightbulb',result
 	fill 'red gray green'.split(' ')[result]
 	rectMode CENTER
 	rect x,y,0.8*DY,0.45*DY
-	fill {B:'black', W:'white'}[color]
+	fill {b:'black', w:'white'}[color]
 	noStroke()
 	strokeWeight = 0
 	txt 1+opponent,x,y+1,CENTER
@@ -565,17 +614,13 @@ window.keyPressed = ->
 	if key in '0 1q2w3e4r5t6y7u8'
 		index = '0 1q2w3e4r5t6y7u8'.indexOf key
 		if index <= 2 * GAMES
-			if a.res.length < a.col.length then a.res += ASCII[index]
-			if b.res.length < b.col.length then b.res += ASCII[2*GAMES - index]
+			if a.res.length < a.col.length then a.res.push index
+			if b.res.length < b.col.length then b.res.push 2*GAMES - index
 			currentTable = (currentTable + 1) %% (N//2)
 	if key == 'Enter'
 		state = 1 - state
 		if state == 1
 			calcT()
-			#calcScore()
-			#temp = _.sortBy persons, ['score', 'T']
-			#temp = temp.reverse()
-			#print temp
 	if key in 'pP' then lotta()
 	if key in 'lL' then DY += 1
 	if key in 'sS' then DY -= 1
