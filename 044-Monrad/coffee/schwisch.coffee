@@ -1,4 +1,5 @@
 # TODO #######################################
+# WB ska vara wb överallt, även i urlen
 # Inför Dutch Manager
 # Hantera frirond
 # Tie Break - hantering
@@ -12,6 +13,8 @@
 # Parkera spelare. PARK=12,34
 
 # Testa på Mac. (klippbordet)
+
+# Publicera på chess-results? Skapa lämplig fil.
 
 # DONE #########################################
 # Alfabetisk Namnlista. Bord Färg Namn => 1w NILSSON Christer
@@ -38,6 +41,8 @@
 # Ange färg för första bordet i URL-en (EASY) FIRST=WHITE, FIRST=BLACK (default)
 # Hantera 1 till 8 partier per team/person GAMES=1 (default)
 
+import { parseExpr } from './parser.js'
+
 HELP = """
 How to use the Schwisch Chess Tournament Program:
 	Enter = Switch between Tables and Result
@@ -60,7 +65,6 @@ ASCII = '0123456789abcdefg'
 N = 0 # number of players
 DY = 75 # vertical line distance
 DY = 40 # vertical line distance
-
 
 print = console.log
 range = _.range
@@ -164,6 +168,7 @@ class Tournament
 		xdraw()
 
 	fetchURL : (url = location.search) ->
+		print url
 		getParam = (name,def) ->
 			res = urlParams.get name
 			#if res then res else def
