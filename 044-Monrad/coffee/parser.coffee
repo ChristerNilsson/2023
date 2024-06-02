@@ -17,13 +17,13 @@ splitByTopLevelPipe = (expr) ->
   parts.push part if part
   parts
 
-expr = ""
-for i in _.range 100
-    expr += "(1234|Andersson_Arne|(12w1|13b½|13b½|13b½|13b½|13b½|13b½|13b½|13b½|13b½|13b½))"
-start = new Date()
-expr = expr.replaceAll '_', ' '
-expr = expr.replaceAll ')(', ')|('
-expr = '(' + expr + ')'
-result = parseExpr expr
-console.log new Date() - start
-console.log result
+# expr = ""
+# for i in _.range 100
+#     expr += "(1234|Andersson_Arne|(12w1|13b½|13b½|13b½|13b½|13b½|13b½|13b½|13b½|13b½|13b½))"
+# start = new Date()
+# expr = expr.replaceAll '_', ' '
+# expr = expr.replaceAll ')(', ')|('
+# expr = '(' + expr + ')'
+# result = parseExpr expr
+# console.log new Date() - start
+# console.log result

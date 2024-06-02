@@ -44,7 +44,7 @@
 import { parseExpr } from './parser.js'
 
 HELP = """
-How to use the Schwisch Chess Tournament Program:
+How to use Dutch Manager:
 	Enter = Switch between Tables and Result
 	Home = Select First Table
 	Up   = Select Previous Table
@@ -124,7 +124,9 @@ class Tournament
 		document.title = 'Round ' + (@round+1)
 		print @players
 		for p in @players
-			if p.res.length != p.col.length then return
+			if p.res.length != p.col.length
+				print 'avbrutet!'
+				return
 
 		if @round == 0
 			@pairings = @players
@@ -143,8 +145,6 @@ class Tournament
 		#colorize @pairings
 		#assignColors @pairings
 
-		print 'A',@pairings
-
 		@adjustForColors()
 
 		for i in range N//2
@@ -152,9 +152,9 @@ class Tournament
 			b = @pairings[2*i+1]
 			a.opp.push b.id
 			b.opp.push a.id
+			#a.res += ' '
+			#b.res += ' '
 			@assignColors a,b
-
-		print 'B',@pairings
 
 		state = 0
 
@@ -168,6 +168,7 @@ class Tournament
 		xdraw()
 
 	fetchURL : (url = location.search) ->
+		print 'fetchURL'
 		print url
 		getParam = (name,def) ->
 			res = urlParams.get name
@@ -182,16 +183,17 @@ class Tournament
 		@round = parseInt urlParams.get 'ROUND'
 
 		@first = getParam 'FIRST','bw' # Determines if first player has white or black in the first round
-		print 'first',@first
 		@sp = parseFloat getParam 'SP', 0.0 # ScorePoints
 		@tpp = parseInt getParam 'TPP',30 # Tables Per Page
 		@ppp = parseInt getParam 'PPP',60 # Players Per Page
 
-		res = {}
-		names = urlParams.get('NAME').replaceAll('_',' ').split '|'
-		elos = urlParams.get('ELO').split '|'
-		elos = _.map elos, (elo) -> parseInt elo
-		N = names.length
+		players = urlParams.get 'PLAYERS'
+		players = players.replaceAll ')(', ')|('
+		players = players.replaceAll '_',' '
+		players = '(' + players + ')'
+		players = parseExpr players
+
+		N = players.length
 
 		if N < 4
 			print "Error: Number of players must be 4 or more!"
@@ -201,13 +203,17 @@ class Tournament
 			return
 
 		for i in range N
-			@players.push new Player i, names[i], elos[i], [], "", "" # @id, @name, @elo, @opp, @col, @res
+			name = players[i][1]
+			elo = parseInt players[i][0]
+			@players.push new Player i, elo, name
+
+		print @players
 		
 		@players = _.sortBy @players, (player) -> player.elo
 		@players = @players.reverse()
 
 		for i in range N
-			@players[i].id = i+1
+			@players[i].id = i
 
 		print 'sorted players', @players
 
@@ -234,7 +240,7 @@ class Tournament
 			print(@players)
 		else
 			if N % 2 == 1
-				@players.push new Player '-frirond-'
+				@players.push new Player N, 0, '-frirond-'
 				N += 1
 				# persons = _.map range(N), (i) -> {id:i, name: res.NAME[i], elo: res.ELO[i], col:'', res:[], bal:0, opp:[], T:[]}
 
@@ -364,12 +370,21 @@ class Tournament
 		res.push "&DATE=" + "2023-11-25"
 		res.push "&ROUNDS=" + @rounds
 		res.push "&ROUND=" + @round
-		res.push "&NAME=" + (_.map @players, (person) -> person.name.replaceAll " ","_").join "|"
-		res.push "&ELO=" + (_.map @players, (person) -> person.elo).join "|"
-		#if persons[0].opp.length> 0
-		res.push "&OPP=" + (_.map @players, (person) -> (_.map person.opp, ints2strings)).join "|"
-		res.push "&COL=" + (_.map @players, (person) -> person.col).join "|"
-		res.push "&RES=" + (_.map @players, (person) -> res2string person.res).join "|"
+		res.push "PLAYERS=" 
+		
+		players = []
+		for player in @players
+			s = player.createPlayer()
+			players.push '(' + s + ')'
+		players = players.join("\n")
+		res = res.concat players
+
+		# res.push "&NAME=" + (_.map @players, (person) -> person.name.replaceAll " ","_").join "|"
+		# res.push "&ELO=" + (_.map @players, (person) -> person.elo).join "|"
+		# #if persons[0].opp.length> 0
+		# res.push "&OPP=" + (_.map @players, (person) -> (_.map person.opp, ints2strings)).join "|"
+		# res.push "&COL=" + (_.map @players, (person) -> person.col).join "|"
+		# res.push "&RES=" + (_.map @players, (person) -> res2string person.res).join "|"
 		res.join '\n'
 
 	adjustForColors : () ->
@@ -377,11 +392,11 @@ class Tournament
 		res = []
 		for i in range N//2
 			if @pairings[2*i].col.length == 0 or 'w' == _.last @pairings[2*i].col
-				res.push @pairings[2*i] # W
-				res.push @pairings[2*i+1] # B
+				res.push @pairings[2*i] # w
+				res.push @pairings[2*i+1] # b
 			else
-				res.push @pairings[2*i+1] # W
-				res.push @pairings[2*i] # B
+				res.push @pairings[2*i+1] # w
+				res.push @pairings[2*i] # b
 		@pairings = res
 
 	makeTableFile : (header) ->
@@ -468,18 +483,17 @@ class Tournament
 				@lightbulb person.col[r][0], x, y, person.res[r], inv[person.opp[r]]
 
 class Player
-	constructor : (@id, @name, @elo, @opp, @col, @res) ->
+	constructor : (@id, @elo, @name, @opp=[], @col="", @res="") ->
 
-	balans : () -> # färgbalans
+	balans : -> # färgbalans
 		result = 0
 		for ch in @col
 			if ch=='b' then result -= 1
 			if ch=='w' then result += 1
 		result
 
-	score : () ->
+	score : ->
 		result = 0
-		# print 'score',state,@res.length,@col.length
 		n = tournament.round
 		if state == 0 then n = n-1
 		sp = tournament.sp
@@ -487,21 +501,16 @@ class Player
 			if i < @col.length and i < @res.length
 				key = @col[i] + @res[i]
 				result += {'w2': 1-sp, 'b2': 1, 'w1': 0.5-sp, 'b1': 0.5+sp, 'w0': 0, 'b0': sp}[key]
-				
 		result
 
-
-# string2ints = (s) -> 
-# 	print s
-# 	print s.split(",")
-# 	res = _.map s.split(","), (item) -> parseInt item
-# 	print res
-# 	res
-#assert [], string2ints ""
-#assert [1], string2ints "1"
-#assert [1,2], string2ints "1,2"
-# assert [1,2,3], string2ints "1,2,3"
-
+	createPlayer : -> # (1234|Christer|(12w1|23b))
+		res = []
+		res.push @elo
+		res.push @name.replaceAll ' ','_'
+		nn = @opp.length
+		ocr = ("#{@opp[i]}#{@col[i]}#{if i < nn-1 then @res[i] else ''}" for i in range(nn)) 
+		res.push '(' + ocr.join('|') + ')'
+		res.join '|'
 
 copyToClipboard = (text) ->
 	if !navigator.clipboard
@@ -656,8 +665,8 @@ window.keyPressed = ->
 				errors.push currentTable
 				print 'errors',errors
 		else
-			if a.res.length < a.col.length then a.res += "012"[index]
-			if b.res.length < b.col.length then b.res += "012"[2 - index]
+			if a.res.length < a.col.length then a.res = a.res + "012"[index]
+			if b.res.length < b.col.length then b.res = b.res + "012"[2 - index]
 		currentTable = (currentTable + 1) %% (N//2)
 
 	if key == 'Enter'
