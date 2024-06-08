@@ -1,6 +1,11 @@
-# Swiss Tournament Handler
+# Dutch Manager
 
-The URL is the database.
+* Open Source
+* The database == The URL
+* Keyboard only - No Mouse
+* Scorepoints SP=0.1
+* Backup files downloaded automatically after every pairing
+* Simplified Pairing compared with JaVaFo and BBP
 
 ## Keys
 
@@ -30,31 +35,92 @@ This is your ultimate backup!
 127.0.0.1:5500
 ?TOUR=Klass_1
 &DATE=2024-05-28
-&ROUNDS=6
+&ROUNDS=8
+&ROUND=0
+&SP=0.0
+&TPP=30
+&PPP=60
+&PLAYERS=
+(1825|JOHANSSON_Lennart_B.)
+(1697|BJÖRKDAHL_Göran)
+(1684|SILINS_Peteris)
+(1681|STOLOV_Leonid)
+(1644|PETTERSSON_Lars-Åke)
+(1598|AIKIO_Onni)
+(1598|ISRAEL_Dan)
+(1583|PERSSON_Kjell)
+(1561|LILJESTRÖM_Tor)
+(1559|LEHVONEN_Jouko)
+(1539|ANDERSSON_Lars_Owe)
+(1535|ÅBERG_Lars-Erik)
+(1532|ANTONSSON_Görgen)
+(1400|STRÖMBÄCK_Henrik)
+```
+
+```
+127.0.0.1:5500
+?TOUR=Klass_1
+&DATE=2023-11-25
+&ROUNDS=8
+&ROUND=2
+&PLAYERS=
+(1825|JOHANSSON_Lennart_B.|(1w1|9b))
+(1697|BJÖRKDAHL_Göran|(0b0|4w))
+(1684|SILINS_Peteris|(3w½|13b))
+(1681|STOLOV_Leonid|(2b½|8w))
+(1644|PETTERSSON_Lars-Åke|(5w0|1b))
+(1598|ISRAEL_Dan|(4b1|6w))
+(1598|AIKIO_Onni|(7w1|5b))
+(1583|PERSSON_Kjell|(6b0|10w))
+(1561|LILJESTRÖM_Tor|(9w½|3b))
+(1559|LEHVONEN_Jouko|(8b½|0w))
+(1539|ANDERSSON_Lars_Owe|(11w0|7b))
+(1535|ÅBERG_Lars-Erik|(10b1|12w))
+(1532|ANTONSSON_Görgen|(13w1|11b))
+(0|STRÖMBÄCK_Henrik|(12b0|2w))
+```
+
+28 players:
+```
+127.0.0.1:5500
+?TOUR=Klass_1
+&DATE=2024-05-28
+&ROUNDS=10
 &ROUND=0
 &SP=0.1
 &TPP=30
 &PPP=60
 &PLAYERS=
 (1825|JOHANSSON_Lennart_B.)
-(1800|BJÖRKDAHL_Göran)
-(1775|STRÖMBÄCK_Henrik)
-(1750|AIKIO_Onni)
-(1725|LILJESTRÖM_Tor)
-(1700|PETTERSSON_Lars-Åke)
-(1675|STOLOV_Leonid)
-(1650|SILINS_Peteris)
-(1625|PERSSON_Kjell)
-(1600|LEHVONEN_Jouko)
-(1575|ISRAEL_Dan)
-(1550|ÅBERG_Lars-Erik)
-(1525|ANTONSSON_Görgen)
-(1500|ANDERSSON_Lars_Owe)
+(1697|BJÖRKDAHL_Göran)
+(1684|SILINS_Peteris)
+(1681|STOLOV_Leonid)
+(1644|PETTERSSON_Lars-Åke)
+(1598|AIKIO_Onni)
+(1598|ISRAEL_Dan)
+(1583|PERSSON_Kjell)
+(1561|LILJESTRÖM_Tor)
+(1559|LEHVONEN_Jouko)
+(1539|ANDERSSON_Lars_Owe)
+(1535|ÅBERG_Lars-Erik)
+(1532|ANTONSSON_Görgen)
+(1400|STRÖMBÄCK_Henrik)
+(1325|JOHANSSON_Lennart_B.)
+(1197|BJÖRKDAHL_Göran)
+(1184|SILINS_Peteris)
+(1181|STOLOV_Leonid)
+(1144|PETTERSSON_Lars-Åke)
+(1098|AIKIO_Onni)
+(1098|ISRAEL_Dan)
+(1083|PERSSON_Kjell)
+(1061|LILJESTRÖM_Tor)
+(1059|LEHVONEN_Jouko)
+(1039|ANDERSSON_Lars_Owe)
+(1035|ÅBERG_Lars-Erik)
+(1032|ANTONSSON_Görgen)
+(1001|STRÖMBÄCK_Henrik)
 ```
 
-&OPP=1,5,2|0,6,3|3,11,0|2,8,1|5,13,12|4,0,6|7,1,5|6,10,9|9,3,11|8,12,7|11,7,13|10,2,8|13,9,4|12,4,10
-&COL=WBB|BWB|WBW|BWW|WBB|BWB|WBW|BWB|WBW|BWW|WBW|BWB|WBW|BWB
-&RES=221|020|221|022|201|002|000|220|001|222|200|001|201|022
 
 100 players:  
 ```
