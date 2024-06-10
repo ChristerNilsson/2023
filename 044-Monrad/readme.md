@@ -29,6 +29,26 @@ This is your ultimate backup!
 [Try it!](https://christernilsson.github.io/2023/044-Monrad?TOUR=Klass_1&DATE=2024-05-28&ROUNDS=6&ROUND=0&SP=0.1&TPP=30&PPP=60&NAME=ANDERSSON_Lars_Owe|JOHANSSON_Lennart_B.|BJÖRKDAHL_Göran|STRÖMBÄCK_Henrik|AIKIO_Onni|LILJESTRÖM_Tor|PETTERSSON_Lars-Åke|STOLOV_Leonid|SILINS_Peteris|PERSSON_Kjell|LEHVONEN_Jouko|ISRAEL_Dan|ÅBERG_Lars-Erik|ANTONSSON_Görgen&ELO=1500|1825|1800|1775|1750|1725|1700|1675|1650|1625|1600|1575|1550|1525
 )
 
+8 players:
+```
+127.0.0.1:5500
+?TOUR=Klass_1
+&DATE=2024-05-28
+&ROUNDS=7
+&ROUND=0
+&SP=0.0
+&TPP=30
+&PPP=60
+&PLAYERS=
+(1825|JOHANSSON_Lennart_B.)
+(1697|BJÖRKDAHL_Göran)
+(1684|SILINS_Peteris)
+(1681|STOLOV_Leonid)
+(1644|PETTERSSON_Lars-Åke)
+(1598|AIKIO_Onni)
+(1598|ISRAEL_Dan)
+(1583|PERSSON_Kjell)
+```
 
 14 players:
 ```
