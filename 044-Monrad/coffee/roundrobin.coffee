@@ -35,7 +35,7 @@ resultat = [] # 012 sorterad på id
 showType = (a) -> if typeof a == 'string' then "'#{a}'" else a
 assert = (a,b) -> if not _.isEqual a,b then print "Assert failure: #{showType a} != #{showType b}"
 
-ok = (p0, p1) -> p0.id != p1.id and p0.id not in p1.opp and abs(p0.balans() + p1.balans()) <= 1 # eller 2
+ok = (p0, p1) -> p0.id != p1.id and p0.id not in p1.opp and abs(p0.balans() + p1.balans()) <= 2 # eller 2
 other = (col) -> if col == 'b' then 'w' else 'b'
 
 message = '' #This is a tutorial tournament. Use it or edit the URL'
@@ -92,7 +92,9 @@ calc = (winner, loser, result, K) ->
 # elodiff = (games,K=20) -> [calc(a,b,res,K) for a,b,res in games]
 
 class Player
-	constructor : (@id, @elo="", @name="", @opp=[], @col="", @res="") ->
+	constructor : (@id, @elo="",  @opp=[], @col="", @res="",@name="") ->
+
+	toString : -> "#{@id} #{@name} elo:#{@elo} #{@col} res:#{@res} opp:[#{@opp}] score:#{@score()}"
 
 	eloDiff : -> 
 		result = 0
@@ -110,12 +112,13 @@ class Player
 	score : ->
 		result = 0
 		n = tournament.round
-		if state == 0 then n = n-1
+		#if state == 0 then n = n-1
 		sp = tournament.sp
 		for i in range n
 			if i < @col.length and i < @res.length
 				key = @col[i] + @res[i]
 				result += {'w2': 1-sp, 'b2': 1, 'w1': 0.5-sp, 'b1': 0.5+sp, 'w0': 0, 'b0': sp}[key]
+		# print 'id,score',@id, @res, result,n
 		result
 
 	read : (player) -> 
@@ -153,6 +156,7 @@ class Player
 		res.push '(' + ocr.join('|') + ')'
 		res.join '|'
 
+
 class Tournament 
 	constructor : () ->
 		@name = ''
@@ -170,6 +174,8 @@ class Tournament
 		@robin = range N
 
 		@fetchURL()
+
+		@mat = []
 		# @round -= 1
 		#@lotta()
 
@@ -187,7 +193,7 @@ class Tournament
 		return []
 
 	flip : (p0,p1) -> # p0 byter färg, p0 anpassar sig
-		print 'flip',p0.col,p1.col
+		#print 'flip',p0.col,p1.col
 		col0 = _.last p0.col
 		col1 = col0
 		col0 = other col0
@@ -195,16 +201,17 @@ class Tournament
 		p1.col += col1
 
 	assignColors : (p0,p1) ->
-		if p0.col.length == 0
-			col1 = @first[p0.id % 2]
-			col0 = other col1
-			p0.col += col0
-			p1.col += col1
-		else
-			balans = p0.balans() + p1.balans()
-			if balans == 0 then @flip p0,p1
-			else if 2 == abs balans
-				if 2 == abs p0.balans() then @flip p0,p1 else @flip p1,p0
+		# if p0.col.length == 0
+			# col1 = @first[p0.id % 2]
+			# col0 = other col1
+			# print 'assignColors',col0,col1
+			# p0.col += col0
+			# p1.col += col1
+		# else
+		balans = p0.balans() + p1.balans()
+		if balans == 0 then @flip p0,p1
+		else if 2 == abs balans
+			if 2 == abs p0.balans() then @flip p0,p1 else @flip p1,p0
 
 	makeBerger : -> 
 
@@ -232,6 +239,50 @@ class Tournament
 
 		print 'robin',@robin
 
+	skikta : () ->
+		print '@round',@round
+		R = @round
+		print 'skikta',@players
+		print 'scores',(p.score() for p in @players)
+		temp = _.groupBy @players, (p) -> 2 * p.score() >= R # then 'strong' else 'weak'
+
+		strong = temp.true
+		weak = temp.false
+
+		if strong is undefined then strong = []
+		if weak is undefined then weak = []
+
+		strong.sort (a,b) ->
+			diff = b.score() - a.score()
+			if diff != 0 then return diff
+			return b.elo - a.elo
+
+		weak.sort (a,b) -> b.elo - a.elo
+
+		print 'strong',strong
+		print 'weak',weak
+
+		print("--- strong ---")
+		for p in strong
+			print p.toString()
+		print("--- weak ---")
+		for p in weak
+			print p.toString()
+		print("---")
+
+		print 'strong',strong
+
+		temp = strong.concat weak
+
+		print 'temp',temp
+		temp
+		# @players = _.clone @players
+		# @players.sort (a,b) -> 
+		# 	diff = b.score() - a.score()
+		# 	if diff != 0 then return diff
+		# 	return b.elo - a.elo
+
+
 	lotta : () ->
 
 		#print @players
@@ -243,18 +294,45 @@ class Tournament
 		print 'Lottning av rond ',@round
 		document.title = 'Round ' + (@round+1)
 
-		if @round % 2 == 1 then @players = @players.reverse()
+		#if @round % 2 == 1 then @players = @players.reverse()
+
+		@players = @skikta @players
+
+
+		#print 'före pair',@players
 		@pairings = @pair @players
-		
-		print 'pairings',@pairings
 		for i in range N//2
 			a = @pairings[2*i]
 			b = @pairings[2*i+1]
 			a.opp.push b.id
 			b.opp.push a.id
-			@assignColors a,b
 
-		print 'lotta',@players
+		if @round==0
+			for i in range N//2
+				a = @pairings[2*i]
+				b = @pairings[2*i+1]
+				col1 = "bw"[i%2] #@first[p0.id % 2]
+				col0 = other col1
+				# print 'assignColors',col0,col1
+				a.col += col0
+				b.col += col1
+		else
+			for i in range N//2
+				a = @pairings[2*i]
+				b = @pairings[2*i+1]
+				@assignColors a,b
+		#print 'efter pair',@pairings
+
+		for i in range N//2
+			a = @pairings[2*i]
+			b = @pairings[2*i+1]
+			if 'w' == a.col[@round]
+				print a.toString(), b.toString()
+			else
+				print b.toString(), a.toString()
+		# print 'lotta',@players
+
+		#@players.sort (a,b) -> b.elo - a.elo
 
 		# @makeBerger()
 
@@ -324,62 +402,11 @@ class Tournament
 		print 'sorted players', @players
 
 		if @ROUND > 0
-			#opps = urlParams.get('OPP').split '|'
-			#cols = urlParams.get('COL').split '|'
-			#ress = urlParams.get('RES').split '|'
-			#if names.length != opps.length != cols.length != ress.length != elos.length
-			#	print "Error: Illegal number of players in OPP, COL, ELO or RES!"
-			#	return
-
-			#opps = _.map opps, (r) -> _.map opp.split(','), (s) -> parseInt s
-			#ress = _.map ress, (res) -> _.map res, (ch) -> parseInt ch
-
-			# for i in range N
-			# 	if ress[i].length != opps[i].length != cols[i].length != ress[i].length
-			# 		print "Error: Illegal number of rounds for player #{names[i]}!"
-			# 		return
-			# 	@players[i].name = names[i]
-			# 	@players[i].col = cols[i]
-			# 	@players[i].res = ress[i]
-			# 	@players[i].opp = opps[i] 
-			# 	#@players[i].tie = [0,0,0]
-			# print(@players)
 		else
 			if N % 2 == 1
 				@players.push new Player N, 0, '-frirond-'
 				N += 1
 				# persons = _.map range(N), (i) -> {id:i, name: res.NAME[i], elo: res.ELO[i], col:'', res:[], bal:0, opp:[], T:[]}
-
-	# flip : (p0,p1) -> # p0 byter färg, p0 anpassar sig
-	# 	print 'flip',p0.col,p1.col
-	# 	col0 = _.last p0.col
-	# 	col1 = col0
-	# 	col0 = other col0
-	# 	p0.col += col0
-	# 	p1.col += col1
-
-	# assignColors : (p0,p1) ->
-	# 	if p0.col.length == 0
-	# 		col1 = @first[p0.id % 2]
-	# 		col0 = other col1
-	# 		p0.col += col0
-	# 		p1.col += col1
-	# 	else
-	# 		balans = p0.balans() + p1.balans()
-	# 		if balans == 0 then @flip p0,p1
-	# 		else if 2 == abs balans
-	# 			if 2 == abs p0.balans() then @flip p0,p1 else @flip p1,p0
-
-	# pair : (persons, pairing=[]) ->
-	# 	if pairing.length == N then return pairing
-	# 	a  = persons[0]
-	# 	for b in persons
-	# 		if not ok a,b then continue
-	# 		newPersons = (p for p in persons when p not in [a,b])
-	# 		newPairing = pairing.concat [a,b]
-	# 		result = @pair newPersons,newPairing
-	# 		if result.length == N then return result
-	# 	return []
 
 	txtT : (value, w, align=window.CENTER) -> 
 		if value.length > w then value = value.substring 0,w
@@ -490,41 +517,7 @@ class Tournament
 		players = players.join("\n")
 		res = res.concat players
 
-		# res.push "&NAME=" + (_.map @players, (person) -> person.name.replaceAll " ","_").join "|"
-		# res.push "&ELO=" + (_.map @players, (person) -> person.elo).join "|"
-		# #if persons[0].opp.length> 0
-		# res.push "&OPP=" + (_.map @players, (person) -> (_.map person.opp, ints2strings)).join "|"
-		# res.push "&COL=" + (_.map @players, (person) -> person.col).join "|"
-		# res.push "&RES=" + (_.map @players, (person) -> res2string person.res).join "|"
 		res.join '\n'
-
-	# adjustForColors : () ->
-	# 	print 'adjustForColors',N, @pairings.length
-	# 	res = []
-	# 	for i in range N//2
-
-	# 		if @pairings[2*i].col.length == 0
-	# 			if i % 2==0 
-	# 				res.push @pairings[2*i+1] # w
-	# 				res.push @pairings[2*i] # b
-	# 			else
-	# 				res.push @pairings[2*i] # w
-	# 				res.push @pairings[2*i+1] # b
-	# 		else if 'w' == _.last @pairings[2*i].col
-	# 			res.push @pairings[2*i] # w
-	# 			res.push @pairings[2*i+1] # b
-	# 		else
-	# 			res.push @pairings[2*i+1] # w
-	# 			res.push @pairings[2*i] # b
-
-	# 		# if @pairings[2*i].col.length == 0 or 'w' == _.last @pairings[2*i].col
-	# 		# 	res.push @pairings[2*i] # w
-	# 		# 	res.push @pairings[2*i+1] # b
-	# 		# else
-	# 		# 	res.push @pairings[2*i+1] # w
-	# 		# 	res.push @pairings[2*i] # b
-
-	# 	@pairings = res
 
 	makeTableFile : (header) ->
 		res = []
@@ -758,6 +751,22 @@ xdraw = ->
 	if state == 1 then tournament.showResult()
 	if state == 2 then tournament.showHelp()
 
+elo_probabilities = (R_W, R_B, draw=0.2) ->
+	E_W = 1 / (1 + 10 ** ((R_B - R_W) / 400))
+	win = E_W - draw / 2
+	loss = (1 - E_W) - draw / 2
+	# arr = [loss, draw, win]
+	x = _.random 0,1,true
+	# print x,loss,draw,win
+	if x < loss then return 0
+	if x < loss + draw then return 1
+	return 2
+
+# p = elo_probabilities(1200, 1400)
+# print(p)  # Output should be close to [0.44, 0.2, 0.26]
+
+
+
 window.keyPressed = ->
 	# print key
 	if key == 'Home' then currentTable = 0
@@ -793,10 +802,30 @@ window.keyPressed = ->
 	if key == 'x'
 		for i in range tournament.pairings.length // 2
 			a = tournament.pairings[2*i]
-			b = tournament.pairings[2*i+1]
-			index = i % 3
-			if a.res.length < a.col.length then a.res += "012"[index]
-			if b.res.length < b.col.length then b.res += "012"[2 - index]
+			b = tournament.pairings[2*i+1]			
+			res = elo_probabilities a.elo, b.elo
+			#print 'random',a.elo,b.elo,res
+			if a.res.length < a.col.length then a.res += "012"[res] 
+			if b.res.length < b.col.length then b.res += "012"[2 - res]
+
+		matrix = []
+		for r in range tournament.round
+			res = []
+			for player in tournament.players
+				res.push [player.id,player.opp[r]]				
+			matrix.push res
+		print 'dump', JSON.stringify matrix
+
+		#@players.sort (a,b) -> b.elo - a.elo
+
+
+	# if key == 'x'
+	# 	for i in range tournament.pairings.length // 2
+	# 		a = tournament.pairings[2*i]
+	# 		b = tournament.pairings[2*i+1]
+	# 		index = i % 3
+	# 		if a.res.length < a.col.length then a.res += "012"[index]
+	# 		if b.res.length < b.col.length then b.res += "012"[2 - index]
 
 	if key == 'Delete'
 		i = currentTable
