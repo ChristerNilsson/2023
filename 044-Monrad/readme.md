@@ -147,6 +147,7 @@ This is your ultimate backup!
 &DATE=2024-05-03
 &ROUNDS=8
 &ROUND=0
+&SP=0.1
 &PLAYERS=
 (2416|2416)
 (2413|2413)

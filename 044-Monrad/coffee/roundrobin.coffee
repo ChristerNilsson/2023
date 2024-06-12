@@ -94,7 +94,7 @@ calc = (winner, loser, result, K) ->
 class Player
 	constructor : (@id, @elo="",  @opp=[], @col="", @res="",@name="") ->
 
-	toString : -> "#{@id} #{@name} elo:#{@elo} #{@col} res:#{@res} opp:[#{@opp}] score:#{@score()}"
+	toString : -> "#{@id} #{@name} elo:#{@elo} #{@col} res:#{@res} opp:[#{@opp}] score:#{@score().toFixed(1)} weight:#{@weight().toFixed(2)} balans:#{@balans()}"
 
 	eloDiff : -> 
 		result = 0
@@ -120,6 +120,13 @@ class Player
 				result += {'w2': 1-sp, 'b2': 1, 'w1': 0.5-sp, 'b1': 0.5+sp, 'w0': 0, 'b0': sp}[key]
 		# print 'id,score',@id, @res, result,n
 		result
+
+	weight : -> 
+		r = tournament.round
+		R = tournament.rounds
+		w = tournament.weights # t ex [0/7 1/7 2/7 3/7 4/7 5/7 6/7 7/7] vid åtta ronder
+		# N är antal spelare
+		w[r] * @score()/R + w[R-1-r] * (N-@id)/N
 
 	read : (player) -> 
 		# (1234|Christer|(12w0|23b½|14w)) 
@@ -201,17 +208,27 @@ class Tournament
 		p1.col += col1
 
 	assignColors : (p0,p1) ->
-		# if p0.col.length == 0
-			# col1 = @first[p0.id % 2]
-			# col0 = other col1
-			# print 'assignColors',col0,col1
-			# p0.col += col0
-			# p1.col += col1
-		# else
-		balans = p0.balans() + p1.balans()
-		if balans == 0 then @flip p0,p1
-		else if 2 == abs balans
-			if 2 == abs p0.balans() then @flip p0,p1 else @flip p1,p0
+		b0 = p0.balans()
+		b1 = p1.balans()
+		if b0 < b1 then x = 0
+		else if b0 > b1 then x = 1
+		else if p0.id < p1.id then x = 0 else x = 1
+		p0.col += 'wb'[x]
+		p1.col += 'bw'[x]
+		return 
+
+		if p0.col.length == 0
+			col1 = @first[p0.id % 2]
+			col0 = other col1
+			print 'assignColors',col0,col1
+			p0.col += col0
+			p1.col += col1
+		else
+			balans = p0.balans() + p1.balans()
+			if balans == 0 then @flip p0,p1
+			else if 2 == abs balans
+				if 2 == abs p0.balans() then @flip p0,p1 else @flip p1,p0
+			else print 'unexpected',balans
 
 	makeBerger : -> 
 
@@ -239,48 +256,48 @@ class Tournament
 
 		print 'robin',@robin
 
-	skikta : () ->
-		print '@round',@round
-		R = @round
-		print 'skikta',@players
-		print 'scores',(p.score() for p in @players)
-		temp = _.groupBy @players, (p) -> 2 * p.score() >= R # then 'strong' else 'weak'
+	# skikta : () ->
+	# 	print '@round',@round
+	# 	R = @round
+	# 	print 'skikta',@players
+	# 	print 'scores',(p.score() for p in @players)
+	# 	temp = _.groupBy @players, (p) -> 2 * p.score() >= R # then 'strong' else 'weak'
 
-		strong = temp.true
-		weak = temp.false
+	# 	strong = temp.true
+	# 	weak = temp.false
 
-		if strong is undefined then strong = []
-		if weak is undefined then weak = []
+	# 	if strong is undefined then strong = []
+	# 	if weak is undefined then weak = []
 
-		strong.sort (a,b) ->
-			diff = b.score() - a.score()
-			if diff != 0 then return diff
-			return b.elo - a.elo
+	# 	strong.sort (a,b) ->
+	# 		diff = b.score() - a.score()
+	# 		if diff != 0 then return diff
+	# 		return b.elo - a.elo
 
-		weak.sort (a,b) -> b.elo - a.elo
+	# 	weak.sort (a,b) -> b.elo - a.elo
 
-		print 'strong',strong
-		print 'weak',weak
+	# 	print 'strong',strong
+	# 	print 'weak',weak
 
-		print("--- strong ---")
-		for p in strong
-			print p.toString()
-		print("--- weak ---")
-		for p in weak
-			print p.toString()
-		print("---")
+	# 	print("--- strong ---")
+	# 	for p in strong
+	# 		print p.toString()
+	# 	print("--- weak ---")
+	# 	for p in weak
+	# 		print p.toString()
+	# 	print("---")
 
-		print 'strong',strong
+	# 	print 'strong',strong
 
-		temp = strong.concat weak
+	# 	temp = strong.concat weak
 
-		print 'temp',temp
-		temp
-		# @players = _.clone @players
-		# @players.sort (a,b) -> 
-		# 	diff = b.score() - a.score()
-		# 	if diff != 0 then return diff
-		# 	return b.elo - a.elo
+	# 	print 'temp',temp
+	# 	temp
+	# 	# @players = _.clone @players
+	# 	# @players.sort (a,b) -> 
+	# 	# 	diff = b.score() - a.score()
+	# 	# 	if diff != 0 then return diff
+	# 	# 	return b.elo - a.elo
 
 
 	lotta : () ->
@@ -294,10 +311,19 @@ class Tournament
 		print 'Lottning av rond ',@round
 		document.title = 'Round ' + (@round+1)
 
-		if @round % 2 == 1 then @players = @players.reverse() # # #
+		@players = _.clone @players
+		@players.sort (a,b) -> 
+			#diff = b.score() - a.score()
+			# if diff != 0 then return diff
+			# return b.elo - a.elo
+			b.weight() - a.weight()
+		
+		# if @round % 2 == 1 then @players = @players.reverse() # reverse verkar inte spela någon roll
+		# @players = @skikta @players
 
-		@players = @skikta @players
-
+		print 'sorterat på id'
+		for p in @persons
+			print(p.toString())
 
 		#print 'före pair',@players
 		@pairings = @pair @players
@@ -306,6 +332,11 @@ class Tournament
 			b = @pairings[2*i+1]
 			a.opp.push b.id
 			b.opp.push a.id
+
+		for i in range N//2
+			a = @pairings[2*i]
+			b = @pairings[2*i+1]
+			print "#{a.id}-#{b.id} weight #{a.weight().toFixed(2)} vs #{b.weight().toFixed(2)}"
 
 		if @round==0
 			for i in range N//2
@@ -323,13 +354,13 @@ class Tournament
 				@assignColors a,b
 		#print 'efter pair',@pairings
 
-		for i in range N//2
-			a = @pairings[2*i]
-			b = @pairings[2*i+1]
-			if 'w' == a.col[@round]
-				print a.toString(), b.toString()
-			else
-				print b.toString(), a.toString()
+		# for i in range N//2
+		# 	a = @pairings[2*i]
+		# 	b = @pairings[2*i+1]
+		# 	if 'w' == a.col[@round]
+		# 		print a.toString(), b.toString()
+		# 	else
+		# 		print b.toString(), a.toString()
 		# print 'lotta',@players
 
 		#@players.sort (a,b) -> b.elo - a.elo
@@ -366,6 +397,26 @@ class Tournament
 		@tpp = parseInt getParam 'TPP',30 # Tables Per Page
 		@ppp = parseInt getParam 'PPP',60 # Players Per Page
 
+		@weights = getParam 'WEIGHTS','77777777' # '01234567'
+		@weights = (@weights[r]/(@rounds-1) for r in range @rounds)
+		@weights.push 1
+		print 'weights',@weights
+		# Antag 8 ronder
+		# pp = partipoäng. 0, 0.5 eller 1 per parti
+		# elo implementerat som id. Högsta elo <=> id=0, lägsta elo <=> antal spelare minus ett.
+		# 0 = 7/7 elo + 0/7 pp (dvs enbart elo)
+ 		# 1 = 6/7 elo + 1/7 pp
+ 		# 2 = 5/7 elo + 2/7 pp
+ 		# 7 = 0/7 elo + 7/7 pp (dvs enbart pp)
+		# Exempel:
+		# '00000000' enbart elo. Tight, men vem vann?
+		# '77777777' enbart partipoäng. Det vanligaste idag.
+		# '00007777' Först fyra elo, därefter fyra partipoäng.
+		# '01234567' Elo som successivt övergår i partipoäng.
+		# '76543210' Troligen ointressant.
+		# Upp till 36 ronder: 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ
+		# Första ronden blir alltid elo eftersom partipoäng saknas. Samma som Swiss.
+
 		players = urlParams.get 'PLAYERS'
 		print players
 		players = players.replaceAll ')(', ')|('
@@ -373,6 +424,9 @@ class Tournament
 		players = '(' + players + ')'
 		players = parseExpr players
 		print 'xxx',players
+
+		# players.sort (a,b) -> b.elo - a.elo
+
 
 		N = players.length
 
@@ -398,6 +452,8 @@ class Tournament
 			@players[i].id = i
 
 		@persons = _.clone @players
+
+		print (p.elo for p in @persons)
 
 		print 'sorted players', @players
 
@@ -803,8 +859,13 @@ window.keyPressed = ->
 		for i in range tournament.pairings.length // 2
 			a = tournament.pairings[2*i]
 			b = tournament.pairings[2*i+1]			
-			res = elo_probabilities a.elo, b.elo
-			#print 'random',a.elo,b.elo,res
+
+			if abs(a.elo - b.elo) <= 5 then res = 1
+			else if a.elo > b.elo then res = 2
+			else res = 0
+
+			# res = elo_probabilities a.elo, b.elo
+
 			if a.res.length < a.col.length then a.res += "012"[res] 
 			if b.res.length < b.col.length then b.res += "012"[2 - res]
 
