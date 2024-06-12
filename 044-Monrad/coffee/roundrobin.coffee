@@ -35,7 +35,7 @@ resultat = [] # 012 sorterad på id
 showType = (a) -> if typeof a == 'string' then "'#{a}'" else a
 assert = (a,b) -> if not _.isEqual a,b then print "Assert failure: #{showType a} != #{showType b}"
 
-ok = (p0, p1) -> p0.id != p1.id and p0.id not in p1.opp and abs(p0.balans() + p1.balans()) <= 2 # eller 2
+ok = (p0, p1) -> p0.id != p1.id and p0.id not in p1.opp and abs(p0.balans() + p1.balans()) <= 1
 other = (col) -> if col == 'b' then 'w' else 'b'
 
 message = '' #This is a tutorial tournament. Use it or edit the URL'
@@ -294,7 +294,7 @@ class Tournament
 		print 'Lottning av rond ',@round
 		document.title = 'Round ' + (@round+1)
 
-		#if @round % 2 == 1 then @players = @players.reverse()
+		if @round % 2 == 1 then @players = @players.reverse() # # #
 
 		@players = @skikta @players
 
