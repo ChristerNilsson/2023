@@ -1,22 +1,86 @@
-# Dutch Manager
+# Swiss Tight Pairer
+
+First I would like to show the different pairings of 
+
+[Tyresö Open 2024 78]() 
+
+[Swiss Dutch 78](swiss.txt)  
+[Swiss Tight 78](tight.txt)  
+
+[swiss_36.txt](swiss_36.txt)  
+[tight_36.txt](tight_36.txt)  
+
+Swiss Dutch has some slaughter rounds in the beginning of every tournament.
+These are quite boring as the superiour player almost always win.
+Tight Pairer tries to make similar strength players meet more often.
+To calculate the ultimate winner, elo points are accumulated for every win or draw.
+
+* Winner gets the Elo rating of the other player
+* Drawer gets half the Elo of the other player
+* Black eventually receives a bonus, depending on SP
+
+* Scorepoints         SP=0.1 (default 0.0)
+	* Drawing as White = 0.4 (default 0.5)
+	* Drawing as Black = 0.6 (default 0.5)
+	* Winning as White = 1.0 (default 1.0)
+	* Winning as Black = 1.2 (default 1.0)
 
 * Open Source
 * The database == The URL
 * Keyboard only - No Mouse
-* Scorepoints SP=0.1
 * Backup files downloaded automatically after every pairing
-* Simplified Pairing compared with JaVaFo and BBP
+* Player with zero Elo is considered to have 1400.
+
+## Advantages
+
+* Players will meet similar strength players
+* One person maximum needs a bye. Compare this with Berger.
+* Available in the browser.
+* Pages can be zoomed
+
+
+## Example 1, SP=0.0
+```
+Player Elo   Result  Factor
+White  2400  ½       0.5
+Black  1600  ½       0.5
+
+Black gets 2400 * 0.5 = 1200 points
+White gets 1600 * 0.5 =  800 points
+```
+
+## Example 2, SP=0.1
+```
+Player Elo   Result  Factor
+White  2400  ½       0.4
+Black  1600  ½       0.6
+
+Black gets 2400 * 0.6 = 1440 points
+White gets 1600 * 0.4 =  640 points
+```
+
+## Example 3, SP=0.1
+
+```
+Player Elo   Result  Factor 
+White  2400  0       0 
+Black  1600  1       1.2
+
+Black gets 2400 * 1.2 = 2880 points
+If white wins, white will get 1600 * 1 = 1600 points
+```
 
 ## Keys
 
+```
 Enter = Jump between Tables and Result
 ArrowUp/ArrowDown = Select Table
 0 = Enter White Loss
 space = Enter Draw
 1 = Enter White Win
-ArrowLeft/ArrowRight = Change result
 Home = Jump to first table
 End = Jump to last table
+```
 
 ## No Mouse or touch interface!
 
@@ -24,245 +88,15 @@ End = Jump to last table
 
 This is your ultimate backup!  
 
-[Try it!](https://christernilsson.github.io/2023/044-Monrad)
+[8 players](8.txt)
 
-[Try it!](https://christernilsson.github.io/2023/044-Monrad?TOUR=Klass_1&DATE=2024-05-28&ROUNDS=6&ROUND=0&SP=0.1&TPP=30&PPP=60&NAME=ANDERSSON_Lars_Owe|JOHANSSON_Lennart_B.|BJÖRKDAHL_Göran|STRÖMBÄCK_Henrik|AIKIO_Onni|LILJESTRÖM_Tor|PETTERSSON_Lars-Åke|STOLOV_Leonid|SILINS_Peteris|PERSSON_Kjell|LEHVONEN_Jouko|ISRAEL_Dan|ÅBERG_Lars-Erik|ANTONSSON_Görgen&ELO=1500|1825|1800|1775|1750|1725|1700|1675|1650|1625|1600|1575|1550|1525
-)
+[14 players](14.txt)
 
-8 players:
-```
-127.0.0.1:5500
-?TOUR=Klass_1
-&DATE=2024-05-28
-&ROUNDS=7
-&ROUND=0
-&SP=0.0
-&TPP=30
-&PPP=60
-&PLAYERS=
-(1825|JOHANSSON_Lennart_B.)
-(1697|BJÖRKDAHL_Göran)
-(1684|SILINS_Peteris)
-(1681|STOLOV_Leonid)
-(1644|PETTERSSON_Lars-Åke)
-(1598|AIKIO_Onni)
-(1598|ISRAEL_Dan)
-(1583|PERSSON_Kjell)
-```
+[14 players - 2nd round](14_2.txt)
 
-14 players:
-```
-127.0.0.1:5500
-?TOUR=Klass_1
-&DATE=2024-05-28
-&ROUNDS=8
-&ROUND=0
-&SP=0.0
-&TPP=30
-&PPP=60
-&PLAYERS=
-(1825|JOHANSSON_Lennart_B.)
-(1697|BJÖRKDAHL_Göran)
-(1684|SILINS_Peteris)
-(1681|STOLOV_Leonid)
-(1644|PETTERSSON_Lars-Åke)
-(1598|AIKIO_Onni)
-(1598|ISRAEL_Dan)
-(1583|PERSSON_Kjell)
-(1561|LILJESTRÖM_Tor)
-(1559|LEHVONEN_Jouko)
-(1539|ANDERSSON_Lars_Owe)
-(1535|ÅBERG_Lars-Erik)
-(1532|ANTONSSON_Görgen)
-(1400|STRÖMBÄCK_Henrik)
-```
+[28 players](28.txt)
 
-```
-127.0.0.1:5500
-?TOUR=Klass_1
-&DATE=2023-11-25
-&ROUNDS=8
-&ROUND=2
-&PLAYERS=
-(1825|JOHANSSON_Lennart_B.|(1w1|9b))
-(1697|BJÖRKDAHL_Göran|(0b0|4w))
-(1684|SILINS_Peteris|(3w½|13b))
-(1681|STOLOV_Leonid|(2b½|8w))
-(1644|PETTERSSON_Lars-Åke|(5w0|1b))
-(1598|ISRAEL_Dan|(4b1|6w))
-(1598|AIKIO_Onni|(7w1|5b))
-(1583|PERSSON_Kjell|(6b0|10w))
-(1561|LILJESTRÖM_Tor|(9w½|3b))
-(1559|LEHVONEN_Jouko|(8b½|0w))
-(1539|ANDERSSON_Lars_Owe|(11w0|7b))
-(1535|ÅBERG_Lars-Erik|(10b1|12w))
-(1532|ANTONSSON_Görgen|(13w1|11b))
-(0|STRÖMBÄCK_Henrik|(12b0|2w))
-```
-
-28 players:
-```
-127.0.0.1:5500
-?TOUR=Klass_1
-&DATE=2024-05-28
-&ROUNDS=10
-&ROUND=0
-&SP=0.0
-&TPP=30
-&PPP=60
-&PLAYERS=
-(1825|A)
-(1697|B)
-(1684|C)
-(1681|D)
-(1644|E)
-(1599|F)
-(1598|G)
-(1583|H)
-(1561|I)
-(1559|J)
-(1539|K)
-(1535|L)
-(1532|M)
-(1400|N)
-(1325|O)
-(1197|P)
-(1184|Q)
-(1181|R)
-(1144|S)
-(1098|T)
-(1097|U)
-(1083|V)
-(1061|X)
-(1059|Y)
-(1039|Z)
-(1035|Å)
-(1032|Ä)
-(1001|Ö)
-```
-
-78 players:  
-```
-127.0.0.1:5500?TOUR=Tyresö_Open_2024
-&DATE=2024-05-03
-&ROUNDS=8
-&ROUND=0
-&SP=0.1
-&PLAYERS=
-(2416|2416)
-(2413|2413)
-(2366|2366)
-(2335|2335)
-(2272|2272)
-(2235|2235)
-(2213|2213)
-(2141|2141)
-(2113|2113)
-(2109|2109)
-(2108|2108)
-(2093|2093)
-(2076|2076)
-(2065|2065)
-(2048|2048)
-(2046|2046)
-(2039|2039)
-(2035|2035)
-(2031|2031)
-(2022|2022)
-(2001|2001)
-(1985|1985)
-(1977|1977)
-(1954|1954)
-(1944|1944)
-(1936|1936)
-(1923|1923)
-(1907|1907)
-(1897|1897)
-(1896|1896)
-(1893|1893)
-(1889|1889)
-(1886|1886)
-(1885|1885)
-(1880|1880)
-(1878|1878)
-(1871|1871)
-(1852|1852)
-(1848|1848)
-(1846|1846)
-(1835|1835)
-(1833|1833)
-(1828|1828)
-(1827|1827)
-(1818|1818)
-(1803|1803)
-(1800|1800)
-(1796|1796)
-(1794|1794)
-(1793|1793)
-(1787|1787)
-(1783|1783)
-(1778|1778)
-(1768|1768)
-(1763|1763)
-(1761|1761)
-(1748|1748)
-(1733|1733)
-(1733|1733)
-(1728|1728)
-(1726|1726)
-(1721|1721)
-(1709|1709)
-(1695|1695)
-(1691|1691)
-(1688|1688)
-(1680|1680)
-(1671|1671)
-(1650|1650)
-(1641|1641)
-(1624|1624)
-(1622|1622)
-(1579|1579)
-(1575|1575)
-(1524|1524)
-(1480|1480)
-(1417|1417)
-(1406|1406)
-```
-
-
-
-100 players:  
-```
-127.0.0.1:5500?TOUR=Wasa_SK
-&DATE=2023-11-28
-&ROUNDS=10
-&ROUND=0
-&NAME=AA|AB|AC|AD|AE|AF|AG|AH|AI|AJ|BA|BB|BC|BD|BE|BF|BG|BH|BI|BJ|CA|CC|CC|CD|CE|CF|CG|CH|CI|CJ|DA|DD|DC|DD|DE|DF|DG|DH|DI|DJ|EA|EE|EC|ED|EE|EF|EG|EH|EI|EJ|FA|FF|FC|FD|FE|FF|FG|FH|FI|FJ|GA|GB|GC|GD|GE|GF|GG|GH|GI|GJ|HA|HB|HC|HD|HE|HF|HG|HH|HI|HJ|IA|IB|IC|ID|IE|IF|IG|IH|II|IJ|JA|JB|JC|JD|JE|JF|JG|JH|JI|JJ
-&ELO=1825|1800|1775|1750|1725|1700|1675|1650|1625|1600|1575|1550|1525|1500|1725|1700|1675|1650|1625|1600|1575|1550|1525|1500|1725|1700|1675|1650|1625|1600|1575|1550|1525|1500|1725|1700|1675|1650|1625|1600|1575|1550|1525|1500|1725|1700|1675|1650|1625|1600|1575|1550|1525|1500|1725|1700|1675|1650|1625|1600|1575|1550|1525|1500|1725|1700|1675|1650|1625|1600|1575|1550|1525|1500|1725|1700|1675|1650|1625|1600|1575|1550|1525|1500|1725|1700|1675|1650|1625|1600|1575|1550|1525|1500|1725|1700|1675|1650|1625|1600
-```
-### Monrad
-
-	* Handles tournaments with 4 to 64 players.
-
-### Quick Start
-
-Enter the names in the URL.  
-Show the names and let everybody be seated.  
-The names are alphabetically ordered.  
-
-<img align="center" src="1.GIF">
-
-When the first game is played, click Next to see the Tables screen.  
-
-<img align="center" src="2.GIF">
-
-Click on the winner or between them for a draw.  
-Clicking twice cancels the result.  
-When all results are entered, click Next.  
-
-<img align="center" src="3.GIF">
-
-Click Next to start the next round.  
+[78 players](78.txt)
 
 ### Instructions
 	Edit the URL above.  
@@ -294,98 +128,3 @@ Click Next to start the next round.
 	* The updated URL contains all information to display the result page.
 	* The URL is available on the clipboard.
 	* No data will be stored on the server. All data is in the URL.
-
-### Sample URL
-Eight players, four rounds  
-Just copy and paste it into your browser. Oneliner not needed.  
-```
-https://christernilsson.github.io/2023/044-Monrad
-?NAME=CARLSEN_Christer|BENGTSSON_Bertil|HARALDSSON_Helge|ERIKSSON_Erik|ANDERSSON_Anders|DANIELSSON_Daniel|GREIDER_Göran|FRANSSON_Ferdinand
-&TOUR=Wasa SK KM blixt
-&DATE=2023-11-25
-&OPP=1,3,5,6|0,4,3,7|3,7,6,5|2,0,1,4|5,1,7,3|4,6,0,2|7,5,2,0|6,2,4,1
-&COL=WBWB|BWWB|WBWB|BWBW|WBWB|BWBW|WBBW|BWBW
-&RES=2111|0200|1222|1122|0020|2010|2201|0002
-&TIE=WD1
-```
-
-# Table of number of rounds (R) given number of players (N).
-General rule: 2*R <= N. Also R <= 20
-```
-N: 4 6 8 10 12 24 26 62 64
-R: 2 3 4  4  6  6  8  8 10
-```
-
-### Teams
-
-* State the team size in parameter Z
-* Keys: 
-	* 0
-	* space ½
-	* 1
-	* q 1½
-	* 2
-	* w 2½ 
-	* 3
-	* e 3½
-	* 4
-	* r 4½
-	* 5
-	* t 5½
-	* 6
-	* y 6½
-	* 7
-	* u 7½
-	* 8
-	* Left  Arrow: Decrease White with ½. Wraps.
-	* Right Arrow: Increase White with ½. Wraps.
-* Use Up and Down to select game. Wraps
-* Also: Home End PgUp PgDn
-
-# Kontroller av URL.
-* Antal spelare skall överensstämma i N, O, C och R
-* Antal ronder skall överensstämma i O C och R
-* Tillåtna tecken i N: I princip alla möjliga. De kodas/avkodas automatiskt. T ex åäöÅÄÖéæýþÿüïœßđèùúøàáçìíñμ-. Emojis?
-* Tillåtna tecken i O: 0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-/ (64 tecken)
-* Tillåtna tecken i C: BW (två tecken)
-* Tillåtna tecken i R individuellt spel: 012 (tre tecken)
-* Tillåtna tecken i R med åtta spelare per lag: 0123456789abcdefg (16 tecken)
-
-### Begränsningar
-* 4 till 64 spelare
-
-### Noterat
-Begränsningar i antal ronder med maxweight-algoritmen:
-N 8 16 32 64 128
-R 4 10 25 50 113
-64/50 tar 1204 ms (python) för alla ronderna.
-För stora N och små R är min rekursiva pair mycket snabbare.
-
-### Frågor
-* Ska man se till att antaler ronder alltid är jämnt ? (Av färgrättviseskäl)
-* Vad är lämpligt antal ronder, givet N spelare ?
-* Visa placering som 12 (plats, Jämn=Vit, Udda=Svart) eller 6W (bord + färg) ?
-
-### ToDo
-
-* Slumpa namnen om ORC saknas!
-* Blankett att fylla i resultatet (bordslista). En för varje rond.
-* E= (ELO-rating) förberedelse för Swiss
-* TB= (Tiebreaks) Prioritetsordning
-* P= (partier per match) Lagturneringar
-* R= Antal ronder
-* Ändra Result till Score
-* Score anges med ett tecken. T ex åtta spelare: 0 1q2w3e4r5t6y7u8  q=½-7½  u=7½-½
-
-### Transpilering av .py till .coffee.
-Tvingades transpilera fyra funktioner i ett eget pass, pga begränsningar i chatGPT.  
-En felaktighet var att jag behövde byta `i,j = j,i` mot `[i,j] = [j,i]`
-En annan att list comprehension använde [] istf ()
-Negativa index fixades genom att [i] => [i %% length]
-
-### Hur jag hittade alla buggar i övergången från Python till Coffeescript
-* Låt python skapa en tracefil med utskrifter
-* Låt Javascript skapa en tracefil med samma utskrifter
-* Ställ dig på python.txt i PyCharm
-* Kör PyCharm|View|Compare With och välj senaste tracefilen från javascript
-

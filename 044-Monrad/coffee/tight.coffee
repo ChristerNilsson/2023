@@ -1,7 +1,7 @@
 import { parseExpr } from './parser.js'
 
 HELP = """
-How to use Schwisch Manager:
+How to use Swiss Tight Manager:
 	Enter = Switch between Tables and Result
 	Home = Select First Table
 	Up   = Select Previous Table
@@ -18,7 +18,10 @@ How to use Schwisch Manager:
 	H = Show Help for constructing the URL
 """.split '\n'
 
+# up down  enter  1 space=draw 0  delete  Pair  Small Large  Matrix
+
 ASCII = '0123456789abcdefg'
+ALFABET = '123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 N = 0 # number of players
 ZOOM = [40,40,40] # vertical line distance for three states
 
@@ -29,13 +32,17 @@ currentTable = 0
 tournament = null
 errors = [] # id för motsägelsefulla resultat. Tas bort med Delete
 
+anrop = {ok:0, balans:0, pair:0}
+
 state = 0 # 0=Tables 1=Result 2=Help
 resultat = [] # 012 sorterad på id
 
 showType = (a) -> if typeof a == 'string' then "'#{a}'" else a
 assert = (a,b) -> if not _.isEqual a,b then print "Assert failure: #{showType a} != #{showType b}"
 
-ok = (p0, p1) -> p0.id != p1.id and p0.id not in p1.opp and abs(p0.balans() + p1.balans()) <= 1
+ok = (p0, p1) -> 
+	anrop.ok++
+	p0.id != p1.id and p0.id not in p1.opp and abs(p0.balans() + p1.balans()) <= 1
 other = (col) -> if col == 'b' then 'w' else 'b'
 
 message = '' #This is a tutorial tournament. Use it or edit the URL'
@@ -78,31 +85,31 @@ initials = (name) ->
 assert 'cn', initials 'christer nilsson'
 assert 'JLB', initials 'JOHANSSON Lennart B.'
 
-cdf = (x) -> # https://www.geeksforgeeks.org/javascript-program-for-normal-cdf-calculator/
-    T = 1 / (1 + 0.2316419 * Math.abs x)
-    D = 0.3989423 * Math.exp -x * x / 2
-    cd = D * T * (0.3193815 + T * (-0.3565638 + T * (1.781478 + T * (-1.821256 + T * 1.330274))))
-    if x > 0 then 1 - cd else cd
+# cdf = (x) -> # https://www.geeksforgeeks.org/javascript-program-for-normal-cdf-calculator/
+#     T = 1 / (1 + 0.2316419 * Math.abs x)
+#     D = 0.3989423 * Math.exp -x * x / 2
+#     cd = D * T * (0.3193815 + T * (-0.3565638 + T * (1.781478 + T * (-1.821256 + T * 1.330274))))
+#     if x > 0 then 1 - cd else cd
 
-calc = (winner, loser, result, K) ->
-    diff = winner - loser
-    u = diff/400 * sqrt(2)
-    (result - cdf(u)) * K
+# calc = (winner, loser, result, K) ->
+#     diff = winner - loser
+#     u = diff/400 * sqrt(2)
+#     (result - cdf(u)) * K
 
 # elodiff = (games,K=20) -> [calc(a,b,res,K) for a,b,res in games]
 
 class Player
 	constructor : (@id, @elo="",  @opp=[], @col="", @res="",@name="") ->
 
-	toString : -> "#{@id} #{@name} elo:#{@elo} #{@col} res:#{@res} opp:[#{@opp}] score:#{@score().toFixed(1)} weight:#{@weight().toFixed(2)} balans:#{@balans()}"
+	toString : -> "#{@id} #{@name} elo:#{@elo} #{@col} res:#{@res} opp:[#{@opp}] score:#{@score().toFixed(1)} eloSum:#{@eloSum().toFixed(0)}" # balans:#{@balans()}"
 
-	eloDiff : -> 
-		result = 0
-		for i in range @res.length
-			result += calc @elo, tournament.persons[@opp[i]].elo, 0.5 * parseInt(@res[i]), 20
-		result
+	eloSum : -> 
+		sp = tournament.sp
+		hash = {'w2': 1, 'b2': 1+2*sp, 'w1': 0.5-sp, 'b1': 0.5+sp, 'w0': 0, 'b0': 0}
+		sum(tournament.persons[@opp[i]].elo * hash[@col[i] + @res[i]] for i in range @res.length)
 
 	balans : -> # färgbalans
+		anrop.balans++
 		result = 0
 		for ch in @col
 			if ch=='b' then result -= 1
@@ -112,21 +119,14 @@ class Player
 	score : ->
 		result = 0
 		n = tournament.round
-		#if state == 0 then n = n-1
 		sp = tournament.sp
 		for i in range n
 			if i < @col.length and i < @res.length
 				key = @col[i] + @res[i]
-				result += {'w2': 1-sp, 'b2': 1, 'w1': 0.5-sp, 'b1': 0.5+sp, 'w0': 0, 'b0': sp}[key]
-		# print 'id,score',@id, @res, result,n
+				#result += {'w2': 1-sp, 'b2': 1, 'w1': 0.5-sp, 'b1': 0.5+sp, 'w0': 0, 'b0': sp}[key]
+				res = {'w2': 1, 'b2': 1+2*sp, 'w1': 0.5-sp, 'b1': 0.5+sp, 'w0': 0, 'b0': 0}[key]
+		#print 'id,score',@id, @res, result,n
 		result
-
-	weight : -> 
-		r = tournament.round
-		R = tournament.rounds
-		w = tournament.weights # t ex [0/7 1/7 2/7 3/7 4/7 5/7 6/7 7/7] vid åtta ronder
-		# N är antal spelare
-		w[r] * @score()/R + w[R-1-r] * (N-@id)/N
 
 	read : (player) -> 
 		# (1234|Christer|(12w0|23b½|14w)) 
@@ -166,7 +166,7 @@ class Player
 
 class Tournament 
 	constructor : () ->
-		@name = ''
+		@title = ''
 		@rounds = 0
 		@round = 0
 		@sp = 0.0 # 0.01
@@ -188,15 +188,41 @@ class Tournament
 
 	write : () ->
 
-	pair : (persons, pairing=[]) ->
-		if pairing.length == N then return pairing
-		a  = persons[0]
+	# pair : (persons, pairing=[]) ->
+	# 	anrop.pair++
+	# 	if pairing.length == N then return pairing
+	# 	a = persons[0]
+	# 	for b in persons
+	# 		if not ok a,b then continue
+	# 		newPersons = (p for p in persons when p not in [a,b])
+	# 		newPairing = pairing.concat [a,b]
+	# 		result = @pair newPersons,newPairing
+	# 		if result.length == N then return result
+	# 	return []
+
+	pair : (persons, index=0, pairing=[], antal = 0) ->
+		# denna version klarar cirka dubbla antalet ronder.
+		anrop.pair++
+		if antal == N then return pairing
+		a = persons[index]
 		for b in persons
+			if pairing[b.id] >= 0 then continue
 			if not ok a,b then continue
-			newPersons = (p for p in persons when p not in [a,b])
-			newPairing = pairing.concat [a,b]
-			result = @pair newPersons,newPairing
-			if result.length == N then return result
+			pairing[a.id] = b.id
+			pairing[b.id] = a.id
+			if antal+2==N then return pairing
+			for ix in range index+1,N # sök upp nästa lediga index
+				if pairing[persons[ix].id] == -1 then break
+			if antal + 2 < N
+				result = @pair persons, ix, pairing, antal+2
+				if result.length > 0 then return result
+			else
+				pairing[a.id] = -1
+				pairing[b.id] = -1
+				return pairing
+			pairing[a.id] = -1
+			pairing[b.id] = -1
+			if index == N then return result
 		return []
 
 	flip : (p0,p1) -> # p0 byter färg, p0 anpassar sig
@@ -230,74 +256,18 @@ class Tournament
 				if 2 == abs p0.balans() then @flip p0,p1 else @flip p1,p0
 			else print 'unexpected',balans
 
-	makeBerger : -> 
-
-		@pairings = []
-		for i in range N//2
-			if i == 0 
-				order = if @round % 2 == 0 then 'wb' else 'bw'
-			else 
-				order = if i % 2 == 0 then 'wb' else 'bw'
-			w = @players[@robin[i]]
-			b = @players[@robin[N-1-i]]
-			if order == 'bw' then [w,b] = [b,w]
-			@pairings.push w
-			@pairings.push b
-			w.col += "w"
-			b.col += "b"
-			w.opp.push b.id
-			b.opp.push w.id
-
-		print 'players',@players
-
-		temp = @robin.pop()
-		@robin.unshift @robin.pop()
-		@robin.push temp
-
-		print 'robin',@robin
-
-	# skikta : () ->
-	# 	print '@round',@round
-	# 	R = @round
-	# 	print 'skikta',@players
-	# 	print 'scores',(p.score() for p in @players)
-	# 	temp = _.groupBy @players, (p) -> 2 * p.score() >= R # then 'strong' else 'weak'
-
-	# 	strong = temp.true
-	# 	weak = temp.false
-
-	# 	if strong is undefined then strong = []
-	# 	if weak is undefined then weak = []
-
-	# 	strong.sort (a,b) ->
-	# 		diff = b.score() - a.score()
-	# 		if diff != 0 then return diff
-	# 		return b.elo - a.elo
-
-	# 	weak.sort (a,b) -> b.elo - a.elo
-
-	# 	print 'strong',strong
-	# 	print 'weak',weak
-
-	# 	print("--- strong ---")
-	# 	for p in strong
-	# 		print p.toString()
-	# 	print("--- weak ---")
-	# 	for p in weak
-	# 		print p.toString()
-	# 	print("---")
-
-	# 	print 'strong',strong
-
-	# 	temp = strong.concat weak
-
-	# 	print 'temp',temp
-	# 	temp
-	# 	# @players = _.clone @players
-	# 	# @players.sort (a,b) -> 
-	# 	# 	diff = b.score() - a.score()
-	# 	# 	if diff != 0 then return diff
-	# 	# 	return b.elo - a.elo
+	unscramble : (pairings) -> # [5,3,4,1,2,0] => [0,1,2,3,4,5]
+		# print 'unscramble',pairings
+		result = []
+		for i in range pairings.length
+			if pairings[i] != -1
+				j = pairings[i]
+				result.push @players[i]
+				result.push @players[j]
+				pairings[j] = -1
+				pairings[i] = -1
+		# print 'unscramble=>',result
+		result
 
 
 	lotta : () ->
@@ -312,31 +282,49 @@ class Tournament
 		document.title = 'Round ' + (@round+1)
 
 		@players = _.clone @players
-		@players.sort (a,b) -> 
-			#diff = b.score() - a.score()
-			# if diff != 0 then return diff
-			# return b.elo - a.elo
-			b.weight() - a.weight()
+		@players.sort (a,b) -> a.id - b.id
+
+		# print ""
+		# print 'sorterat på elo'
+		# for p in @players
+		# 	print(p.toString())
 		
-		# if @round % 2 == 1 then @players = @players.reverse() # reverse verkar inte spela någon roll
-		# @players = @skikta @players
+		if @round % 2 == 1 then @players = @players.reverse() # reverse verkar inte spela någon roll
 
-		print 'sorterat på id'
-		for p in @persons
-			print(p.toString())
+		# print 'sorterat på id'
+		# for p in @persons
+		# 	print(p.toString())
 
-		#print 'före pair',@players
-		@pairings = @pair @players
+		if @round == @rounds
+			temp = _.clone @players
+			temp.sort (a,b) -> 
+				diff = b.eloSum() - a.eloSum()
+				if diff != 0 then return diff
+				return b.score() - a.score()
+			print 'sorterat på [eloSum,score]'
+			for p in temp
+				print(p.toString())
+
+		start = new Date()
+		anrop = {ok:0,balans:0,pair:0}
+		lista = (-1 for i in range N)
+		# print 'lista',lista
+		@pairings = @pair @players, 0, lista
+		@pairings = @unscramble @pairings
+		print 'cpu:',new Date() - start
+		print 'anrop',anrop
+		print 'pairings',@pairings
+
 		for i in range N//2
 			a = @pairings[2*i]
 			b = @pairings[2*i+1]
 			a.opp.push b.id
 			b.opp.push a.id
 
-		for i in range N//2
-			a = @pairings[2*i]
-			b = @pairings[2*i+1]
-			print "#{a.id}-#{b.id} weight #{a.weight().toFixed(2)} vs #{b.weight().toFixed(2)}"
+		# for i in range N//2
+		# 	a = @pairings[2*i]
+		# 	b = @pairings[2*i+1]
+		# 	print "#{a.id}-#{b.id} elo #{a.elo} vs #{b.elo}"
 
 		if @round==0
 			for i in range N//2
@@ -352,29 +340,15 @@ class Tournament
 				a = @pairings[2*i]
 				b = @pairings[2*i+1]
 				@assignColors a,b
-		#print 'efter pair',@pairings
-
-		# for i in range N//2
-		# 	a = @pairings[2*i]
-		# 	b = @pairings[2*i+1]
-		# 	if 'w' == a.col[@round]
-		# 		print a.toString(), b.toString()
-		# 	else
-		# 		print b.toString(), a.toString()
-		# print 'lotta',@players
-
-		#@players.sort (a,b) -> b.elo - a.elo
-
-		# @makeBerger()
 
 		timestamp = new Date().toLocaleString 'se-SE'
-		#print 'tournament',tournament
-		downloadFile tournament.makeTableFile(" for " + @name + " in Round #{@round}    #{timestamp}"), @name + " Round #{@round}.txt"
-		downloadFile @createURL(), "URL for " + @name + " Round #{@round}.txt"
+		downloadFile tournament.makeTableFile(" for " + @title + " in Round #{@round}    #{timestamp}"), @title + " Round #{@round}.txt"
+		downloadFile @createURL(), "URL for " + @title + " Round #{@round}.txt"
+		start = new Date()
+		downloadFile @createMatrix(), "Matrix of Pairings for Round #{@round}.txt"
 
 		@round += 1
 		state = 0
-		#print {'pairings after pairing', @pairings}
 		xdraw()
 
 	fetchURL : (url = location.search) ->
@@ -387,7 +361,7 @@ class Tournament
 
 		urlParams = new URLSearchParams url
 		@players = []
-		@name = urlParams.get('TOUR').replace '_',' '
+		@title = urlParams.get('TOUR').replace '_',' '
 		@datum = urlParams.get('DATE') or ""
 		@rounds = parseInt urlParams.get 'ROUNDS'
 		@round = parseInt urlParams.get 'ROUND'
@@ -396,26 +370,6 @@ class Tournament
 		@sp = parseFloat getParam 'SP', 0.0 # ScorePoints
 		@tpp = parseInt getParam 'TPP',30 # Tables Per Page
 		@ppp = parseInt getParam 'PPP',60 # Players Per Page
-
-		@weights = getParam 'WEIGHTS','77777777' # '01234567'
-		@weights = (@weights[r]/(@rounds-1) for r in range @rounds)
-		@weights.push 1
-		print 'weights',@weights
-		# Antag 8 ronder
-		# pp = partipoäng. 0, 0.5 eller 1 per parti
-		# elo implementerat som id. Högsta elo <=> id=0, lägsta elo <=> antal spelare minus ett.
-		# 0 = 7/7 elo + 0/7 pp (dvs enbart elo)
- 		# 1 = 6/7 elo + 1/7 pp
- 		# 2 = 5/7 elo + 2/7 pp
- 		# 7 = 0/7 elo + 7/7 pp (dvs enbart pp)
-		# Exempel:
-		# '00000000' enbart elo. Tight, men vem vann?
-		# '77777777' enbart partipoäng. Det vanligaste idag.
-		# '00007777' Först fyra elo, därefter fyra partipoäng.
-		# '01234567' Elo som successivt övergår i partipoäng.
-		# '76543210' Troligen ointressant.
-		# Upp till 36 ronder: 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ
-		# Första ronden blir alltid elo eftersom partipoäng saknas. Samma som Swiss.
 
 		players = urlParams.get 'PLAYERS'
 		print players
@@ -427,14 +381,13 @@ class Tournament
 
 		# players.sort (a,b) -> b.elo - a.elo
 
-
 		N = players.length
 
 		if N < 4
 			print "Error: Number of players must be 4 or more!"
 			return
-		if N > 100
-			print "Error: Number of players must be 100 or less!"
+		if N > 200
+			print "Error: Number of players must be 200 or less!"
 			return
 
 		for i in range N
@@ -444,7 +397,7 @@ class Tournament
 
 		print @players
 		
-		@players = _.sortBy @players, (player) -> player.elo
+		@players = _.sortBy @players, (player) -> -player.id
 		@players = @players.reverse()
 		@persons = _.cloneDeep @players
 
@@ -481,7 +434,7 @@ class Tournament
 		y = ZOOM[state]/2
 		textAlign LEFT,CENTER
 		s = ''
-		s += @txtT "#{@name} #{@datum}" ,30, window.LEFT
+		s += @txtT "#{@title} #{@datum}" ,30, window.LEFT
 		s += ' ' + @txtT header, 22, window.CENTER
 		s += ' ' + @txtT 'Round ' + @round, 30, window.RIGHT
 		fill 'black'
@@ -560,7 +513,7 @@ class Tournament
 		res = []
 		#res.push "https://christernilsson.github.io/2023/044-Monrad"
 		res.push "http://127.0.0.1:5500"
-		res.push "?TOUR=" + @name.replace ' ','_'
+		res.push "?TOUR=" + @title.replace ' ','_'
 		res.push "&DATE=" + "2023-11-25"
 		res.push "&ROUNDS=" + @rounds
 		res.push "&ROUND=" + @round
@@ -606,6 +559,53 @@ class Tournament
 			if i % @tpp == @tpp-1 then res.push "\f"
 		res.join "\n"	
 
+	distans : (rounds) ->
+		result = []
+		for i in range(rounds.length) 
+			for [a,b] in rounds[i]
+				result.push abs(a-b) 
+		(sum(result)/result.length).toFixed 1
+
+	makeCanvas : ->
+		result = []
+		for i in range N
+			line = new Array N
+			_.fill line, '·'
+			line[i] = '*'
+			result.push line
+		result
+
+	dumpCanvas : (title,average,canvas) ->
+		output = ["", title]
+		output.push "Tightness: #{average}  (Average position count from the current player (*))"
+		header = (str((i + 1) % 10) for i in range(N)).join(' ')
+		output.push '   ' + header
+		ordning = (p.elo for p in @persons)
+		for i in range canvas.length
+			row = canvas[i]
+			nr = i + 1
+			nr = if nr < 10 then ' ' + str(nr) else str(nr)
+			output.push "#{nr} #{(str(item) for item in row).join(" ")} #{ordning[i]}"
+		output.push '   ' + header
+		output.join '\n'
+
+	drawMatrix : (title,rounds) ->
+		canvas = @makeCanvas()
+		for i in range rounds.length
+			for [a,b] in rounds[i]
+				canvas[a][b] = ALFABET[i]
+				canvas[b][a] = ALFABET[i]
+		@dumpCanvas title,@distans(rounds),canvas
+
+	createMatrix : ->
+		matrix = []
+		for r in range @round
+			res = []
+			for player in @players
+				res.push [player.id,player.opp[r]]				
+			matrix.push res
+		@drawMatrix @title, matrix
+
 	showResult : ->
 		@showHeader 'Result'
 		print 'showResult'
@@ -618,17 +618,19 @@ class Tournament
 
 		# _.sortBy på [score, elo] verkar inte fungera pga array jämförs som sträng?
 
-		temp = _.clone @players
-		temp.sort (a,b) -> 
-			diff = b.score() - a.score()
-			if diff != 0 then return diff
-			return b.elo - a.elo
+		# temp = _.clone @players
+		# temp.sort (a,b) -> 
+		# 	return a.id - b.id 
 
-		print 'tempA',temp
+		# 	diff = b.eloSum() - a.eloSum()
+		# 	if diff != 0 then return diff
+		# 	return b.elo - a.elo
+
+		# print 'tempA',temp
 		#temp.reverse()
 
-		inv = (p.id for p in temp)
-		inv = invert inv
+		# inv = (p.id for p in temp)
+		# inv = invert inv
 
 		y = 1.5 * ZOOM[state]
 		textAlign LEFT
@@ -640,8 +642,8 @@ class Tournament
 		s += ' ' + @txtT "Elo",  4,window.RIGHT
 		s += ' ' + @txtT "Name", 25,window.LEFT
 		s += ' ' + @txtT rheader,3*@rounds,window.LEFT 
-		s += ' ' + @txtT "Score",5,window.RIGHT
-		s += ' ' + @txtT "±Elo", 6,window.RIGHT
+		# s += ' ' + @txtT "Score",5,window.RIGHT
+		s += ' ' + @txtT "EloSum", 6,window.RIGHT
 		s += ' ' + @txtT "D",    2,window.CENTER
 		s += ' ' + @txtT "W",    1,window.CENTER
 		s += ' ' + @txtT "B",    2,window.CENTER
@@ -649,7 +651,7 @@ class Tournament
 		text s,10,y
 
 		fill 'white' 
-		for person,i in temp
+		for person,i in tournament.persons
 			y += ZOOM[state] * 0.5
 			s = ""
 			s +=       @txtT (1+i).toString(),      2, window.RIGHT
@@ -659,8 +661,8 @@ class Tournament
 			print(person)
 			score = person.score()
 			score = myRound score, 1
-			s += ' ' + @txtT score,             5, window.RIGHT
-			s += ' ' + @txtT myRound(person.eloDiff(),1).toString(),  6, window.RIGHT
+			# s += ' ' + @txtT score,             5, window.RIGHT
+			s += ' ' + @txtT person.eloSum().toFixed(0),  6, window.RIGHT
 
 			# s += ' ' + @txtT prRes(person.tie[0]),2,window.CENTER
 			# s += ' ' + @txtT       person.tie[1], 2,window.CENTER
@@ -691,7 +693,7 @@ copyToClipboard = (text) ->
 sum = (s) ->
 	res = 0
 	for item in s
-		res += parseInt item
+		res += parseFloat item
 	res
 assert 6, sum '012012'
 
@@ -811,17 +813,11 @@ elo_probabilities = (R_W, R_B, draw=0.2) ->
 	E_W = 1 / (1 + 10 ** ((R_B - R_W) / 400))
 	win = E_W - draw / 2
 	loss = (1 - E_W) - draw / 2
-	# arr = [loss, draw, win]
 	x = _.random 0,1,true
-	# print x,loss,draw,win
-	if x < loss then return 0
-	if x < loss + draw then return 1
-	return 2
-
-# p = elo_probabilities(1200, 1400)
-# print(p)  # Output should be close to [0.44, 0.2, 0.26]
-
-
+	index = 2
+	if x < loss + draw then index = 1
+	if x < loss then index = 0
+	index
 
 window.keyPressed = ->
 	# print key
@@ -858,27 +854,25 @@ window.keyPressed = ->
 	if key == 'x'
 		for i in range tournament.pairings.length // 2
 			a = tournament.pairings[2*i]
-			b = tournament.pairings[2*i+1]			
+			b = tournament.pairings[2*i+1]		
 
-			if abs(a.elo - b.elo) <= 5 then res = 1
-			else if a.elo > b.elo then res = 2
-			else res = 0
-
-			# res = elo_probabilities a.elo, b.elo
+			x = 1
+			if x==0	# Utan slump
+				if abs(a.elo - b.elo) <= 5 then res = 1
+				else if a.elo > b.elo then res = 2
+				else res = 0
+			else if x==1 # elo_prob
+				res = elo_probabilities a.elo, b.elo
+			else if x==2 # ren slump [0.4,0.2,0.4]
+				r = _.random 1, true
+				res = 2
+				if r < 0.6 then res=1
+				if r < 0.4 then res=0
 
 			if a.res.length < a.col.length then a.res += "012"[res] 
 			if b.res.length < b.col.length then b.res += "012"[2 - res]
 
-		matrix = []
-		for r in range tournament.round
-			res = []
-			for player in tournament.players
-				res.push [player.id,player.opp[r]]				
-			matrix.push res
-		print 'dump', JSON.stringify matrix
-
 		#@players.sort (a,b) -> b.elo - a.elo
-
 
 	# if key == 'x'
 	# 	for i in range tournament.pairings.length // 2

@@ -814,6 +814,15 @@ window.keyPressed = ->
 			if a.res.length < a.col.length then a.res += "012"[index]
 			if b.res.length < b.col.length then b.res += "012"[2 - index]
 
+			matrix = []
+			for r in range tournament.round
+				res = []
+				for player in tournament.players
+					res.push [player.id,player.opp[r]]				
+				matrix.push res
+			print 'dump', JSON.stringify matrix
+
+
 	if key == 'Delete'
 		i = currentTable
 		errors = (e for e in errors when e != i)
