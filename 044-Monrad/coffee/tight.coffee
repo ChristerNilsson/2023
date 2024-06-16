@@ -1,4 +1,7 @@
 import { parseExpr } from './parser.js'
+# import {maxWeightMatching} from './mwmatching.js'
+#import {maxWeightMatching} from './mattkrick.js'
+import {Edmonds} from './mattkrick.js'
 
 HELP = """
 How to use Swiss Tight Manager:
@@ -21,7 +24,7 @@ How to use Swiss Tight Manager:
 # up down  enter  1 space=draw 0  delete  Pair  Small Large  Matrix
 
 ASCII = '0123456789abcdefg'
-ALFABET = '123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+ALFABET = '123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz' # 62 ronder
 N = 0 # number of players
 ZOOM = [40,40,40] # vertical line distance for three states
 
@@ -176,7 +179,7 @@ class Tournament
 		# dessa tre listor pekar på samma objekt
 		@players = []
 		@persons = [] # stabil, sorterad på id och elo
-		@pairings = [] # varierar med varje rond
+		@pairs = [] # varierar med varje rond
 
 		@robin = range N
 
@@ -200,30 +203,45 @@ class Tournament
 	# 		if result.length == N then return result
 	# 	return []
 
-	pair : (persons, index=0, pairing=[], antal = 0) ->
-		# denna version klarar cirka dubbla antalet ronder.
-		anrop.pair++
-		if antal == N then return pairing
-		a = persons[index]
-		for b in persons
-			if pairing[b.id] >= 0 then continue
-			if not ok a,b then continue
-			pairing[a.id] = b.id
-			pairing[b.id] = a.id
-			if antal+2==N then return pairing
-			for ix in range index+1,N # sök upp nästa lediga index
-				if pairing[persons[ix].id] == -1 then break
-			if antal + 2 < N
-				result = @pair persons, ix, pairing, antal+2
-				if result.length > 0 then return result
-			else
-				pairing[a.id] = -1
-				pairing[b.id] = -1
-				return pairing
-			pairing[a.id] = -1
-			pairing[b.id] = -1
-			if index == N then return result
-		return []
+	generateNet : ->
+		edges = []
+		for i in range N 
+			a = @persons[i]
+			for j in range i+1,N 
+				b = @persons[j]
+				diff = abs a.id - b.id
+				cost = 10000 - diff *diff
+				if ok a,b then edges.push [a.id,b.id,cost]
+		edges
+	
+	findSolution : (edges) -> 
+		edmonds = new Edmonds edges
+		edmonds.maxWeightMatching edges
+
+	# pair : (persons, index=0, pairing=[], antal=0) ->
+	# 	# denna version tar 43 sek för rond 16 med 78 spelare.
+	# 	anrop.pair++
+	# 	if antal == N then return pairing
+	# 	a = persons[index]
+	# 	for b in persons
+	# 		if pairing[b.id] >= 0 then continue
+	# 		if not ok a,b then continue
+	# 		pairing[a.id] = b.id # sätt paret
+	# 		pairing[b.id] = a.id
+	# 		if antal+2==N then return pairing
+	# 		for ix in range index+1,N # sök upp nästa lediga index
+	# 			if pairing[persons[ix].id] == -1 then break
+	# 		if antal + 2 < N
+	# 			result = @pair persons, ix, pairing, antal+2
+	# 			if result.length > 0 then return result
+	# 		else
+	# 			pairing[a.id] = -1 # återställ paret
+	# 			pairing[b.id] = -1
+	# 			return pairing
+	# 		pairing[a.id] = -1 # återställ paret
+	# 		pairing[b.id] = -1
+	# 		if index == N then return result
+	# 	return []
 
 	flip : (p0,p1) -> # p0 byter färg, p0 anpassar sig
 		#print 'flip',p0.col,p1.col
@@ -256,24 +274,21 @@ class Tournament
 				if 2 == abs p0.balans() then @flip p0,p1 else @flip p1,p0
 			else print 'unexpected',balans
 
-	unscramble : (pairings) -> # [5,3,4,1,2,0] => [0,1,2,3,4,5]
-		# print 'unscramble',pairings
+	unscramble : (solution) -> # [5,3,4,1,2,0] => [[0,5],[1,3],[2,4]]
+		solution = _.clone solution
 		result = []
-		for i in range pairings.length
-			if pairings[i] != -1
-				j = pairings[i]
-				result.push @players[i]
-				result.push @players[j]
-				pairings[j] = -1
-				pairings[i] = -1
-		# print 'unscramble=>',result
+		for i in range solution.length
+			if solution[i] != -1
+				j = solution[i]
+				result.push [i,j] #[@players[i].id,@players[j].id]
+				solution[j] = -1
+				solution[i] = -1
 		result
-
 
 	lotta : () ->
 
 		#print @players
-		for p in @players
+		for p in @persons
 			if p.res.length != p.col.length
 				print 'avbrutet!'
 				return
@@ -281,45 +296,53 @@ class Tournament
 		print 'Lottning av rond ',@round
 		document.title = 'Round ' + (@round+1)
 
-		@players = _.clone @players
-		@players.sort (a,b) -> a.id - b.id
+		# @players = _.clone @players
+		# @players.sort (a,b) -> a.id - b.id
 
 		# print ""
 		# print 'sorterat på elo'
 		# for p in @players
 		# 	print(p.toString())
 		
-		if @round % 2 == 1 then @players = @players.reverse() # reverse verkar inte spela någon roll
+		#if @round % 2 == 1 then @players = @players.reverse() # reverse verkar inte spela någon roll
 
 		# print 'sorterat på id'
 		# for p in @persons
 		# 	print(p.toString())
 
-		if @round == @rounds
-			temp = _.clone @players
-			temp.sort (a,b) -> 
-				diff = b.eloSum() - a.eloSum()
-				if diff != 0 then return diff
-				return b.score() - a.score()
-			print 'sorterat på [eloSum,score]'
-			for p in temp
-				print(p.toString())
+		# if @round == @rounds
+		# 	temp = _.clone @players
+		# 	temp.sort (a,b) -> 
+		# 		diff = b.eloSum() - a.eloSum()
+		# 		if diff != 0 then return diff
+		# 		return b.score() - a.score()
+		# 	print 'sorterat på [eloSum,score]'
+		# 	for p in temp
+		# 		print(p.toString())
 
 		start = new Date()
 		anrop = {ok:0,balans:0,pair:0}
-		lista = (-1 for i in range N)
+		# lista = (-1 for i in range N)
 		# print 'lista',lista
-		@pairings = @pair @players, 0, lista
-		@pairings = @unscramble @pairings
+		# @pairings = @pair @players, 0, lista
+		net = @generateNet @persons
+		print 'net',net
+		solution = @findSolution net
+		print 'solution',solution
+		@pairs = @unscramble solution
+		print 'pairs',@pairs
+		# @pairings = (@persons[index] for index in solution)
 		print 'cpu:',new Date() - start
-		print 'anrop',anrop
-		print 'pairings',@pairings
+		# print 'anrop',anrop
+		# print 'pairings',@pairings
 
-		for i in range N//2
-			a = @pairings[2*i]
-			b = @pairings[2*i+1]
-			a.opp.push b.id
-			b.opp.push a.id
+		for [a,b] in @pairs
+			pa = @persons[a]
+			pb = @persons[b]
+			pa.opp.push pb.id
+			pb.opp.push pa.id
+
+		print @persons
 
 		# for i in range N//2
 		# 	a = @pairings[2*i]
@@ -327,25 +350,26 @@ class Tournament
 		# 	print "#{a.id}-#{b.id} elo #{a.elo} vs #{b.elo}"
 
 		if @round==0
-			for i in range N//2
-				a = @pairings[2*i]
-				b = @pairings[2*i+1]
-				col1 = "bw"[i%2] #@first[p0.id % 2]
+			for i in range @pairs.length
+				[a,b] = @pairs[i]
+				pa = @persons[a]
+				pb = @persons[b]
+				col1 = "bw"[i%2]
 				col0 = other col1
-				# print 'assignColors',col0,col1
-				a.col += col0
-				b.col += col1
+				pa.col += col0
+				pb.col += col1
 		else
-			for i in range N//2
-				a = @pairings[2*i]
-				b = @pairings[2*i+1]
-				@assignColors a,b
+			for [a,b] in @pairs
+				pa = @persons[a]
+				pb = @persons[b]
+				@assignColors pa,pb
 
 		timestamp = new Date().toLocaleString 'se-SE'
 		downloadFile tournament.makeTableFile(" for " + @title + " in Round #{@round}    #{timestamp}"), @title + " Round #{@round}.txt"
 		downloadFile @createURL(), "URL for " + @title + " Round #{@round}.txt"
 		start = new Date()
 		downloadFile @createMatrix(), "Matrix of Pairings for Round #{@round}.txt"
+		downloadFile @generateNet(), "Net Pairings for Round #{@round}.txt"
 
 		@round += 1
 		state = 0
@@ -410,8 +434,7 @@ class Tournament
 
 		print 'sorted players', @players
 
-		if @ROUND > 0
-		else
+		if @ROUND == 0
 			if N % 2 == 1
 				@players.push new Player N, 0, '-frirond-'
 				N += 1
@@ -462,10 +485,13 @@ class Tournament
 		text s,10,y
 
 		#print 'pairings.length',@pairings.length
-		for i in range N//2
+		for i in range @pairs.length
+			[a,b] = @pairs[i]
+			a = @persons[a]
+			b = @persons[b]
 			y += ZOOM[state] * 0.5
-			a = @pairings[2*i  ] # White
-			b = @pairings[2*i+1] # Black
+			# a = @pairs[2*i  ] # White
+			# b = @pairs[2*i+1] # Black
 			pa = myRound a.score(), 1
 			pb = myRound b.score(), 1
 			both = if a.res.length == a.col.length then prBoth _.last(a.res) else "   -   "
@@ -533,9 +559,19 @@ class Tournament
 
 		#print header
 		#print 'makeTableFile',@pairings
-		players = ([@pairings[i],i] for i in range N)
-		players = _.sortBy players, (p) -> p[0].name
-		players = ("#{_.pad((1+i//2).toString() + 'wb'[i%2] ,5)} #{p.name}" for [p,i] in players)
+		players = []
+		for i in range @pairs.length
+			[a,b] = @pairs[i]
+			pa = @persons[a]
+			pb = @persons[b]
+			players.push [pa,2*i]
+			players.push [pb,2*i+1]
+
+		# players = ([@persons[@pairs[i]],i] for i in range N//2)
+		players = _.sortBy players, (p) -> p.name
+		print 'players',players
+
+		# players = ("#{_.pad((1+i//2).toString() + 'wb'[i%2] ,5)} #{p.name}" for [p,i] in players)
 
 		res.push "NAMES" + header
 		res.push ""
@@ -550,12 +586,15 @@ class Tournament
 		res.push "TABLES" + header
 		res.push ""
 		for i in range N//2
+			[a,b] = @pairs[i]
 			if i % @tpp == 0
 				res.push "Table White".padEnd(6+25) + _.pad("",20) + 'Black'.padEnd(25)
-			a = @pairings[2*i]
-			b = @pairings[2*i+1]
+			pa = @persons[a]
+			pb = @persons[b]
+			# a = @pairings[2*i]
+			# b = @pairings[2*i+1]
 			res.push ""
-			res.push _.pad(i+1,6) + a.name.padEnd(25) + _.pad("|____| - |____|",20) +  b.name.padEnd(25)
+			res.push _.pad(i+1,6) + pa.name.padEnd(25) + _.pad("|____| - |____|",20) +  pb.name.padEnd(25)
 			if i % @tpp == @tpp-1 then res.push "\f"
 		res.join "\n"	
 
@@ -826,19 +865,21 @@ window.keyPressed = ->
 	if key == 'ArrowDown' then currentTable = (currentTable + 1) %% (N//2)
 	if key == 'End' then currentTable = (N//2) - 1
 	index = 2 * currentTable
-	a = tournament.pairings[index]
-	b = tournament.pairings[index+1]
+	[a,b] = tournament.pairs[currentTable]
+	pa = tournament.persons[a]
+	pb = tournament.persons[b]
+	# b = tournament.pairings[index+1]
 
 	if key in '0 1'
 		index = '0 1'.indexOf key
 		ch = "012"[index]
-		if a.res.length == a.col.length 
-			if ch != _.last a.res
+		if a.res.length == pa.col.length 
+			if ch != _.last pa.res
 				errors.push currentTable
 				print 'errors',errors
 		else
-			if a.res.length < a.col.length then a.res += "012"[index]
-			if b.res.length < b.col.length then b.res += "210"[index]
+			if pa.res.length < pa.col.length then pa.res += "012"[index]
+			if pb.res.length < pb.col.length then pb.res += "210"[index]
 		currentTable = (currentTable + 1) %% (N//2)
 
 	if key == 'Enter'
@@ -852,25 +893,27 @@ window.keyPressed = ->
 	if key in 'S' then ZOOM[state] -= 4
 
 	if key == 'x'
-		for i in range tournament.pairings.length // 2
-			a = tournament.pairings[2*i]
-			b = tournament.pairings[2*i+1]		
+		for i in range tournament.pairs.length
+			[a,b] = tournament.pairs[i]
+			# b = tournament.pairings[2*i+1]		
+			pa = tournament.persons[a]
+			pb = tournament.persons[b]
 
 			x = 1
 			if x==0	# Utan slump
-				if abs(a.elo - b.elo) <= 5 then res = 1
-				else if a.elo > b.elo then res = 2
+				if abs(pa.elo - pb.elo) <= 5 then res = 1
+				else if pa.elo > pb.elo then res = 2
 				else res = 0
 			else if x==1 # elo_prob
-				res = elo_probabilities a.elo, b.elo
+				res = elo_probabilities pa.elo, pb.elo
 			else if x==2 # ren slump [0.4,0.2,0.4]
 				r = _.random 1, true
 				res = 2
 				if r < 0.6 then res=1
 				if r < 0.4 then res=0
 
-			if a.res.length < a.col.length then a.res += "012"[res] 
-			if b.res.length < b.col.length then b.res += "012"[2 - res]
+			if pa.res.length < pa.col.length then pa.res += "012"[res] 
+			if pb.res.length < pb.col.length then pb.res += "012"[2 - res]
 
 		#@players.sort (a,b) -> b.elo - a.elo
 
@@ -885,11 +928,14 @@ window.keyPressed = ->
 	if key == 'Delete'
 		i = currentTable
 		errors = (e for e in errors when e != i)
-		if a.res.length == b.res.length
-			a = tournament.pairings[2*i]
-			b = tournament.pairings[2*i+1]
-			a.res = a.res.substring 0,a.res.length-1
-			b.res = b.res.substring 0,b.res.length-1
+		if pa.res.length == pb.res.length
+			[a,b] = tournament.pairs[i]
+			pa = tournament.persons[a]
+			pb = tournament.persons[b]
+			# b = tournament.pairings[2*i+1]
+
+			pa.res = pa.res.substring 0,pa.res.length-1
+			pb.res = pb.res.substring 0,pb.res.length-1
 		currentTable = (currentTable + 1) %% (N//2)
 
 	xdraw()
