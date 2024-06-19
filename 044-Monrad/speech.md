@@ -49,7 +49,7 @@ Därefter följde fyra långpartier, 90m + 30s.
 
 För att bestämma hur väl en lottning motsvarar målet, utvecklades ett mätetal, benämnt Sparseness (gleshet).  
 Detta beräknas genom att ta fram medelvärdet av alla partiers absoluta elo-differens.  
-Sparseness för Swiss blev 220.4 och för Dense Pairings 44.85.  
+Sparseness för Swiss blev 220.4 och för Dense Pairings 44.85 (simulerat).  
 Swiss är i detta fall, alltså fem gånger glesare än Dense Pairings.
 
 [Swiss Dutch](swiss.txt)  
