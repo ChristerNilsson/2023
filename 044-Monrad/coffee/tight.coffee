@@ -1,9 +1,16 @@
 import { parseExpr } from './parser.js'
 # import {maxWeightMatching} from './mwmatching.js'
-import {Edmonds} from './mattkrick.js'
+import {Edmonds} from './mattkrick.js' # seems to be better than mwmatching.js
+
+# parameters that somewhat affects matching
+COST = 'QUADRATIC' # QUADRATIC=1.01 or LINEAR=1
+DIFF = 'ID' # ID or ELO
+COLORS = 1 # 1 or 2
+
+RINGS = {'b':'•', 'w':'o'}
 
 HELP = """
-How to use Swiss Tight Manager:
+How to use Dense Pairings:
 	Enter = Switch between Tables and Result
 	Home = Select First Table
 	Up   = Select Previous Table
@@ -23,7 +30,7 @@ How to use Swiss Tight Manager:
 # up down  enter  1 space=draw 0  delete  Pair  Small Large  Matrix
 
 ASCII = '0123456789abcdefg'
-ALFABET = '123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz' # 62 ronder
+ALFABET = '123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz' # 62 ronder maximalt
 N = 0 # number of players
 ZOOM = [40,40,40] # vertical line distance for three states
 
@@ -31,10 +38,9 @@ print = console.log
 range = _.range
 datum = ''
 currentTable = 0
+currentResult = 0 
 tournament = null
 errors = [] # id för motsägelsefulla resultat. Tas bort med Delete
-
-anrop = {ok:0, balans:0, pair:0}
 
 state = 0 # 0=Tables 1=Result 2=Help
 resultat = [] # 012 sorterad på id
@@ -42,9 +48,7 @@ resultat = [] # 012 sorterad på id
 showType = (a) -> if typeof a == 'string' then "'#{a}'" else a
 assert = (a,b) -> if not _.isEqual a,b then print "Assert failure: #{showType a} != #{showType b}"
 
-ok = (p0, p1) -> 
-	anrop.ok++
-	p0.id != p1.id and p0.id not in p1.opp and abs(p0.balans() + p1.balans()) <= 1
+ok = (p0, p1) -> p0.id != p1.id and p0.id not in p1.opp and abs(p0.balans() + p1.balans()) <= COLORS
 other = (col) -> if col == 'b' then 'w' else 'b'
 
 message = '' #This is a tutorial tournament. Use it or edit the URL'
@@ -100,6 +104,8 @@ assert 'JLB', initials 'JOHANSSON Lennart B.'
 
 # elodiff = (games,K=20) -> [calc(a,b,res,K) for a,b,res in games]
 
+normera = (x) -> x # 1000/1010 * x - 392
+
 class Player
 	constructor : (@id, @elo="",  @opp=[], @col="", @res="",@name="") ->
 
@@ -108,10 +114,16 @@ class Player
 	eloSum : -> 
 		sp = tournament.sp
 		hash = {'w2': 1, 'b2': 1+2*sp, 'w1': 0.5-sp, 'b1': 0.5+sp, 'w0': 0, 'b0': 0}
-		sum(tournament.persons[@opp[i]].elo * hash[@col[i] + @res[i]] for i in range @res.length)
+		sum(normera(tournament.persons[@opp[i]].elo) * hash[@col[i] + @res[i]] for i in range @res.length)
+
+	avgEloDiff : ->
+		res = []
+		for id in @opp.slice 0, @opp.length - 1
+			res.push abs normera(@elo) - normera(tournament.persons[id].elo)
+		# print 'avgEloDiff', @opp, res,sum(res) / res.length
+		sum(res) / res.length
 
 	balans : -> # färgbalans
-		anrop.balans++
 		result = 0
 		for ch in @col
 			if ch=='b' then result -= 1
@@ -159,7 +171,7 @@ class Player
 		res = []
 		res.push @elo
 		res.push @name.replaceAll ' ','_'
-		nn = @opp.length
+		nn = @opp.length - 1
 		# ocr = ("#{@opp[i]}#{@col[i]}#{if i < nn-1 then "0½1"[@res[i]] else ''}" for i in range(nn)) 
 		ocr = ("#{@opp[i]}#{@col[i]}#{if i < nn then "0½1"[@res[i]] else ''}" for i in range(nn)) 
 		res.push '(' + ocr.join('|') + ')'
@@ -191,7 +203,6 @@ class Tournament
 	write : () ->
 
 	# pair : (persons, pairing=[]) ->
-	# 	anrop.pair++
 	# 	if pairing.length == N then return pairing
 	# 	a = persons[0]
 	# 	for b in persons
@@ -204,13 +215,17 @@ class Tournament
 
 	generateNet : ->
 		edges = []
-		for i in range N 
-			a = @persons[i]
-			for j in range i+1,N 
-				b = @persons[j]
-				diff = abs a.id - b.id
-				cost = 10000 - diff *diff
-				if ok a,b then edges.push [a.id,b.id,cost]
+		for a in range N
+			pa = @persons[a]
+			for b in range a+1,N
+				pb = @persons[b]
+
+				if DIFF == 'ELO' then diff = abs pa.elo - pb.elo
+				if DIFF == 'ID'  then diff = abs pa.id - pb.id
+				if COST == 'LINEAR'    then cost = 2000000 - diff 
+				if COST == 'QUADRATIC' then cost = 2000000 - diff ** 1.01
+
+				if ok pa,pb then edges.push [pa.id,pb.id,cost]
 		edges
 	
 	findSolution : (edges) -> 
@@ -219,7 +234,6 @@ class Tournament
 
 	# pair : (persons, index=0, pairing=[], antal=0) ->
 	# 	# denna version tar 43 sek för rond 16 med 78 spelare.
-	# 	anrop.pair++
 	# 	if antal == N then return pairing
 	# 	a = persons[index]
 	# 	for b in persons
@@ -320,7 +334,6 @@ class Tournament
 		# 		print(p.toString())
 
 		start = new Date()
-		anrop = {ok:0,balans:0,pair:0}
 		# lista = (-1 for i in range N)
 		# print 'lista',lista
 		# @pairings = @pair @players, 0, lista
@@ -328,11 +341,13 @@ class Tournament
 		print 'net',net
 		solution = @findSolution net
 		print 'solution',solution
+		if -1 in solution
+			print 'Solution failed!'
+			return 
 		@pairs = @unscramble solution
 		print 'pairs',@pairs
 		# @pairings = (@persons[index] for index in solution)
 		print 'cpu:',new Date() - start
-		# print 'anrop',anrop
 		# print 'pairings',@pairings
 
 		for [a,b] in @pairs
@@ -348,7 +363,7 @@ class Tournament
 		# 	b = @pairings[2*i+1]
 		# 	print "#{a.id}-#{b.id} elo #{a.elo} vs #{b.elo}"
 
-		if @round==0
+		if @round == 0
 			for i in range @pairs.length
 				[a,b] = @pairs[i]
 				pa = @persons[a]
@@ -357,18 +372,22 @@ class Tournament
 				col0 = other col1
 				pa.col += col0
 				pb.col += col1
+				if i%2==1 then @pairs[i].reverse()
 		else
-			for [a,b] in @pairs
+			for i in range @pairs.length
+				[a,b] = @pairs[i]
 				pa = @persons[a]
 				pb = @persons[b]
 				@assignColors pa,pb
+				if pa.col[@round]=='b' then @pairs[i].reverse()
 
 		timestamp = new Date().toLocaleString 'se-SE'
-		downloadFile tournament.makeTableFile(" for " + @title + " in Round #{@round}    #{timestamp}"), @title + " Round #{@round}.txt"
-		downloadFile @createURL(), "URL for " + @title + " Round #{@round}.txt"
+		downloadFile tournament.makeStandardFile(" for " + @title + " in Round #{@round}    #{timestamp}"), "R#{@round} #{@title}.txt"
+		downloadFile @createURL(), "R#{@round} URL.txt"
 		start = new Date()
-		downloadFile @createMatrix(), "Matrix of Pairings for Round #{@round}.txt"
-		downloadFile @generateNet(), "Net Pairings for Round #{@round}.txt"
+		if @round > 0 then downloadFile @createMatrix(), "R#{@round} Matrix.txt"
+		# downloadFile @generateNet(), "R#{@round} Net.txt"
+		# downloadFile @makeStandings(), "R#{@round} Standings.txt"
 
 		@round += 1
 		state = 0
@@ -420,13 +439,12 @@ class Tournament
 
 		print @players
 		
-		@players = _.sortBy @players, (player) -> -player.id
+		@players = _.sortBy @players, (player) -> player.elo
 		@players = @players.reverse()
-		@persons = _.cloneDeep @players
-
 		for i in range N
 			@players[i].id = i
 
+		# @persons = _.cloneDeep @players
 		@persons = _.clone @players
 
 		print (p.elo for p in @persons)
@@ -518,25 +536,20 @@ class Tournament
 			text s,10,y
 
 	lightbulb : (color, x, y, result, opponent) ->
-		# print 'lightbulb',color, x, y, result, opponent
 		push()
-		#print 'lightbulb',result
-		# result = 2 * '0½1'.indexOf result
 		result = '012'.indexOf result
-		#print 'lightbulb',result
 		fill 'red gray green'.split(' ')[result]
 		rectMode CENTER
 		rect x,y,0.84 * ZOOM[state],0.45 * ZOOM[state]
 		fill {b:'black', w:'white'}[color]
 		noStroke()
 		strokeWeight = 0
-#		@txt 1+opponent,x,y+1,CENTER
 		@txt opponent,x,y+1,CENTER
 		pop()
 
 	createURL : ->
 		res = []
-		#res.push "https://christernilsson.github.io/2023/044-Monrad"
+		#res.push "https://christernilsson.github.io/Dense"
 		res.push "http://127.0.0.1:5500"
 		res.push "?TOUR=" + @title.replace ' ','_'
 		res.push "&DATE=" + "2023-11-25"
@@ -553,11 +566,69 @@ class Tournament
 
 		res.join '\n'
 
-	makeTableFile : (header) ->
-		res = []
+	makeStandings : (res) ->
+		if @pairs.length == 0 then "This ROUND can't be paired! (Too many rounds)"
 
-		#print header
-		#print 'makeTableFile',@pairings
+		temp = _.clone @players
+		temp.sort (a,b) -> 
+			diff = b.eloSum() - a.eloSum()
+			if diff != 0 then return diff
+			return b.elo - a.elo
+
+		#result = []
+		res.push "STANDINGS"
+		res.push ""
+
+		# Header
+		s = ""
+		s +=       @txtT "#",     2
+		s += ' ' + @txtT "Id",    4,window.RIGHT
+		s += ' ' + @txtT "Elo",   4,window.RIGHT
+		s += ' ' + @txtT "Name", 25,window.LEFT
+		for r in range @round
+			s += @txtT "#{r+1}",6,window.RIGHT
+		s += '  ' + @txtT "EloSum", 6,window.RIGHT
+		header = s
+		
+		for person,i in temp
+			if i % @ppp == 0 then res.push header
+			s = ""
+			s +=       @txtT (1+i).toString(),          2, window.RIGHT
+			s += ' ' + @txtT (person.id+1).toString(),  4, window.RIGHT
+			s += ' ' + @txtT person.elo.toString(),     4, window.RIGHT
+			s += ' ' + @txtT person.name,              25, window.LEFT
+			s += ' '
+			for r in range @round
+				s += @txtT "#{person.opp[r]+1}#{RINGS[person.col[r][0]]}#{"0½1"[person.res[r]]}", 6, window.RIGHT			
+			s += ' ' + @txtT person.eloSum().toFixed(0),  6, window.RIGHT
+			res.push s
+			if i % @ppp == @ppp-1 then res.push "\f"
+		res.push "\f"
+
+	makeNames : (header,players,res) ->
+		res.push "NAMES" + header
+		res.push ""
+		r = tournament.round
+		for p,i in players
+			if i % @ppp == 0 then res.push "Table Name"
+			res.push "#{str(1 + p[1]//2).padStart(3)} #{RINGS[p[0].col[r][0]]} #{p[0].name}"
+			if i % @ppp == @ppp-1 then res.push "\f"
+		res.push "\f"
+
+	makeTables : (header,res) ->
+		res.push "TABLES" + header
+		res.push ""
+		for i in range @pairs.length
+			[a,b] = @pairs[i]
+			if i % @tpp == 0 then res.push "Table White".padEnd(5+25) + _.pad("",28) + 'Black'.padEnd(25)
+			pa = @persons[a]
+			pb = @persons[b]
+			res.push ""
+			res.push _.pad(i+1,6) + pa.elo + ' ' + @txtT(pa.name, 25, window.LEFT) + ' ' + _.pad("|____| - |____|",20) + ' ' + pb.elo + ' ' + @txtT(pb.name, 25, window.LEFT)
+			if i % @tpp == @tpp-1 then res.push "\f"
+
+	makeStandardFile : (header) ->
+		res = []
 		players = []
 		for i in range @pairs.length
 			[a,b] = @pairs[i]
@@ -567,42 +638,25 @@ class Tournament
 			players.push [pb,2*i+1]
 
 		# players = ([@persons[@pairs[i]],i] for i in range N//2)
-		players = _.sortBy players, (p) -> p.name
+		players = _.sortBy players, (p) -> p[0].name
 		print 'players',players
 
 		# players = ("#{_.pad((1+i//2).toString() + 'wb'[i%2] ,5)} #{p.name}" for [p,i] in players)
 
-		res.push "NAMES" + header
-		res.push ""
-		for p,i in players
-			if i % @ppp == 0
-				res.push "Table Name"
-			res.push p
-			if i % @ppp == @ppp-1 then res.push "\f"
+		@makeStandings res
+		@makeNames header,players,res
+		@makeTables header,res
 
-		res.push "\f"
-
-		res.push "TABLES" + header
-		res.push ""
-		for i in range N//2
-			[a,b] = @pairs[i]
-			if i % @tpp == 0
-				res.push "Table White".padEnd(6+25) + _.pad("",20) + 'Black'.padEnd(25)
-			pa = @persons[a]
-			pb = @persons[b]
-			# a = @pairings[2*i]
-			# b = @pairings[2*i+1]
-			res.push ""
-			res.push _.pad(i+1,6) + pa.name.padEnd(25) + _.pad("|____| - |____|",20) +  pb.name.padEnd(25)
-			if i % @tpp == @tpp-1 then res.push "\f"
 		res.join "\n"	
 
 	distans : (rounds) ->
 		result = []
 		for i in range(rounds.length) 
 			for [a,b] in rounds[i]
-				result.push abs(a-b) 
-		(sum(result)/result.length).toFixed 1
+				pa = tournament.persons[a]
+				pb = tournament.persons[b]
+				result.push abs(pa.elo-pb.elo) 
+		(sum(result)/result.length).toFixed 2
 
 	makeCanvas : ->
 		result = []
@@ -615,16 +669,16 @@ class Tournament
 
 	dumpCanvas : (title,average,canvas) ->
 		output = ["", title]
-		output.push "Tightness: #{average}  (Average position count from the current player (*))"
+		output.push "Sparseness: #{average}  (Average Elo Difference) DIFF:#{DIFF} COST:#{COST} COLORS:#{COLORS} SP:#{@sp}"
+		output.push ""
 		header = (str((i + 1) % 10) for i in range(N)).join(' ')
-		output.push '   ' + header
+		output.push '     ' + header + '   Elo    AED'
 		ordning = (p.elo for p in @persons)
 		for i in range canvas.length
 			row = canvas[i]
-			nr = i + 1
-			nr = if nr < 10 then ' ' + str(nr) else str(nr)
-			output.push "#{nr} #{(str(item) for item in row).join(" ")} #{ordning[i]}"
-		output.push '   ' + header
+			nr = str(i + 1).padStart(3)
+			output.push "#{nr}  #{(str(item) for item in row).join(" ")}  #{ordning[i]} #{@persons[i].avgEloDiff().toFixed(1).padStart(6)}"
+		output.push '     ' + header
 		output.join '\n'
 
 	drawMatrix : (title,rounds) ->
@@ -644,25 +698,23 @@ class Tournament
 			matrix.push res
 		@drawMatrix @title, matrix
 
-	showResult : ->
-		@showHeader 'Result'
-		print 'showResult'
-		if @pairings.length == 0
+	showStandings : ->
+		@showHeader 'Standings'
+		print 'showStandings'
+		if @pairs.length == 0
 			txt "This ROUND can't be paired! (Too many rounds)",width/2,height/2,CENTER
 			return
 
 		noStroke()
-		# calcT()
 
 		# _.sortBy på [score, elo] verkar inte fungera pga array jämförs som sträng?
 
-		# temp = _.clone @players
-		# temp.sort (a,b) -> 
-		# 	return a.id - b.id 
-
-		# 	diff = b.eloSum() - a.eloSum()
-		# 	if diff != 0 then return diff
-		# 	return b.elo - a.elo
+		temp = _.clone @players
+		temp.sort (a,b) -> 
+			# return a.id - b.id 
+			diff = b.eloSum() - a.eloSum()
+			if diff != 0 then return diff
+			return b.elo - a.elo
 
 		# print 'tempA',temp
 		#temp.reverse()
@@ -670,49 +722,43 @@ class Tournament
 		# inv = (p.id for p in temp)
 		# inv = invert inv
 
-		y = 1.5 * ZOOM[state]
+		y = 1.5 * ZOOM[state] + currentResult
 		textAlign LEFT
 		rheader = _.map range(1,@rounds+1), (i) -> "#{i%10} "
 		rheader = rheader.join ' '
 
 		s = ""
 		s +=       @txtT "#",    2
+		s += ' ' + @txtT "Id",   4,window.RIGHT
 		s += ' ' + @txtT "Elo",  4,window.RIGHT
 		s += ' ' + @txtT "Name", 25,window.LEFT
 		s += ' ' + @txtT rheader,3*@rounds,window.LEFT 
-		# s += ' ' + @txtT "Score",5,window.RIGHT
-		s += ' ' + @txtT "EloSum", 6,window.RIGHT
-		s += ' ' + @txtT "D",    2,window.CENTER
-		s += ' ' + @txtT "W",    1,window.CENTER
-		s += ' ' + @txtT "B",    2,window.CENTER
+		s += ' ' + @txtT "EloSum", 7,window.RIGHT
 		
 		text s,10,y
 
 		fill 'white' 
-		for person,i in tournament.persons
+		for person,i in temp
 			y += ZOOM[state] * 0.5
 			s = ""
 			s +=       @txtT (1+i).toString(),      2, window.RIGHT
+			s += ' ' + @txtT (person.id+1).toString(),  4, window.RIGHT
 			s += ' ' + @txtT person.elo.toString(), 4, window.RIGHT
 			s += ' ' + @txtT person.name,          25, window.LEFT
 			s += ' ' + @txtT '', 3*@rounds, window.CENTER
 			print(person)
 			score = person.score()
 			score = myRound score, 1
-			# s += ' ' + @txtT score,             5, window.RIGHT
-			s += ' ' + @txtT person.eloSum().toFixed(0),  6, window.RIGHT
+			s += ' ' + @txtT person.eloSum().toFixed(1),  7, window.RIGHT
 
-			# s += ' ' + @txtT prRes(person.tie[0]),2,window.CENTER
-			# s += ' ' + @txtT       person.tie[1], 2,window.CENTER
-			# s += ' ' + @txtT prRes(person.tie[2]),2,window.CENTER
 			text s,10,y
 
 			#print('round',round)
 			for r in range @round-1
-				x = ZOOM[state] * (10.5 + 0.9*r)
+				x = ZOOM[state] * (12.1 + 0.9*r)
 				# print r,person.col[r][0], x, y, person.res[r], inv[person.opp[r]]
 				# @lightbulb person.col[r][0], x, y, person.res[r], initials @players[inv[person.opp[r]]].name
-				@lightbulb person.col[r][0], x, y, person.res[r], person.opp[r] # initials @persons[person.opp[r]].name
+				@lightbulb person.col[r][0], x, y, person.res[r], person.opp[r]+1 # initials @persons[person.opp[r]].name
 
 copyToClipboard = (text) ->
 	if !navigator.clipboard
@@ -735,10 +781,7 @@ sum = (s) ->
 	res
 assert 6, sum '012012'
 
-# getMet = (a,b) -> b.id in persons[a.id].opp
-
 downloadFile = (txt,filename) ->
-	#print 'filename',filename
 	blob = new Blob [txt], { type: 'text/plain' }
 	url = URL.createObjectURL blob
 	a = document.createElement 'a'
@@ -781,58 +824,17 @@ invert = (arr) ->
 assert [0,1,2,3], invert [0,1,2,3]
 assert [3,2,0,1], invert [2,3,1,0]
 
-setT0 = (p,q) ->
-	if q in persons[p].opp
-		r = persons[p].opp.indexOf q
-		# persons[p].tie[0] = persons[p].res[r]
-
-calcT = ->
-	# T ska beräknas först när allt är klart!
-	# Beräkna T1 bara för de poänggrupper som har exakt två personer och då enbart om de har mött varandra.
-	# Oklart om detta används för grupper med t ex tre personer. Låg sannolikhet att alla mött varandra.
-	scores = {}
-	for p in range persons.length
-		person = persons[p]
-		key = sum person.res
-		if key of scores then scores[key].push p
-		else scores[key] = [p]
-		# person.tie[0] = 0
-	for key of scores
-		if scores[key].length == 2
-			[p,q] = scores[key]
-			setT0 p,q
-			setT0 q,p
-
-	# for p in persons
-	# 	p.tie[1] = p.res.split("").filter((x) => x == '2').length
-	# 	p.tie[2] = 0
-	# 	for i in p.opp
-	# 		p.tie[2] += sum persons[i].res # Buchholz: the sum of opposition scores
-
-mw = (x) -> x/1000 * width
-
-########### GUI ############
-# if location.search == ''
-# 	title = 'Tutorial Tournament'
-# 	datum = new Date()
-# 	datum = datum.toISOString().split('T')[0]
-# 	url = "?T=#{title.replace(" ","_")}&NAME=ANDERSSON_Anders|BENGTSSON_Bertil|CARLSEN_Christer|DANIELSSON_Daniel|ERIKSSON_Erik|FRANSSON_Ferdinand|GREIDER_Göran|HARALDSSON_Helge"
-# 	location.href = url
-# else
-# 	fetchURL()
-# 	pairings = persons
-
 showHelp = ->
 	textAlign LEFT
 	for i in range HELP.length
 		text HELP[i],100,50+50*i
 
 window.windowResized = -> 
-	resizeCanvas windowWidth-4,windowHeight-4
+	resizeCanvas windowWidth-4,1650 #windowHeight-4
 	xdraw()
 
 window.setup = ->
-	createCanvas windowWidth-4,windowHeight-4
+	createCanvas windowWidth-4,1650 # windowHeight-4
 	textFont 'Courier New'
 	textAlign CENTER,CENTER
 	tournament = new Tournament()
@@ -844,7 +846,7 @@ xdraw = ->
 	background 'gray'
 	textSize ZOOM[state] * 0.5
 	if state == 0 then tournament.showTables()
-	if state == 1 then tournament.showResult()
+	if state == 1 then tournament.showStandings()
 	if state == 2 then tournament.showHelp()
 
 elo_probabilities = (R_W, R_B, draw=0.2) ->
@@ -857,84 +859,83 @@ elo_probabilities = (R_W, R_B, draw=0.2) ->
 	if x < loss then index = 0
 	index
 
-window.keyPressed = ->
+handleResult = (a,b,pa,pb,key) ->
+	index = '0 1'.indexOf key
+	ch = "012"[index]
+	if pa.res.length == pa.col.length 
+		if ch != _.last pa.res
+			errors.push currentTable
+			print 'errors',errors
+	else
+		if pa.res.length < pa.col.length then pa.res += "012"[index]
+		if pb.res.length < pb.col.length then pb.res += "210"[index]
+	currentTable = (currentTable + 1) %% (N//2)
+
+fakeInput = ->
+	for i in range tournament.pairs.length
+		[a,b] = tournament.pairs[i]
+		pa = tournament.persons[a]
+		pb = tournament.persons[b]
+
+		x = 1
+		if x==0	# Utan slump
+			if abs(pa.elo - pb.elo) <= 5 then res = 1
+			else if pa.elo > pb.elo then res = 2
+			else res = 0
+		else if x==1 # elo_prob
+			res = elo_probabilities pa.elo, pb.elo
+		else if x==2 # ren slump [0.4,0.2,0.4]
+			r = _.random 1, true
+			res = 2
+			if r < 0.6 then res=1
+			if r < 0.4 then res=0
+
+		if pa.res.length < pa.col.length then pa.res += "012"[res] 
+		if pb.res.length < pb.col.length then pb.res += "012"[2 - res]
+
+handleDelete = (pa,pb) ->
+	i = currentTable
+	errors = (e for e in errors when e != i)
+	if pa.res.length == pb.res.length
+		[a,b] = tournament.pairs[i]
+		pa = tournament.persons[a]
+		pb = tournament.persons[b]
+		# b = tournament.pairings[2*i+1]
+
+		pa.res = pa.res.substring 0,pa.res.length-1
+		pb.res = pb.res.substring 0,pb.res.length-1
+	currentTable = (currentTable + 1) %% (N//2)
+
+window.keyPressed = (event) ->
 	# print key
 	if key == 'Home' then currentTable = 0
-	if key == 'ArrowUp' then currentTable = (currentTable - 1) %% (N//2)
-	if key == 'ArrowDown' then currentTable = (currentTable + 1) %% (N//2)
 	if key == 'End' then currentTable = (N//2) - 1
-	index = 2 * currentTable
+
+	if key == 'ArrowUp'
+		currentTable = (currentTable - 1) %% (N//2)
+		event.preventDefault()
+	if key == 'ArrowDown'
+		currentTable = (currentTable + 1) %% (N//2)
+		event.preventDefault()
+
+	# if key == 'PageUp' then currentResult -= 800
+	# if key == 'PageDown' then currentResult += 800
+
+	# index = 2 * currentTable
 	[a,b] = tournament.pairs[currentTable]
 	pa = tournament.persons[a]
 	pb = tournament.persons[b]
-	# b = tournament.pairings[index+1]
 
-	if key in '0 1'
-		index = '0 1'.indexOf key
-		ch = "012"[index]
-		if a.res.length == pa.col.length 
-			if ch != _.last pa.res
-				errors.push currentTable
-				print 'errors',errors
-		else
-			if pa.res.length < pa.col.length then pa.res += "012"[index]
-			if pb.res.length < pb.col.length then pb.res += "210"[index]
-		currentTable = (currentTable + 1) %% (N//2)
-
-	if key == 'Enter'
-		state = 1 - state
-		# if state == 1
-		# 	calcT()
+	if key in '0 1' then handleResult a,b,pa,pb,key
+	if key == 'Enter' then state = 1 - state
 	if key in 'pP' then tournament.lotta()
+
 	if key in 'l' then ZOOM[state] += 1
 	if key in 's' then ZOOM[state] -= 1
 	if key in 'L' then ZOOM[state] += 4
 	if key in 'S' then ZOOM[state] -= 4
 
-	if key == 'x'
-		for i in range tournament.pairs.length
-			[a,b] = tournament.pairs[i]
-			# b = tournament.pairings[2*i+1]		
-			pa = tournament.persons[a]
-			pb = tournament.persons[b]
-
-			x = 1
-			if x==0	# Utan slump
-				if abs(pa.elo - pb.elo) <= 5 then res = 1
-				else if pa.elo > pb.elo then res = 2
-				else res = 0
-			else if x==1 # elo_prob
-				res = elo_probabilities pa.elo, pb.elo
-			else if x==2 # ren slump [0.4,0.2,0.4]
-				r = _.random 1, true
-				res = 2
-				if r < 0.6 then res=1
-				if r < 0.4 then res=0
-
-			if pa.res.length < pa.col.length then pa.res += "012"[res] 
-			if pb.res.length < pb.col.length then pb.res += "012"[2 - res]
-
-		#@players.sort (a,b) -> b.elo - a.elo
-
-	# if key == 'x'
-	# 	for i in range tournament.pairings.length // 2
-	# 		a = tournament.pairings[2*i]
-	# 		b = tournament.pairings[2*i+1]
-	# 		index = i % 3
-	# 		if a.res.length < a.col.length then a.res += "012"[index]
-	# 		if b.res.length < b.col.length then b.res += "012"[2 - index]
-
-	if key == 'Delete'
-		i = currentTable
-		errors = (e for e in errors when e != i)
-		if pa.res.length == pb.res.length
-			[a,b] = tournament.pairs[i]
-			pa = tournament.persons[a]
-			pb = tournament.persons[b]
-			# b = tournament.pairings[2*i+1]
-
-			pa.res = pa.res.substring 0,pa.res.length-1
-			pb.res = pb.res.substring 0,pb.res.length-1
-		currentTable = (currentTable + 1) %% (N//2)
+	if key == 'x' then fakeInput()
+	if key == 'Delete' then handleDelete pa,pb
 
 	xdraw()

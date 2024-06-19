@@ -1,74 +1,5 @@
-# Swiss Tight Pairer
+# Swiss Tight Pairing
 
-First I would like to show the different pairings of 
-
-[Tyresö Open 2024 78]() 
-
-[Swiss Dutch 78](swiss.txt)  
-[Swiss Tight 78](tight.txt)  
-
-[swiss_36.txt](swiss_36.txt)  
-[tight_36.txt](tight_36.txt)  
-
-Swiss Dutch has some slaughter rounds in the beginning of every tournament.
-These are quite boring as the superiour player almost always win.
-Tight Pairer tries to make similar strength players meet more often.
-To calculate the ultimate winner, elo points are accumulated for every win or draw.
-
-* Winner gets the Elo rating of the other player
-* Drawer gets half the Elo of the other player
-* Black eventually receives a bonus, depending on SP
-
-* Scorepoints         SP=0.1 (default 0.0)
-	* Drawing as White = 0.4 (default 0.5)
-	* Drawing as Black = 0.6 (default 0.5)
-	* Winning as White = 1.0 (default 1.0)
-	* Winning as Black = 1.2 (default 1.0)
-
-* Open Source
-* The database == The URL
-* Keyboard only - No Mouse
-* Backup files downloaded automatically after every pairing
-* Player with zero Elo is considered to have 1400.
-
-## Advantages
-
-* Players will meet similar strength players
-* One person maximum needs a bye. Compare this with Berger.
-* Available in the browser.
-* Pages can be zoomed
-
-
-## Example 1, SP=0.0
-```
-Player Elo   Result  Factor
-White  2400  ½       0.5
-Black  1600  ½       0.5
-
-Black gets 2400 * 0.5 = 1200 points
-White gets 1600 * 0.5 =  800 points
-```
-
-## Example 2, SP=0.1
-```
-Player Elo   Result  Factor
-White  2400  ½       0.4
-Black  1600  ½       0.6
-
-Black gets 2400 * 0.6 = 1440 points
-White gets 1600 * 0.4 =  640 points
-```
-
-## Example 3, SP=0.1
-
-```
-Player Elo   Result  Factor 
-White  2400  0       0 
-Black  1600  1       1.2
-
-Black gets 2400 * 1.2 = 2880 points
-If white wins, white will get 1600 * 1 = 1600 points
-```
 
 ## Keys
 
@@ -128,3 +59,101 @@ This is your ultimate backup!
 	* The updated URL contains all information to display the result page.
 	* The URL is available on the clipboard.
 	* No data will be stored on the server. All data is in the URL.
+
+### Performance
+
+78 players.  
+Handled pairing up to 44 rounds.  
+7 ms per round.  
+
+
+
+## Bonus till svart
+
+Eventuellt kan man tilldela svart en bonus.  
+Orsaken till denna bonus är att kompensera för [vits fördel att få börja](https://chess-results.com/tnr816234.aspx?lan=6&art=13&turdet=YES&flag=30).  
+
+* Bonuspoäng         = 0.1 (default 0.0)
+	* Remi som vit   = 0.4 (default 0.5)
+	* Remi som svart = 0.6 (default 0.5)
+	* Vit vinst      = 1.0 (default 1.0)
+	* Svart vinst    = 1.2 (default 1.0)
+
+Denna parameter kan sättas till det värde man anser vara lämpligast.  
+Vill man inte dela ut denna bonuspoäng sätts parametern till noll.  
+
+## Några exempel på beräkningar
+
+### Exampel 1 Svart vinner
+```
+Spelare Elo   Resultat  Faktor
+Vit     2400  0         0      
+Svart   1600  1         1   =>  2400 * 1.0 = 2400 elopoäng
+```
+
+### Exempel 2 Remi
+```
+Spleare Elo   Result  Faktor
+Vit     2400  ½       0.5  =>  1600 * 0.5 =  800 elopoäng
+Svart   1600  ½       0.5  =>  2400 * 0.5 = 1200 elopoäng
+```
+
+### Exempel 3 Svart vinner, Bonus = 0.1
+```
+Spelare Elo   Resultat  Faktor
+Vit     2400  0         0 
+Svart   1600  1         1.2  =>  2400 * 1.2 = 2880 elopoäng
+```
+
+### Exempel 4 Vit vinner, Bonus = 0.1
+```
+Spelare Elo   Resultat  Faktor
+Vit     2400  1         1.0  =>  1600 * 1.0 = 1600 elopoäng
+Svart   1600  0         0    
+```
+
+### Exempel 5 Remi, Bonus = 0.1
+```
+Spelare Elo   Result  Faktor 
+Vit     2400  ½       0.4    1600 * 0.4 =  640 elopoäng
+Svart   1600  ½       0.6    2400 * 0.6 = 1440 elopoäng
+```
+
+### Hypotetiskt exempel
+```
+Högsta gruppen
+2400 Adam: Fyra remier ger 1195 + 1190 + 1185 + 1180 = 4750 elos
+2390 Bert
+2380 Carl
+2370 Dina
+2360 Erik
+
+Lägsta gruppen
+1440 Rolf 
+1430 Sven
+1420 Ture
+1410 Ulla
+1400 Omar: Fyra vinster ger 1440 + 1430 + 1420 + 1410 = 5700 elos
+```
+Omar, med elo 1400, lyckades alltså komma före Adam med 2400 i rating.
+Kommentar: Eftersom spelarna har närliggande elotal är fyra vinster av fyra osannolikt.  
+Dock *kan* det inträffa. Man måste leva på hoppet!
+
+### Subtraktion med 400
+```
+Högsta gruppen
+2000 Adam: Fyra remier ger 995 + 990 + 985 + 980 = 3950 elos
+1990 Bert
+1980 Carl
+1970 Dina
+1960 Erik
+
+Lägsta gruppen
+1040 Rolf 
+1030 Sven
+1020 Ture
+1010 Ulla
+1000 Omar: Fyra vinster ger 1040 + 1030 + 1020 + 1010 = 4100 elos
+```
+Ordningen återställd
+
