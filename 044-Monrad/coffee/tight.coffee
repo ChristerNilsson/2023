@@ -1,11 +1,11 @@
 import { parseExpr } from './parser.js'
-# import {maxWeightMatching} from './mwmatching.js'
-import {Edmonds} from './mattkrick.js' # seems to be better than mwmatching.js
+import {Edmonds} from './mattkrick.js'
 
 # parameters that somewhat affects matching
 COST = 'QUADRATIC' # QUADRATIC=1.01 or LINEAR=1
 DIFF = 'ID' # ID or ELO
 COLORS = 1 # 1 or 2
+
 RINGS = {'b':'•', 'w':'o'}
 
 HELP = """
@@ -75,21 +75,11 @@ assert true, [2] > [12]
 assert true, "2" > "12"
 assert false, 2 > 12
 
-# xxx = [[2,1],[12,2],[12,1],[3,4]]
-# assert [[2,1],[3,4],[12,2]], _.sortBy(xxx, (x) -> [x[0],x[1]])
-# assert [[3,4],[2,1],[1,2]], _.sortBy(xxx, (x) -> -x[0])
-# assert [[2,1],[1,2],[3,4]], _.sortBy(xxx, (x) -> x[1])
-# assert [[3,4],[1,2],[2,1]], _.sortBy(xxx, (x) -> -x[1])
-
-initial = (name) ->
-	res = ""
-	arr = name.replace('-',' ').split ' '
-	for s in arr.slice 0,3
-		res += s[0]
-	if res.length==2 then res += arr[1][1]
-	res
-assert 'CNi', initial 'Christer Nilsson'
-assert 'JLB', initial 'JOHANSSON Lennart B.'
+xxx = [[2,1],[12,2],[12,1],[3,4]]
+assert [[2,1],[3,4],[12,2]], _.sortBy(xxx, (x) -> [x[0],x[1]])
+assert [[3,4],[2,1],[1,2]], _.sortBy(xxx, (x) -> -x[0])
+assert [[2,1],[1,2],[3,4]], _.sortBy(xxx, (x) -> x[1])
+assert [[3,4],[1,2],[2,1]], _.sortBy(xxx, (x) -> -x[1])
 
 normera = (x) -> x # 1000/1010 * x - 392
 
@@ -177,18 +167,6 @@ class Tournament
 
 	write : () ->
 
-	# testInitials : ->
-	# 	hash = {}
-	# 	for p in @persons
-	# 		key = initial p.name
-	# 		if key not of hash then hash[key] = []
-	# 		hash[key].push p.name
-	# 	result = []
-	# 	for key of hash
-	# 		if hash[key].length > 1
-	# 			result.push 'Collision for initial ' + key + ': ' + hash[key].join ', '
-	# 	result.join '\n'
-
 	makeEdges : ->
 		edges = []
 		for a in range N
@@ -223,20 +201,6 @@ class Tournament
 		else if p0.id < p1.id then x = 0 else x = 1
 		p0.col += 'wb'[x]
 		p1.col += 'bw'[x]
-		return 
-
-		# if p0.col.length == 0
-		# 	col1 = @first[p0.id % 2]
-		# 	col0 = other col1
-		# 	print 'assignColors',col0,col1
-		# 	p0.col += col0
-		# 	p1.col += col1
-		# else
-		# 	balans = p0.balans() + p1.balans()
-		# 	if balans == 0 then @flip p0,p1
-		# 	else if 2 == abs balans
-		# 		if 2 == abs p0.balans() then @flip p0,p1 else @flip p1,p0
-		# 	else print 'unexpected',balans
 
 	unscramble : (solution) -> # [5,3,4,1,2,0] => [[0,5],[1,3],[2,4]]
 		solution = _.clone solution
@@ -298,8 +262,7 @@ class Tournament
 				@assignColors pa,pb
 				if pa.col[@round]=='b' then @pairs[i].reverse()
 
-		timestamp = new Date().toLocaleString 'se-SE'
-		downloadFile tournament.makeStandardFile(" for " + @title + " in Round #{@round}    #{timestamp}"), "R#{@round} #{@title}.txt"
+		downloadFile tournament.makeStandardFile(), "R#{@round} #{@title}.txt"
 		downloadFile @createURL(), "R#{@round} URL.txt"
 		start = new Date()
 		if @round > 0 then downloadFile @createMatrix(), "R#{@round} Matrix.txt"
@@ -336,7 +299,7 @@ class Tournament
 		players = players.replaceAll '_',' '
 		players = '(' + players + ')'
 		players = parseExpr players
-		print 'xxx',players
+		print 'players',players
 
 		# players.sort (a,b) -> b.elo - a.elo
 
@@ -361,17 +324,9 @@ class Tournament
 		for i in range N
 			@players[i].id = i
 
-		# @persons = _.cloneDeep @players
 		@persons = _.clone @players
 
-		# message = @testInitials()
-		# if message != '' 
-		# 	print message
-		# 	alert message
-		# 	return
-
 		print (p.elo for p in @persons)
-
 		print 'sorted players', @players
 
 		if @ROUND == 0
@@ -424,14 +379,11 @@ class Tournament
 		textAlign window.LEFT
 		text s,10,y
 
-		#print 'pairings.length',@pairings.length
 		for i in range @pairs.length
 			[a,b] = @pairs[i]
 			a = @persons[a]
 			b = @persons[b]
 			y += ZOOM[state] * 0.5
-			# a = @pairs[2*i  ] # White
-			# b = @pairs[2*i+1] # Black
 			pa = myRound a.score(), 1
 			pb = myRound b.score(), 1
 			both = if a.res.length == a.col.length then prBoth _.last(a.res) else "   -   "
@@ -489,7 +441,7 @@ class Tournament
 
 		res.join '\n'
 
-	makeStandings : (res) ->
+	makeStandings : (header,res) ->
 		if @pairs.length == 0 then res.push "This ROUND can't be paired! (Too many rounds)"
 
 		temp = _.clone @players
@@ -500,7 +452,7 @@ class Tournament
 
 		inv = invert (p.id for p in temp)
 
-		res.push "STANDINGS"
+		res.push "STANDINGS" + header
 		res.push ""
 
 		header = ""
@@ -542,14 +494,14 @@ class Tournament
 		res.push ""
 		for i in range @pairs.length
 			[a,b] = @pairs[i]
-			if i % @tpp == 0 then res.push "Table White".padEnd(5+25) + _.pad("",28) + 'Black'.padEnd(25)
+			if i % @tpp == 0 then res.push "Table #{RINGS.w}".padEnd(5+25) + _.pad("",28) + "#{RINGS.b}".padEnd(25)
 			pa = @persons[a]
 			pb = @persons[b]
 			res.push ""
 			res.push _.pad(i+1,6) + pa.elo + ' ' + @txtT(pa.name, 25, window.LEFT) + ' ' + _.pad("|____| - |____|",20) + ' ' + pb.elo + ' ' + @txtT(pb.name, 25, window.LEFT)
 			if i % @tpp == @tpp-1 then res.push "\f"
 
-	makeStandardFile : (header) ->
+	makeStandardFile : () ->
 		res = []
 		players = []
 		for i in range @pairs.length
@@ -558,16 +510,16 @@ class Tournament
 			pb = @persons[b]
 			players.push [pa,2*i]
 			players.push [pb,2*i+1]
-
-		# players = ([@persons[@pairs[i]],i] for i in range N//2)
 		players = _.sortBy players, (p) -> p[0].name
-		print 'players',players
 
-		# players = ("#{_.pad((1+i//2).toString() + 'wb'[i%2] ,5)} #{p.name}" for [p,i] in players)
+		timestamp = new Date().toLocaleString('se-SE').slice 0,16
+		header0 = " for " + @title + " after Round #{@round}    #{timestamp}"
+		header1 = " for " + @title + " in Round #{@round+1}    #{timestamp}"
 
-		@makeStandings res
-		@makeNames header,players,res
-		@makeTables header,res
+		@makeStandings header0,res
+		if @round < @rounds 
+			@makeNames header1,players,res
+			@makeTables header1,res
 
 		res.join "\n"	
 
