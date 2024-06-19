@@ -81,14 +81,15 @@ assert false, 2 > 12
 # assert [[2,1],[1,2],[3,4]], _.sortBy(xxx, (x) -> x[1])
 # assert [[3,4],[1,2],[2,1]], _.sortBy(xxx, (x) -> -x[1])
 
-initials = (name) ->
+initial = (name) ->
 	res = ""
 	arr = name.replace('-',' ').split ' '
-	for s in arr
+	for s in arr.slice 0,3
 		res += s[0]
+	if res.length==2 then res += arr[1][1]
 	res
-assert 'cn', initials 'christer nilsson'
-assert 'JLB', initials 'JOHANSSON Lennart B.'
+assert 'CNi', initial 'Christer Nilsson'
+assert 'JLB', initial 'JOHANSSON Lennart B.'
 
 normera = (x) -> x # 1000/1010 * x - 392
 
@@ -175,6 +176,18 @@ class Tournament
 		@mat = []
 
 	write : () ->
+
+	# testInitials : ->
+	# 	hash = {}
+	# 	for p in @persons
+	# 		key = initial p.name
+	# 		if key not of hash then hash[key] = []
+	# 		hash[key].push p.name
+	# 	result = []
+	# 	for key of hash
+	# 		if hash[key].length > 1
+	# 			result.push 'Collision for initial ' + key + ': ' + hash[key].join ', '
+	# 	result.join '\n'
 
 	makeEdges : ->
 		edges = []
@@ -351,6 +364,12 @@ class Tournament
 		# @persons = _.cloneDeep @players
 		@persons = _.clone @players
 
+		# message = @testInitials()
+		# if message != '' 
+		# 	print message
+		# 	alert message
+		# 	return
+
 		print (p.elo for p in @persons)
 
 		print 'sorted players', @players
@@ -394,13 +413,13 @@ class Tournament
 		y = 1.5 * ZOOM[state]
 		s = ""
 		s +=       @txtT '#', 2,window.RIGHT
-		s += ' ' + @txtT 'Score', 5,window.RIGHT
+		# s += ' ' + @txtT 'Score', 5,window.RIGHT
 		s += ' ' + @txtT 'Elo',   4,window.RIGHT
 		s += ' ' + @txtT 'White', 25,window.LEFT
 		s += ' ' + @txtT 'Result',7,window.CENTER
 		s += ' ' + @txtT 'Black', 25,window.LEFT
 		s += ' ' + @txtT 'Elo',   4,window.LEFT
-		s += ' ' + @txtT 'Score', 5,window.RIGHT
+		# s += ' ' + @txtT 'Score', 5,window.RIGHT
 		fill 'black'
 		textAlign window.LEFT
 		text s,10,y
@@ -420,7 +439,7 @@ class Tournament
 			nr = i+1
 			s = ""
 			s += @txtT nr.toString(), 2, window.RIGHT
-			s += ' ' + @txtT pa, 5
+			# s += ' ' + @txtT pa, 5
 			s += ' ' + @txtT a.elo.toString(), 4, window.RIGHT
 			s += ' ' + @txtT a.name, 25, window.LEFT
 
@@ -428,7 +447,7 @@ class Tournament
 
 			s += ' ' + @txtT b.name, 25, window.LEFT
 			s += ' ' + @txtT b.elo.toString(), 4, window.RIGHT
-			s += ' ' + @txtT pb, 5, window.CENTER
+			# s += ' ' + @txtT pb, 5, window.CENTER
 
 			if i == currentTable
 				fill  'yellow'
@@ -479,29 +498,31 @@ class Tournament
 			if diff != 0 then return diff
 			return b.elo - a.elo
 
+		inv = invert (p.id for p in temp)
+
 		res.push "STANDINGS"
 		res.push ""
 
 		header = ""
 		header +=       @txtT "#",     2
-		header += ' ' + @txtT "Id",    4,window.RIGHT
+		# header += ' ' + @txtT "Id",    4,window.RIGHT
 		header += ' ' + @txtT "Elo",   4,window.RIGHT
 		header += ' ' + @txtT "Name", 25,window.LEFT
 		for r in range @round
 			header += @txtT "#{r+1}",6,window.RIGHT
-		header += '  ' + @txtT "EloSum", 6,window.RIGHT
+		header += '  ' + @txtT "EloSum", 8,window.RIGHT
 		
 		for person,i in temp
 			if i % @ppp == 0 then res.push header
 			s = ""
 			s +=       @txtT (1+i).toString(),          2, window.RIGHT
-			s += ' ' + @txtT (person.id+1).toString(),  4, window.RIGHT
+			# s += ' ' + @txtT (person.id+1).toString(),  4, window.RIGHT
 			s += ' ' + @txtT person.elo.toString(),     4, window.RIGHT
 			s += ' ' + @txtT person.name,              25, window.LEFT
 			s += ' '
 			for r in range @round
-				s += @txtT "#{person.opp[r]+1}#{RINGS[person.col[r][0]]}#{"0½1"[person.res[r]]}", 6, window.RIGHT			
-			s += ' ' + @txtT person.eloSum().toFixed(0),  6, window.RIGHT
+				s += @txtT "#{1+inv[person.opp[r]]}#{RINGS[person.col[r][0]]}#{"0½1"[person.res[r]]}", 6, window.RIGHT			
+			s += ' ' + @txtT person.eloSum().toFixed(1),  8, window.RIGHT
 			res.push s
 			if i % @ppp == @ppp-1 then res.push "\f"
 		res.push "\f"
@@ -512,7 +533,7 @@ class Tournament
 		r = tournament.round
 		for p,i in players
 			if i % @ppp == 0 then res.push "Table Name"
-			res.push "#{str(1 + p[1]//2).padStart(3)} #{RINGS[p[0].col[r][0]]} #{p[0].name}"
+			res.push "#{str(1 + p[1]//2).padStart(3)} #{RINGS[p[0].col[r][0]]} #{p[0].name}" #  (#{initial p[0].name})"
 			if i % @ppp == @ppp-1 then res.push "\f"
 		res.push "\f"
 
@@ -601,7 +622,6 @@ class Tournament
 
 	showStandings : ->
 		@showHeader 'Standings'
-		print 'showStandings'
 		if @pairs.length == 0
 			txt "This ROUND can't be paired! (Too many rounds)",width/2,height/2,CENTER
 			return
@@ -615,25 +635,19 @@ class Tournament
 			if diff != 0 then return diff
 			return b.elo - a.elo
 
-		# print 'tempA',temp
-		#temp.reverse()
-
-		# inv = (p.id for p in temp)
-		# inv = invert inv
+		inv = invert (p.id for p in temp)
 
 		y = 1.5 * ZOOM[state] + currentResult
 		textAlign LEFT
 		rheader = _.map range(1,@rounds+1), (i) -> "#{i%10} "
 		rheader = rheader.join ' '
-
 		s = ""
 		s +=       @txtT "#",    2
-		s += ' ' + @txtT "Id",   4,window.RIGHT
+		# s += ' ' + @txtT "Id",   4,window.RIGHT
 		s += ' ' + @txtT "Elo",  4,window.RIGHT
 		s += ' ' + @txtT "Name", 25,window.LEFT
 		s += ' ' + @txtT rheader,3*@rounds,window.LEFT 
 		s += ' ' + @txtT "EloSum", 7,window.RIGHT
-		
 		text s,10,y
 
 		fill 'white' 
@@ -641,7 +655,7 @@ class Tournament
 			y += ZOOM[state] * 0.5
 			s = ""
 			s +=       @txtT (1+i).toString(),         2, window.RIGHT
-			s += ' ' + @txtT (person.id+1).toString(), 4, window.RIGHT
+			# s += ' ' + @txtT (inv[person.id]).toString(), 4, window.RIGHT
 			s += ' ' + @txtT person.elo.toString(),    4, window.RIGHT
 			s += ' ' + @txtT person.name,             25, window.LEFT
 			s += ' ' + @txtT '',               3*@rounds, window.CENTER
@@ -650,10 +664,10 @@ class Tournament
 			text s,10,y
 
 			for r in range @round-1
-				x = ZOOM[state] * (12.1 + 0.9*r)
+				x = ZOOM[state] * (10.6 + 0.9*r)
 				# print r,person.col[r][0], x, y, person.res[r], inv[person.opp[r]]
-				# @lightbulb person.col[r][0], x, y, person.res[r], initials @players[inv[person.opp[r]]].name
-				@lightbulb person.col[r][0], x, y, person.res[r], person.opp[r]+1 # initials @persons[person.opp[r]].name
+				# @lightbulb person.col[r][0], x, y, person.res[r], initial @players[inv[person.opp[r]]].name
+				@lightbulb person.col[r][0], x, y, person.res[r], 1+inv[person.opp[r]]
 
 copyToClipboard = (text) ->
 	if !navigator.clipboard
