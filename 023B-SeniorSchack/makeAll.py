@@ -179,7 +179,7 @@ def transpileFile(long,short,level=0):
 	global md_bytes
 	global file_count
 
-	if done(long,long.replace('.md','.html')): return
+	# if done(long,long.replace('.md','.html')): return
 
 	with open(long,encoding='utf8') as f:
 		md = f.read()
