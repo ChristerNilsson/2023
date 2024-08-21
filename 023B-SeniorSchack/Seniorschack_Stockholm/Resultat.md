@@ -8,8 +8,8 @@
 ## Individ 
 ||
 |-|
-|[Klubbmästerskap](https://chess-results.com/tnr875945.aspx?lan=6)|
-|[Klass 1](TOUR=13627)|
-|[Klass 2](TOUR=13628)|
-|[Klass 3](TOUR=13631)|
-|[Klass 4](TOUR=13633)|
+|[Klass M](TOUR=14507)|
+|[Klass 1](TOUR=14508)|
+|[Klass 2](TOUR=14509)|
+|[Klass 3](TOUR=14510)|
+|[Klass 4](TOUR=14512)|
