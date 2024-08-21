@@ -125,8 +125,9 @@ def transpileDir(directory, level=0):
 				if f.name != 'files': indexHtml = transpileFile(f.path, f.name, level)
 			else:
 				html = transpileFile(f.path, f.name, level)
-				filename = f.path.replace('.md', '.html').replace('\\', '/')
-				writeHtmlFile(filename, f.name, level + 1, html)
+				if html:
+					filename = f.path.replace('.md', '.html').replace('\\', '/')
+					writeHtmlFile(filename, f.name, level + 1, html)
 
 	for f in os.scandir(path):
 		if os.path.isfile(f):
@@ -163,14 +164,22 @@ def transpileDir(directory, level=0):
 	# Skapa index.html
 	if indexHtml == "":
 		indexHtml = res #"\n".join(res)
-	else:
+	elif indexHtml:
 		indexHtml = indexHtml.replace("CONTENT", res)
 		indexHtml = indexHtml.replace("POSTS", posts)
-	writeHtmlFile(path + '/index.html', name, level+1, indexHtml)
+	if indexHtml:
+		writeHtmlFile(path + '/index.html', name, level+1, indexHtml)
+
+def done(infileName,outfileName):
+	md = os.path.getmtime(infileName)
+	html = os.path.getmtime(outfileName)
+	return md <= html
 
 def transpileFile(long,short,level=0):
 	global md_bytes
 	global file_count
+
+	if done(long,long.replace('.md','.html')): return
 
 	with open(long,encoding='utf8') as f:
 		md = f.read()
