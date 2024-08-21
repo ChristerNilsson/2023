@@ -18,6 +18,11 @@ settings = {
 
 ROOT = settings['rootFolder']
 
+def done(a,b):
+	a = os.path.getmtime(a)
+	b = os.path.getmtime(b)
+	return a <= b
+
 def title(s): return s.replace('.md','').replace('_',' ').replace('.trn','')
 
 def patch(s):
@@ -31,6 +36,7 @@ def patch(s):
 	return s
 
 def writeHtmlFile(filename, t, level, content=""):
+	# print('\t'*level, 'writeHtmlFile',filename)
 	t = title(t)
 	index = 1 + filename.rindex("/")
 	short_md = filename[index:].replace('.html','.md')
@@ -113,17 +119,13 @@ def transpileDir(directory, level=0):
 	hash_others = []
 
 	indexHtml = ""
-	# for f in os.scandir(path):
-	# 	if os.path.isfile(f) and f.name.endswith('.trn'):
-	# 		filename = f.path.replace('.trn', '.html').replace('\\', '/')
-	# 		data = trn2html(f.path)
-	# 		writeHtmlFile(filename, f.name, level+1, data)
 
 	for f in os.scandir(path):
 		if os.path.isfile(f) and f.name.endswith('.md'):
 			if f.name == 'index.md':
 				if f.name != 'files': indexHtml = transpileFile(f.path, f.name, level)
 			else:
+				if done(f.path,f.path.replace('.md','.html')): continue
 				html = transpileFile(f.path, f.name, level)
 				if html:
 					filename = f.path.replace('.md', '.html').replace('\\', '/')
@@ -163,24 +165,17 @@ def transpileDir(directory, level=0):
 
 	# Skapa index.html
 	if indexHtml == "":
-		indexHtml = res #"\n".join(res)
+		indexHtml = res
 	elif indexHtml:
 		indexHtml = indexHtml.replace("CONTENT", res)
 		indexHtml = indexHtml.replace("POSTS", posts)
 	if indexHtml:
 		writeHtmlFile(path + '/index.html', name, level+1, indexHtml)
 
-def done(infileName,outfileName):
-	md = os.path.getmtime(infileName)
-	html = os.path.getmtime(outfileName)
-	return md <= html
-
 def transpileFile(long,short,level=0):
 	global md_bytes
 	global file_count
-
-	# if done(long,long.replace('.md','.html')): return
-
+	# print(long)
 	with open(long,encoding='utf8') as f:
 		md = f.read()
 		# print('\t' * (level + 1) + short, f'({len(md)} bytes) =>', short.replace('.md', '.html'))
