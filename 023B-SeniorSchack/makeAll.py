@@ -113,11 +113,11 @@ def transpileDir(directory, level=0):
 	hash_others = []
 
 	indexHtml = ""
-	for f in os.scandir(path):
-		if os.path.isfile(f) and f.name.endswith('.trn'):
-			filename = f.path.replace('.trn', '.html').replace('\\', '/')
-			data = trn2html(f.path)
-			writeHtmlFile(filename, f.name, level+1, data)
+	# for f in os.scandir(path):
+	# 	if os.path.isfile(f) and f.name.endswith('.trn'):
+	# 		filename = f.path.replace('.trn', '.html').replace('\\', '/')
+	# 		data = trn2html(f.path)
+	# 		writeHtmlFile(filename, f.name, level+1, data)
 
 	for f in os.scandir(path):
 		if os.path.isfile(f) and f.name.endswith('.md'):
