@@ -22,7 +22,7 @@
 
 [Schacksnack](http://www.schacksnack.se)
 
-[Schack-SM 2023](https://schack.se/tavlingar/resultat/sm-2023)
+[schack.se](https://schack.se)
 
 [Stockholms Schackförbund](https://www.stockholmsschack.se)
 

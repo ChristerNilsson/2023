@@ -1,6 +1,9 @@
 År | Segrare | Resultat
 --- | --- | ---
-2024 | Resultatlista seniorserien HT2023 | [Resultat HT23](SENIOR/htmfiler/resultat_HT23.pdf)
+2024 | Lennart B. Johansson (Regerande Seniorseriemästare våren 2024) | [Resultat VT24](TOUR=13627)
+2024 | Resultat från samtliga Veteranserier våren 2024 | [Resultat VT24](SENIOR/htmfiler/resultat_VT24.pdf)
+2024 | Tomas Lindblad (Regerande Klubbmästare 2024) | [Resultatlista KM 2024](SENIOR/htmfiler/SrS_KM_2024_Interim_Ranking_List.pdf)
+2023 | Resultatlista seniorserien HT2023 | [Resultat HT23](SENIOR/htmfiler/resultat_HT23.pdf)
 2023 | Lennart B. Johansson (Seniorseriemästare våren 2023) | [Resultat VT23](https://member.schack.se/ShowTournamentServlet?id=11301&round=1)
 2023 | Resultat från samtliga Veteranserier våren 2023 | [Resultat VT23](SENIOR/htmfiler/resultat_VT23.pdf)
 2023 | Tomas Lindblad (Klubbmästare 2023) | [Resultatlista KM 2023](SENIOR/htmfiler/SrS_KM_2023.pdf)

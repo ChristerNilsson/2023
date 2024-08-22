@@ -1,8 +1,6 @@
-from datetime import datetime
 import os
 import time
 from markdown_it import MarkdownIt
-from trn2html import trn2html
 
 mdit = MarkdownIt('commonmark', {'breaks':True,'html':True}).enable('table')
 
@@ -18,16 +16,13 @@ settings = {
 
 ROOT = settings['rootFolder']
 
-def done(a,b):
-	a = os.path.getmtime(a)
-	b = os.path.getmtime(b)
-	return a <= b
-
+def done(a,b): return os.path.getmtime(a) <= os.path.getmtime(b)
 def title(s): return s.replace('.md','').replace('_',' ').replace('.trn','')
 
 def patch(s):
 	s = s.replace('<p><a href=','<div><a href=') # Reason: To have some whitespace between links (margin-bottom)
 	s = s.replace('</a></p>','</a></div>')
+	s = s.replace('CLUB', 'https://member.schack.se/ShowClubRatingServlet?clubid')
 	s = s.replace('TOUR', 'https://member.schack.se/ShowTournamentServlet?id')
 	s = s.replace('SENIOR','https://www.seniorschackstockholm.se')
 	s = s.replace('BB2','https://storage.googleapis.com/bildbank2/index.html')
@@ -36,7 +31,6 @@ def patch(s):
 	return s
 
 def writeHtmlFile(filename, t, level, content=""):
-	# print('\t'*level, 'writeHtmlFile',filename)
 	t = title(t)
 	index = 1 + filename.rindex("/")
 	short_md = filename[index:].replace('.html','.md')
@@ -78,8 +72,7 @@ def noExt(s):
 	if settings['showExt']: return s
 	else: return s[:s.rindex('.')]
 
-def getLink(f,level):
-	# print('\t' * level + f.name)
+def getLink(f,level): 
 	with open(f.path,encoding='utf8') as f: return patch(f.read().strip())
 
 def tablify(posts,dir):
@@ -106,8 +99,6 @@ def transpileDir(directory, level=0):
 		path = directory.path
 		name = directory.name
 
-	# print('\t'*level + name)
-
 	if name == 'files' or name.endswith('.css'): return
 
 	name = name.replace("_", " ")
@@ -123,10 +114,10 @@ def transpileDir(directory, level=0):
 	for f in os.scandir(path):
 		if os.path.isfile(f) and f.name.endswith('.md'):
 			if f.name == 'index.md':
-				if f.name != 'files': indexHtml = transpileFile(f.path, f.name, level)
+				if f.name != 'files': indexHtml = transpileFile(f.path)
 			else:
 				if done(f.path,f.path.replace('.md','.html')): continue
-				html = transpileFile(f.path, f.name, level)
+				html = transpileFile(f.path)
 				if html:
 					filename = f.path.replace('.md', '.html').replace('\\', '/')
 					writeHtmlFile(filename, f.name, level + 1, html)
@@ -158,7 +149,6 @@ def transpileDir(directory, level=0):
 		transpileDir(f, level + 1)
 
 	res.sort()
-	# res = [f"<div><a href='{href}'>{title}</a></div>" for [title,href] in res]
 
 	res = [f"<tr><td><a href='{href}'>{title}</a></td></tr>" for [title,href] in res]
 	res = "<table>" + "\n".join(res) + "</table>"
@@ -172,14 +162,13 @@ def transpileDir(directory, level=0):
 	if indexHtml:
 		writeHtmlFile(path + '/index.html', name, level+1, indexHtml)
 
-def transpileFile(long,short,level=0):
+def transpileFile(long):
 	global md_bytes
 	global file_count
-	# print(long)
 	with open(long,encoding='utf8') as f:
 		md = f.read()
-		# print('\t' * (level + 1) + short, f'({len(md)} bytes) =>', short.replace('.md', '.html'))
 		file_count += 1
+		# print(long, '-> .html')
 		md_bytes += len(md)
 		html = mdit.render(md)
 		html = patch(html)
