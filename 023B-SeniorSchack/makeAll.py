@@ -1,6 +1,9 @@
+# todo: Man måste toucha index.md för att ändringar i posts ska ses på startsidan. Kör denna varje gång?
+
 import os
 import time
 from markdown_it import MarkdownIt
+from pathlib import Path
 
 mdit = MarkdownIt('commonmark', {'breaks':True,'html':True}).enable('table')
 
@@ -17,6 +20,7 @@ settings = {
 ROOT = settings['rootFolder']
 
 def done(a,b):
+	return False
 	if not os.path.exists(b): return False
 	return os.path.getmtime(a) <= os.path.getmtime(b)
 def title(s): return s.replace('.md','').replace('_',' ').replace('.trn','')
@@ -30,6 +34,7 @@ def patch(s):
 	s = s.replace('BB2','https://storage.googleapis.com/bildbank2/index.html')
 	s = s.replace('ROOT',ROOT)
 	s = s.replace('LICHESS','https://lichess.org')
+	s = s.replace('POSTS',posts)
 	return s
 
 def writeHtmlFile(filename, t, level, content=""):
@@ -170,16 +175,20 @@ def transpileFile(long):
 	with open(long,encoding='utf8') as f:
 		md = f.read()
 		file_count += 1
-		# print(long, '-> .html')
+		print(long, '-> .html')
 		md_bytes += len(md)
 		html = mdit.render(md)
 		html = patch(html)
 	return html
 
+def touch(path): Path(path).touch()
+
+touch("Seniorschack_Stockholm\index.md")
 start = time.time_ns()
 posts = getPosts()
 transpileDir(ROOT,0)
 transpileDir(ROOT + '/files/posts',2)
+
 print()
 print(md_bytes,'=>',html_bytes,'bytes')
 print(file_count, 'files took', round((time.time_ns() - start)/10**6),'ms')

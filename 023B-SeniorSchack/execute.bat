@@ -1,0 +1,2 @@
+python makeAll.py
+pause
