@@ -8,4 +8,4 @@ Ti 24 Bengt Hammar: Missade chanser - Skönhetspriserna som gick upp i rök
 
 ## Oktober
 
-Ti 01 Gunnar Hedin: Zandor Nilsson - Självförtroende i världsklass
+Ti 01 Gunnar Hedin: Zandor Nilsson - Självförtroende i världsklass 

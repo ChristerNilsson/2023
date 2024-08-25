@@ -1,1 +1,0 @@
-Inbjudan kommer snart via mail.
