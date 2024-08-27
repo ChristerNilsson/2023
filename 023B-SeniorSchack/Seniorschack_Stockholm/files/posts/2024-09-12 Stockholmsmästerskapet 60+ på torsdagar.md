@@ -1,1 +1,0 @@
-[Inbjudan](https://www.seniorschackstockholm.se/htmfiler/Inbjudan_SthMVet60+_2024.pdf)

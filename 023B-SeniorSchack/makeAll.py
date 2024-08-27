@@ -20,7 +20,7 @@ settings = {
 ROOT = settings['rootFolder']
 
 def done(a,b):
-	return False
+	if a == "Seniorschack_Stockholm\index.md": return False
 	if not os.path.exists(b): return False
 	return os.path.getmtime(a) <= os.path.getmtime(b)
 def title(s): return s.replace('.md','').replace('_',' ').replace('.trn','')
