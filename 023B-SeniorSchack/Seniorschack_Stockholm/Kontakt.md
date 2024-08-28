@@ -4,7 +4,7 @@ Du är välkommen till en trevlig och kamratlig samvaro
 med många spännande schackpartier och utvecklande seminarier samt spännande simultanschack.  
 
 Vill du bli medlem?    
-Kom till klubblokalen eller kontakta någon av dessa medlemmar:  
+Kom till klubblokalen eller kontakta någon av dessa medlemmar:   
 
 Dag|Ansvarig|Telefon
 ---|--------|-------

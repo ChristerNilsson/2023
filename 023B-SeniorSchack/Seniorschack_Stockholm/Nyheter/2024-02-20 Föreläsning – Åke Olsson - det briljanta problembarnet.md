@@ -1,0 +1,1 @@
+Schacksalongerna 10.00   

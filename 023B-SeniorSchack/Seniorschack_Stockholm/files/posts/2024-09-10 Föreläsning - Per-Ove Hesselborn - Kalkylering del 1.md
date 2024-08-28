@@ -1,1 +1,0 @@
-Schacksalongerna 10-12

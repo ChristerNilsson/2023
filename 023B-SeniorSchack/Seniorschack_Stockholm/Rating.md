@@ -19,5 +19,5 @@
 [Tyresö SK](CLUB=38447)  
 [Täby SK](CLUB=38479)  
 [Vallentuna SK](CLUB=38480)  
-[Wasa SK](CLUB=38481)  
+[Wasa SK](CLUB=38481) 
  

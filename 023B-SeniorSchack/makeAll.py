@@ -1,5 +1,3 @@
-# todo: Man måste toucha index.md för att ändringar i posts ska ses på startsidan. Kör denna varje gång?
-
 import os
 import time
 from markdown_it import MarkdownIt
@@ -34,7 +32,6 @@ def patch(s):
 	s = s.replace('BB2','https://storage.googleapis.com/bildbank2/index.html')
 	s = s.replace('ROOT',ROOT)
 	s = s.replace('LICHESS','https://lichess.org')
-	s = s.replace('POSTS',posts)
 	return s
 
 def writeHtmlFile(filename, t, level, content=""):
@@ -77,36 +74,29 @@ def writeHtmlFile(filename, t, level, content=""):
 def noExt(s):
 	s = s.replace("_", " ")
 	if settings['showExt']: return s
-	else: return s[:s.rindex('.')]
+	else:
+		p = s.rindex('.')
+		if p: return s[:p]
+		return s
 
-def getLink(f,level): 
-	with open(f.path,encoding='utf8') as f: return patch(f.read().strip())
-
-def tablify(posts,dir):
-	res = [f'<tr><td><a href="{dir}{f}">{noExt(f).replace("/files/posts","")}</a></td></tr>' for f in posts]
-	if dir != "": res += ['<tr><td><a href="files/posts/Alla_nyheter.html">Alla nyheter</a></td></tr>']
-	return "<table>" + "\n".join(res) + "</table>"
-
-def getPosts(directory=settings["rootFolder"] + "/files/posts"):
-	files = os.listdir(directory)
-	all = files[::-1]
-	all = [f for f in all if not f.endswith('.md') and not f.endswith('index.html') and not f.endswith('Alla_nyheter.html')]
-
-	writeHtmlFile(directory+'/Alla_nyheter.html', 'Alla nyheter', 3, tablify(all,""))
-	return tablify(all[:settings["latestPosts"]],"files/posts/")
+def getLink(f):
+	with open(f,encoding='utf8') as f1:
+		link = f1.read().strip()
+		return patch(link)
 
 def makeMenu(href,title): return [title, href]
 
 def transpileDir(directory, level=0):
-
 	if type(directory) is str:
 		path = directory
 		name = directory
+		reverse = False
 	else:
 		path = directory.path
 		name = directory.name
+		reverse = path.endswith('\\Nyheter')
 
-	if name == 'files' or name.endswith('.css'): return
+	if name.endswith('.css'): return
 
 	name = name.replace("_", " ")
 
@@ -121,7 +111,7 @@ def transpileDir(directory, level=0):
 	for f in os.scandir(path):
 		if os.path.isfile(f) and f.name.endswith('.md'):
 			if f.name == 'index.md':
-				if f.name != 'files': indexHtml = transpileFile(f.path)
+				indexHtml = transpileFile(f.path)
 			else:
 				if done(f.path,f.path.replace('.md','.html')): continue
 				html = transpileFile(f.path)
@@ -138,7 +128,7 @@ def transpileDir(directory, level=0):
 			elif f.name not in ['favicon.ico','style.css']: hash_others.append(f)
 			else: pass
 		else:
-			if f.name != 'files': hash_directory.append(f)
+			hash_directory.append(f)
 
 	res = []
 
@@ -146,7 +136,8 @@ def transpileDir(directory, level=0):
 		if f.name != 'index.html': res += [[noExt(f.name), f.name]]
 
 	for f in hash_link:  # Lägg in i menyn
-		res += [[noExt(f.name),getLink(f, level + 1)]]
+		pair = [noExt(f.name),getLink(f.path)]
+		res += [pair]
 
 	for f in hash_others:  # Lägg in i menyn
 		res += [[noExt(f.name), f.name]]
@@ -156,18 +147,13 @@ def transpileDir(directory, level=0):
 		transpileDir(f, level + 1)
 
 	res.sort()
+	if reverse: res.reverse()
 
 	res = [f"<tr><td><a href='{href}'>{title}</a></td></tr>" for [title,href] in res]
 	res = "<table>" + "\n".join(res) + "</table>"
 
-	# Skapa index.html
-	if indexHtml == "":
-		indexHtml = res
-	elif indexHtml:
-		indexHtml = indexHtml.replace("CONTENT", res)
-		indexHtml = indexHtml.replace("POSTS", posts)
-	if indexHtml:
-		writeHtmlFile(path + '/index.html', name, level+1, indexHtml)
+	if indexHtml == "": indexHtml = res
+	if indexHtml: writeHtmlFile(path + '/index.html', name, level+1, indexHtml)
 
 def transpileFile(long):
 	global md_bytes
@@ -181,13 +167,8 @@ def transpileFile(long):
 		html = patch(html)
 	return html
 
-def touch(path): Path(path).touch()
-
-touch("Seniorschack_Stockholm\index.md")
 start = time.time_ns()
-posts = getPosts()
 transpileDir(ROOT,0)
-transpileDir(ROOT + '/files/posts',2)
 
 print()
 print(md_bytes,'=>',html_bytes,'bytes')

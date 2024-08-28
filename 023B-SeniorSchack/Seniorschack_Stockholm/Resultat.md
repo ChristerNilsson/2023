@@ -7,7 +7,7 @@
 
 ## Individ 
 ||
-|-|
+|-| 
 |[Klass M](TOUR=14507)|
 |[Klass 1](TOUR=14508)|
 |[Klass 2](TOUR=14509)|

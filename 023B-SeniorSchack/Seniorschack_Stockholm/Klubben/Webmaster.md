@@ -8,5 +8,5 @@ Du kan maila bland annat följande:
 * fil
 * text
 
-Ange även vilken rubrik du vill ha, om det inte framgår av filnamnet.  
+Ange även vilken rubrik du vill ha, om det inte framgår av filnamnet.   
 Ditt innehåll hamnar under Nyheter om inget annat anges.
