@@ -14,6 +14,7 @@ Några high lights:
 * Anpassad för mobiler och äldre.
 * De senaste Nyheterna visas direkt på startsidan.
 * Markdown kan ses för en sida genom att klicka på rubriken.
+  * Ofta saknas .md, då är sidan skapad mha kataloger och filer.  
 * Alfabetisk sortering av menyalternativen.
 * Kronologisk sortering av Nyheter.
 * Bakåt-knappen används alltid för att lämna en sida. (Alt + Left Arrow)
@@ -24,8 +25,6 @@ Några high lights:
 ## .md
 
 This is a **markdown** file and is translated by *makeAll.py* to an **.html** file with the same name.
-
-CONTENT
 
 ## .link
 
@@ -61,12 +60,9 @@ url    |   |   |     |
 * Add .link files to use urls
 * Add an index.md file to show text, images and tables.
 * Add an index.md file if you prefer another sort order
-    * e.g. if your files start with a week day or a month name
-        * fri mon sat sun thu tue wed
-        * apr aug dec feb jan jun jul mar may nov oct sep
 * Add html code to your .md files if necessary.
 * Give all folders and files nice, short names, acceptable as menu names.
-    * For the ```/files/news``` folder, start all file names with a date, using the format YYYY-MM-DD.
+    * For the ```Nyheter``` folder, start all file names with a date, using the format YYYY-MM-DD.
 * style.css can be used to customize your pages.
     * font
     * font size
@@ -76,13 +72,3 @@ url    |   |   |     |
     * style.css can be defined in every folder.
         * Sheets closer to the leaf overrides sheets closer to the root.
         * Try changing color of the links in this folder: ```a {color:green}```
-
-## files
-
-This folder contains files you don't want to be processed.
-
-### Keywords
-
-* **CON_TENT** is used as a placeholder that will be replaced by folder names, .md names, .link names and other file names stored in the *current* folder.
-* **PO_STS** is used as a placeholder that will be replaced by foldernames, markdown names, link names and other filenames stored in the **files/posts** folder.
-    * Only the latest files will be displayed, as specified by the setting *latestPosts* = 5.

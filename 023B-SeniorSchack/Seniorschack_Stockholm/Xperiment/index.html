@@ -20,7 +20,11 @@ I Bildbanken 2 är det katalogstrukturen som styr allt.</p>
 <li>Baserad på <a href="https://www.markdownguide.org/cheat-sheet/">markdown</a>.</li>
 <li>Anpassad för mobiler och äldre.</li>
 <li>De senaste Nyheterna visas direkt på startsidan.</li>
-<li>Markdown kan ses för en sida genom att klicka på rubriken.</li>
+<li>Markdown kan ses för en sida genom att klicka på rubriken.
+<ul>
+<li>Ofta saknas .md, då är sidan skapad mha kataloger och filer.</li>
+</ul>
+</li>
 <li>Alfabetisk sortering av menyalternativen.</li>
 <li>Kronologisk sortering av Nyheter.</li>
 <li>Bakåt-knappen används alltid för att lämna en sida. (Alt + Left Arrow)</li>
@@ -30,7 +34,6 @@ I Bildbanken 2 är det katalogstrukturen som styr allt.</p>
 </ul>
 <h2>.md</h2>
 <p>This is a <strong>markdown</strong> file and is translated by <em>makeAll.py</em> to an <strong>.html</strong> file with the same name.</p>
-<p>CONTENT</p>
 <h2>.link</h2>
 <p>Files with this extension may contain a directory name, an html filename, a filename or an url.<br />
 A <strong>.link</strong> file can be replaced by an <strong>.md file</strong>,<br />
@@ -97,20 +100,11 @@ You could say, the .link file acts as a shortcut.</p>
 <li>Add files to your folders</li>
 <li>Add .link files to use urls</li>
 <li>Add an index.md file to show text, images and tables.</li>
-<li>Add an index.md file if you prefer another sort order
-<ul>
-<li>e.g. if your files start with a week day or a month name
-<ul>
-<li>fri mon sat sun thu tue wed</li>
-<li>apr aug dec feb jan jun jul mar may nov oct sep</li>
-</ul>
-</li>
-</ul>
-</li>
+<li>Add an index.md file if you prefer another sort order</li>
 <li>Add html code to your .md files if necessary.</li>
 <li>Give all folders and files nice, short names, acceptable as menu names.
 <ul>
-<li>For the <code>/files/news</code> folder, start all file names with a date, using the format YYYY-MM-DD.</li>
+<li>For the <code>Nyheter</code> folder, start all file names with a date, using the format YYYY-MM-DD.</li>
 </ul>
 </li>
 <li>style.css can be used to customize your pages.
@@ -126,17 +120,6 @@ You could say, the .link file acts as a shortcut.</p>
 <li>Try changing color of the links in this folder: <code>a {color:green}</code></li>
 </ul>
 </li>
-</ul>
-</li>
-</ul>
-<h2>files</h2>
-<p>This folder contains files you don't want to be processed.</p>
-<h3>Keywords</h3>
-<ul>
-<li><strong>CON_TENT</strong> is used as a placeholder that will be replaced by folder names, .md names, .link names and other file names stored in the <em>current</em> folder.</li>
-<li><strong>PO_STS</strong> is used as a placeholder that will be replaced by foldernames, markdown names, link names and other filenames stored in the <strong>files/posts</strong> folder.
-<ul>
-<li>Only the latest files will be displayed, as specified by the setting <em>latestPosts</em> = 5.</li>
 </ul>
 </li>
 </ul>
