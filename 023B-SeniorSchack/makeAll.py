@@ -8,17 +8,13 @@ file_count = 0
 md_bytes = 0
 html_bytes = 0
 
-settings = {
-	'rootFolder': "Seniorschack_Stockholm",
-	'showExt': False,
-}
-
+settings = {'rootFolder': "Seniorschack_Stockholm", 'showExt': False,}
 ROOT = settings['rootFolder']
 
 def done(a,b):
 	if not os.path.exists(b): return False
 	return os.path.getmtime(a) <= os.path.getmtime(b)
-def title(s): return s.replace('.md','').replace('_',' ') #.replace('.trn','')
+def title(s): return s.replace('.md','').replace('_',' ')
 
 def patch(s):
 	s = s.replace('<p><a href=','<div><a href=') # Reason: To have some whitespace between links (margin-bottom)
@@ -108,6 +104,7 @@ def transpileDir(directory, level=0):
 	for f in os.scandir(path):
 		if os.path.isfile(f) and f.name.endswith('.md'):
 			if f.name == 'index.md':
+				if done(f.path,f.path.replace('.md','.html')): continue
 				indexHtml = transpileFile(f.path)
 			else:
 				if done(f.path,f.path.replace('.md','.html')): continue
@@ -121,9 +118,7 @@ def transpileDir(directory, level=0):
 			if f.name.endswith('.md'): hash_md.append(f)
 			elif f.name.endswith('.html'): hash_html.append(f)
 			elif f.name.endswith('.link'): hash_link.append(f)
-			# elif f.name.endswith('.trn'): pass
 			elif f.name not in ['favicon.ico','style.css']: hash_others.append(f)
-			else: pass
 		else:
 			hash_directory.append(f)
 
@@ -132,14 +127,13 @@ def transpileDir(directory, level=0):
 	for f in hash_html: # Lägg in i menyn
 		if f.name != 'index.html': res += [[noExt(f.name), f.name]]
 
-	for f in hash_link:  # Lägg in i menyn
-		pair = [noExt(f.name),getLink(f.path)]
-		res += [pair]
+	for f in hash_link: # Lägg in i menyn
+		res += [[noExt(f.name),getLink(f.path)]]
 
-	for f in hash_others:  # Lägg in i menyn
+	for f in hash_others: # Lägg in i menyn
 		res += [[noExt(f.name), f.name]]
 
-	for f in hash_directory:  # Lägg in i menyn
+	for f in hash_directory: # Lägg in i menyn
 		res += [[f.name, f.name]]
 		transpileDir(f, level + 1)
 
@@ -165,7 +159,7 @@ def transpileFile(long):
 	return html
 
 start = time.time_ns()
-transpileDir(ROOT,0)
+transpileDir(ROOT)
 
 print()
 print(md_bytes,'=>',html_bytes,'bytes')

@@ -6,11 +6,11 @@ med många spännande schackpartier och utvecklande seminarier samt spännande s
 Vill du bli medlem?    
 Kom till klubblokalen eller kontakta någon av dessa medlemmar:   
 
-Dag|Ansvarig|Telefon
----|--------|-------
-Tisdagar|[perovehesselborn@yahoo.se](BB2?md5=AMGCxYZKUL)|
-Onsdagar|[bosse.steiner@icloud.com](BB2?md5=9O2FFwgn9Z)|073 332 00 32  
-Torsdagar|[Bjorn@Lowgren.eu](BB2?md5=Ab2GMcW0iJ)|070 990 30 00
+| Dag       | Ansvarig                                        | Telefon       |
+|-----------|-------------------------------------------------|---------------|
+| Tisdagar  | [perovehesselborn@yahoo.se](BB2?md5=AMGCxYZKUL) |               |
+| Onsdagar  | [bosse.steiner@icloud.com](BB2?md5=9O2FFwgn9Z)  | 073 332 00 32 |
+| Torsdagar | [Bjorn@Lowgren.eu](BB2?md5=Ab2GMcW0iJ)          | 070 990 30 00 |
 
 ## Avgifter 
 
@@ -27,11 +27,11 @@ Klubbens årsmöte tisdagen den 5 mars 2024 beslutar formellt om årsavgiften.
 
 Avgiften betalas till klubbens bankgiro nr. **111-1038**
 
-Huvudklubb|Klubbavgift|Förbundsavgifter|Totalt
-----------|----------:|---------------:|-----:
-SrS       |      300:-|           340:-|640:-
-Annan     |      300:-|                |300:-
-PRO-kurs  |      300:-|                |300:-
+| Huvudklubb | Klubbavgift | Förbundsavgifter | Totalt |
+|------------|------------:|-----------------:|-------:|
+| SrS        |       300:- |            340:- |  640:- |
+| Annan      |       300:- |                  |  300:- |
+| PRO-kurs   |       300:- |                  |  300:- |
 
 ## Webmaster
 

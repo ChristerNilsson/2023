@@ -36,12 +36,12 @@ You could say, the .link file acts as a shortcut.
 
 ## From/To Matrix
 
-From/To|Dir|.md|.link|url
--------|---|---|-----|---
-Dir    |Yes|Yes|Yes  |Yes
-.md    |Yes|Yes|     |Yes
-.link  |Yes|Yes|     |Yes
-url    |   |   |     |
+| From/To | Dir | .md | .link | url |
+|---------|-----|-----|-------|-----|
+| Dir     | Yes | Yes | Yes   | Yes |
+| .md     | Yes | Yes |       | Yes |
+| .link   | Yes | Yes |       | Yes |
+| url     |     |     |       |     |
 
 **Yes**: a clickable link will be produced in the resulting html file.
 
@@ -72,3 +72,4 @@ url    |   |   |     |
     * style.css can be defined in every folder.
         * Sheets closer to the leaf overrides sheets closer to the root.
         * Try changing color of the links in this folder: ```a {color:green}```
+   

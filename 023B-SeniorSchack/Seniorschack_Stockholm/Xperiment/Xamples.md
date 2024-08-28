@@ -39,10 +39,10 @@ e<sup>iπ</sup> = -1
 2. second
 
 ### Table
- Year |    Winner
-----|--------------
-2021|[Hans Rånby (Seniorseriemästare hösten 2021)](SENIOR/htmfiler/resultat_HT21.pdf)
-2021|[Olle Ålgars (Stockholms Veteranmästare 2021)](SENIOR/htmfiler/resultat_veteran_HT21.pdf)
+| Year | Winner                                                                                    |
+|------|-------------------------------------------------------------------------------------------|
+| 2021 | [Hans Rånby (Seniorseriemästare hösten 2021)](SENIOR/htmfiler/resultat_HT21.pdf)          |
+| 2021 | [Olle Ålgars (Stockholms Veteranmästare 2021)](SENIOR/htmfiler/resultat_veteran_HT21.pdf) |
 
 ### Horizontal ruler
 ---
@@ -63,10 +63,10 @@ e<sup>iπ</sup> = -1
 
 ### Keyboard Shortcuts in Chrome
 
-Action|Key
----|---
-Open focused link|Enter
-Go Back|Alt + Left
-Go Forward|Alt + Right
-Move Focus Forward|Tab
-Move Focus Backward|Shift + Tab
+| Action              | Key         |
+|---------------------|-------------|
+| Open focused link   | Enter       |
+| Go Back             | Alt + Left  |
+| Go Forward          | Alt + Right |
+| Move Focus Forward  | Tab         |
+| Move Focus Backward | Shift + Tab |
