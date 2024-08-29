@@ -5,7 +5,7 @@
 | [Stockholmsserien](TOUR=12714) |
 | [Lag-DM](TOUR=12575)           |
 
-## Individ 
+## Individ  
 |                                                              |
 |--------------------------------------------------------------| 
 | [Klass M](TOUR=14507)                                        |

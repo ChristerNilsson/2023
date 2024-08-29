@@ -8,10 +8,12 @@ file_count = 0
 md_bytes = 0
 html_bytes = 0
 
-settings = {'rootFolder': "Seniorschack_Stockholm", 'showExt': False,}
+settings = {'rootFolder': "Seniorschack_Stockholm", 'showExt': False, 'All':True}
+
 ROOT = settings['rootFolder']
 
 def done(a,b):
+	if settings['All']: return False
 	if not os.path.exists(b): return False
 	return os.path.getmtime(a) <= os.path.getmtime(b)
 def title(s): return s.replace('.md','').replace('_',' ')
@@ -22,6 +24,7 @@ def patch(s):
 	s = s.replace('CLUB', 'https://member.schack.se/ShowClubRatingServlet?clubid')
 	s = s.replace('TOUR', 'https://member.schack.se/ShowTournamentServlet?id')
 	s = s.replace('SENIOR','https://www.seniorschackstockholm.se')
+	s = s.replace('HTM','https://www.seniorschackstockholm.se/htmfiler')
 	s = s.replace('BB2','https://storage.googleapis.com/bildbank2/index.html')
 	s = s.replace('ROOT',ROOT)
 	s = s.replace('LICHESS','https://lichess.org')
@@ -62,6 +65,7 @@ def writeHtmlFile(filename, t, level, content=""):
 	with open(filename, 'w', encoding='utf8') as g:
 		s = '\n'.join(res)
 		g.write(s)
+		print('AUTO',filename,len(s))
 		html_bytes += len(s)
 
 def noExt(s):
@@ -87,7 +91,7 @@ def transpileDir(directory, level=0):
 	else:
 		path = directory.path
 		name = directory.name
-		reverse = path.endswith('\\Nyheter')
+		reverse = path.endswith('\\Nyheter') or path.endswith('\\Dokument')
 
 	if name.endswith('.css'): return
 
@@ -152,7 +156,7 @@ def transpileFile(long):
 	with open(long,encoding='utf8') as f:
 		md = f.read()
 		file_count += 1
-		print(long, '-> .html')
+		print('MD',long,len(md))
 		md_bytes += len(md)
 		html = mdit.render(md)
 		html = patch(html)
