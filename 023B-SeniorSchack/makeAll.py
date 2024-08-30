@@ -1,12 +1,13 @@
 import os
 import time
 from markdown_it import MarkdownIt
+import json
 
 mdit = MarkdownIt('commonmark', {'breaks':True,'html':True}).enable('table')
 
-settings = {'rootFolder': "Seniorschack_Stockholm", 'showExt': False, 'All':False}
-
-ROOT = settings['rootFolder']
+with open("settings.json","r") as f:
+	settings = json.loads(f.read())
+	ROOT = settings['patches']['ROOT']
 
 def done(a,b):
 	if settings['All']: return False
@@ -15,18 +16,13 @@ def done(a,b):
 def title(s): return s.replace('.md','').replace('_',' ')
 
 def patch(s):
-	s = s.replace('<p><a href=','<div><a href=') # Reason: To have some whitespace between links (margin-bottom)
-	s = s.replace('</a></p>','</a></div>')
-	s = s.replace('CLUB', 'https://member.schack.se/ShowClubRatingServlet?clubid')
-	s = s.replace('TOUR', 'https://member.schack.se/ShowTournamentServlet?id')
-	s = s.replace('HTM','SENIOR/htmfiler')
-	s = s.replace('SENIOR','https://www.seniorschackstockholm.se')
-	s = s.replace('BB2','https://storage.googleapis.com/bildbank2/index.html')
-	s = s.replace('ROOT',ROOT)
-	s = s.replace('LICHESS','https://lichess.org')
+	patches = settings['patches']
+	for key in patches:
+		s = s.replace(key,patches[key])
 	return s
 
 def writeHtmlFile(original, filename, t, level, content=""):
+	print('writeHtmlFile',original)
 	t = title(t)
 	index = 1 + filename.rindex("/")
 	short_md = filename[index:].replace('.html','.md')
@@ -47,14 +43,11 @@ def writeHtmlFile(original, filename, t, level, content=""):
 	res.append('<body>')
 
 	if os.path.exists(long_md):
-		res += [f'<h1><a style="color:#000; background-color:#aaa" href="{short_md}">{t}</a> </h1>']
+		res += [f'<h1><a href="{short_md}">{t}</a> </h1>']
 	else:
 		res += [f'<h1>{t}</h1>']
 
-	res += [content]
-
-	res.append('</body>')
-	res.append('</html>')
+	res += [content,'</body>','</html>']
 
 	with open(filename, 'w', encoding='utf8') as g:
 		s = '\n'.join(res)
@@ -118,26 +111,18 @@ def transpileDir(directory, level=0):
 		else:
 			hash_directory.append(f)
 
-	res = []
-
-	for f in hash_html: # Lägg in i menyn
-		if f.name != 'index.html': res += [[noExt(f.name), f.name]]
-
-	for f in hash_link: # Lägg in i menyn
-		res += [[noExt(f.name),getLink(f.path)]]
-
-	for f in hash_others: # Lägg in i menyn
-		res += [[noExt(f.name), f.name]]
-
-	for f in hash_directory: # Lägg in i menyn
+	res = [[noExt(f.name), f.name] for f in hash_html if f.name != 'index.html'] 
+	res += [[noExt(f.name),getLink(f.path)] for f in hash_link] 
+	res += [[noExt(f.name), f.name] for f in hash_others] 
+	for f in hash_directory: 
 		res += [[f.name, f.name]]
 		transpileDir(f, level + 1)
 
 	res.sort()
 	if reverse: res.reverse()
 
-	res = [f"<tr><td><a href='{href}'>{title}</a></td></tr>" for [title,href] in res]
-	res = "<table>" + "\n".join(res) + "</table>"
+	res = [f"\t<tr><td><a href='{href}'>{title}</a></td></tr>" for [title,href] in res]
+	res = "<table>\n" + "\n".join(res) + "\n</table>"
 
 	if indexHtml == "": indexHtml = res
 	if indexHtml: writeHtmlFile('directory ' + name, path + '/index.html', name, level+1, indexHtml)
@@ -152,6 +137,5 @@ def writeMD(long):
 
 start = time.time_ns()
 transpileDir(ROOT)
-
 print(round((time.time_ns() - start)/10**6),'ms')
 print()

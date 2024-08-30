@@ -63,7 +63,5 @@ If the header is not clickable, then there is no markdown for that page.
 
 * Extension: [Tables](https://python-markdown.github.io/extensions/tables/)
 
-* The hidden directory *files* can be used for storing files.
-
-* Latest news are stored in the *files/news* directory
-    * The number of shown items is set in settings.latestNews.
+* style.css
+This file can be used in all levels of the hierarchy. Lower levels has higher priority.

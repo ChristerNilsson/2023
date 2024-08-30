@@ -10,23 +10,25 @@ a {
     padding-right:5px; 
     text-decoration:none; 
     color:yellow; 
-    /* border: 1px solid darkgray;  */
     background-color: gray;
 }
 
-div {margin:5px}
+h1 a {
+    color:black; 
+    background-color: darkgray; 
+}
+
+div {
+    margin:5px
+}
 
 table { 
     font-family:monospace;
     font-size:24px;
 }
 
-/* tr:nth-child(even) {background-color: #888;}
-tr:nth-child(odd) {background-color: #999;} */
-
 th {
     border: 1px solid darkgray; 
-    /* background-color: white; */
     color:black;
     padding-left:5px; 
     padding-right:5px; 
@@ -41,31 +43,3 @@ sup {
     font-size:16px;
 }
 
-red {color: red}
-green {color: green}
-blue {color: blue}
-
-div.CP_Black {
-    text-align: left;
-    font-weight: normal;
-    font-size: 12px;
-    color: black;
-    padding-left: 2px;
-    margin: 0;
-    }
-    
-div.CP_White {
-    text-align: right;
-    font-weight: normal;
-    font-size: 12px;
-    color: black;
-    padding-right: 2px;
-    margin: 0;
-}
-
-div.rfrresult {
-    margin-top: -3px;
-    /* font: 100% 'trebuchet ms',helvetica,sans-serif; */
-    text-align: center;
-    vertical-align: bottom;
-}
