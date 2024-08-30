@@ -21,8 +21,8 @@ def patch(s):
 		s = s.replace(key,patches[key])
 	return s
 
-def writeHtmlFile(original, filename, t, level, content=""):
-	print('writeHtmlFile',original)
+def wrapHtml(original, filename, t, level, content=""):
+	print('wrapHtml',original)
 	t = title(t)
 	index = 1 + filename.rindex("/")
 	short_md = filename[index:].replace('.html','.md')
@@ -100,7 +100,7 @@ def transpileDir(directory, level=0):
 				html = writeMD(f.path)
 				if html:
 					filename = f.path.replace('.md', '.html').replace('\\', '/')
-					writeHtmlFile('markdown ' + f.path, filename, f.name, level + 1, html)
+					wrapHtml('markdown ' + f.path, filename, f.name, level + 1, html)
 
 	for f in os.scandir(path):
 		if os.path.isfile(f):
@@ -125,7 +125,7 @@ def transpileDir(directory, level=0):
 	res = "<table>\n" + "\n".join(res) + "\n</table>"
 
 	if indexHtml == "": indexHtml = res
-	if indexHtml: writeHtmlFile('directory ' + name, path + '/index.html', name, level+1, indexHtml)
+	if indexHtml: wrapHtml('directory ' + name, path + '/index.html', name, level+1, indexHtml)
 
 def writeMD(long):
 	with open(long,encoding='utf8') as f:
