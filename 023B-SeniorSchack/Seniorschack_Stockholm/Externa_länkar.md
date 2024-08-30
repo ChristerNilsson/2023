@@ -7,6 +7,7 @@
 |[ChessBomb](https://www.chess.com/events)|
 |[Chess-results SWE](https://chess-results.com/fed.aspx?lan=6&fed=SWE)|
 |[Dagens kombination](https://www.shredderchess.com/online/playshredder/gdailytactics.php?mylang=en&mysize=32)|
+|[ELO Pairings](https://christernilsson.github.io/ELO-Pairings)|
 |[Internet Chess Club](https://www.chessclub.com)|
 |[LiChess](https://lichess.org)|
 |[Nalimov - sex pjäser](https://www.k4it.de/index.php?topic=egtb&lang=en)|
