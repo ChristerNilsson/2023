@@ -1,22 +1,22 @@
 {
-    "All" : true,
-    "showExt" : false,
-    "patches" : {
+	"All" : true,
+	"showExt" : false,
+	"patches" : {
 		"ROOT" : "Seniorschack_Stockholm",
-    	"CLUB" : "https://member.schack.se/ShowClubRatingServlet?clubid",
-    	"TOUR" : "https://member.schack.se/ShowTournamentServlet?id",
-    	"HTM" : "SENIOR/htmfiler",
-    	"SENIOR" : "https://www.seniorschackstockholm.se",
-    	"BB2" : "https://storage.googleapis.com/bildbank2/index.html",
-    	"LICHESS" : "https://lichess.org",
-	    "<p><a href=" : "<div><a href=",
-    	"</a></p>" : "</a></div>",
-        "</th>\n<th>":"</th><th>",
-        "<tr>\n<th>":"<tr><th>",
-        "</th>\n</tr>":"</th></tr>",
-        "</td>\n<td>":"</td><td>",
-        "<tr>\n<td>":"<tr><td>",
-        "</td>\n</tr>":"</td></tr>",
-        "<tr>":"\t<tr>"
+		"CLUB" : "https://member.schack.se/ShowClubRatingServlet?clubid",
+		"TOUR" : "https://member.schack.se/ShowTournamentServlet?id",
+		"HTM" : "SENIOR/htmfiler",
+		"SENIOR" : "https://www.seniorschackstockholm.se",
+		"BB2" : "https://storage.googleapis.com/bildbank2/index.html",
+		"LICHESS" : "https://lichess.org",
+		"<p><a href=" : "<div><a href=",
+		"</a></p>" : "</a></div>",
+		"</th>\n<th>":"</th><th>",
+		"<tr>\n<th>":"<tr><th>",
+		"</th>\n</tr>":"</th></tr>",
+		"</td>\n<td>":"</td><td>",
+		"<tr>\n<td>":"<tr><td>",
+		"</td>\n</tr>":"</td></tr>",
+		"<tr>":"\t<tr>"
 	}
 }

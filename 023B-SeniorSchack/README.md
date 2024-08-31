@@ -1,25 +1,20 @@
 [Try it!](https://christernilsson.github.io/2023/023B-SeniorSchack/Seniorschack_Stockholm)
 
-* This program is used to transpile markdown files to html files.
+* This program produces html files
+	* Using directory names and file names
+	* Transpiling markdown to html
 
 * The directory structure is used to minimize the amount av markdown needed.
-    * You can reorganize your directory tree without changing any code.
-    * Move files and directories and rerun makeAll.py to update all .html files
-    * Change file and directory names with no code changes
+	* You can reorganize your directory tree without changing any code.
+	* Move files and directories and rerun makeAll.py to update all .html files
+	* Change file and directory names with no code changes
 
 * You have a choice between using directories and files or markdown files or a combination of both
-    * markdown files gives you the opportunity to show the alternatives in any order.
-    * markdown files are also uses to add text, pictures and more.
-    * You can specify a link using a .link file.
-        * The name of the file will be displayed to the user.
-        * The .link file contains a link or an url.
-        * The user will not know which alternative is used of
-            * Markdown
-            * Directory structure
-            * .link file
-
-**The Cauchy-Schwarz Inequality**
-$$\left( \sum_{k=1}^n a_k b_k \right)^2 \leq \left( \sum_{k=1}^n a_k^2 \right) \left( \sum_{k=1}^n b_k^2 \right)$$
+	* markdown files gives you the opportunity to show the alternatives in any order.
+	* markdown files are also uses to add text, pictures and more.
+	* You can specify a link using a .link file.
+		* The name of the file will be displayed to the user.
+		* The .link file contains a link or an url.
 
 Here are some alternatives using directory Information.
 [] indicates what the browser will display.
@@ -32,32 +27,32 @@ index.md (contains a link to Info.pdf)        [Info]
 Info.link (contains a link to Info.pdf)       [Info]
 
 Information                                   [Information]
-    Info.pdf                                      [Info]
+	Info.pdf                                      [Info]
 
 Information                                   [Information]
-    index.md (contains a link to Info.pdf)        [Info]
+	index.md (contains a link to Info.pdf)        [Info]
 
 Information.md (contains a link to Info.pdf)  [Information]
                                                   [Info]
 
 Information                                   [Information]
-    Info.link (contains a link to Info.pdf)       [Info]
+	Info.link (contains a link to Info.pdf)       [Info]
 ```
 
 * You can inspect the markdown file by clicking on the main header.
 The file name and location can be found by looking at the url in the browser.
-If the header is not clickable, then there is no markdown for that page.
+If the header is not clickable, then file structure is used to generate html.
 
 * makeAll.py transpiles all .md-files to .html files.
-    * No md file is mandatory.
-    * You define it when you want to add text or links.
-    * In fact, you can use zero md files.
+	* No md file is mandatory.
+	* You define it when you want to add text or links.
+	* In fact, you can use zero md files.
 
 * Deploy by copying the root folder to your server.
 
 * Helpful:
-    * VS Code and Run On Save
-    * VS Code and Go Live
+	* VS Code and Run On Save
+	* VS Code and Go Live
 
 * [Cheat Sheet](https://commonmark.org/help/)
 
