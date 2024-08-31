@@ -124,7 +124,7 @@ def transpileDir(directory, level=0):
 	res = [f"\t<tr><td><a href='{href}'>{title}</a></td></tr>" for [title,href] in res]
 	res = "<table>\n" + "\n".join(res) + "\n</table>"
 
-	if indexHtml == "": indexHtml = res
+	indexHtml = res if indexHtml == "" else indexHtml.replace("CONTENT",res)
 	if indexHtml: wrapHtml('directory ' + name, path + '/index.html', name, level+1, indexHtml)
 
 def writeMD(long):

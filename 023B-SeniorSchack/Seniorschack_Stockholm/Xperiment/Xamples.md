@@ -26,12 +26,6 @@ e<sup>iπ</sup> = -1
 
 <red>Red</red> <green>Green</green> <blue>Blue</blue> [See style.css](/ROOT/style.css)
 
-```
-fixed width
-    1    23
-   12   123
-```
-
 * first
 * second
 	* third
@@ -46,3 +40,4 @@ fixed width
 | Go Forward          | Alt + Right |
 | Move Focus Forward  | Tab         |
 | Move Focus Backward | Shift + Tab |
+
