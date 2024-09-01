@@ -9,6 +9,9 @@
 	* [Spel](https://christernilsson.github.io/Lab/2019/118-Kalaha/)
 * [Monte Carlo Tree Search](https://en.wikipedia.org/wiki/Monte_Carlo_tree_search)
 
+<iframe src="https://christernilsson.github.io/2024/118-Kalaha/?scale=0.5" title="Kalaha" style="border:0; width:460px; height:170px;"></iframe>
+<iframe src="https://christernilsson.github.io/2024/118-Kalaha/?scale=0.5" title="Kalaha" style="border:0; width:460px; height:170px;"></iframe>
+
 ## Kalaha
 
 * Regler
@@ -18,11 +21,14 @@
 ## Schack
 
 * [Utvärderingsfunktion](https://en.wikipedia.org/wiki/Computer_chess#Leaf_evaluation)
-	* Vinst/förlust
+	* Vinst/förlust/remi
 	* Material
 	* Position
-		* 12 * 64 = 768
-	* Machine Learning
+		* 2 * 6 * 64 = 768
+		* Öppning/mittspel/slutspel + interpolation
+	* Antal möjliga drag
+	* [Machine Learning](https://en.wikipedia.org/wiki/Stockfish_(chess)#NNUE)
 * [Öppningsdatabas](https://en.wikipedia.org/wiki/Computer_chess#Opening_book)
 * [Slutspelsdatabas](https://en.wikipedia.org/wiki/Computer_chess#Endgame_tablebases)
 	* [Syzygy](https://syzygy-tables.info)
+* [Simple Chess Engine](https://github.com/Kyle-L/Simple-Chess-Engine)
