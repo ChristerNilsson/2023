@@ -14,7 +14,7 @@ Ctrl+U to see the html code.
 
 <i><b>Bold Italics</b></i>
 
-<u>Underline</u>
+<u>Underline</u> 
 
 <s>strike through</s>
 

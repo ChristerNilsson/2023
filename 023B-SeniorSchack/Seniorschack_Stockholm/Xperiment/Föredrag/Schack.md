@@ -1,3 +1,4 @@
+
 * [Utvärderingsfunktion](https://en.wikipedia.org/wiki/Computer_chess#Leaf_evaluation)
 	* Vinst/förlust/remi
 	* Material
@@ -7,6 +8,4 @@
 	* Antal möjliga drag
 	* [Machine Learning](https://en.wikipedia.org/wiki/Stockfish_(chess)#NNUE)
 * [Öppningsdatabas](https://en.wikipedia.org/wiki/Computer_chess#Opening_book)
-* [Slutspelsdatabas](https://en.wikipedia.org/wiki/Computer_chess#Endgame_tablebases)
-	* [Syzygy](https://syzygy-tables.info)
 * [Simple Chess Engine](https://github.com/Kyle-L/Simple-Chess-Engine)
