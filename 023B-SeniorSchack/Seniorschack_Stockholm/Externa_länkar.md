@@ -17,5 +17,5 @@
 |[Stockholms Schackförbund](https://www.stockholmsschack.se)|
 |[Studier](HTM/schackstudier.htm)|
 |[Svenska schackbutiken](https://www.schackbutiken.se)|
-|[Sveriges Schackförbund](https://schack.se)|
+|[Sveriges Schackförbund](https://schack.se)| 
 |[Syzygy - sju pjäser](https://syzygy-tables.info)|

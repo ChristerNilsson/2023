@@ -67,7 +67,7 @@ Kalkylering (del 3)
 Fördel: Utvärderingsfunktion behövs ej.
 
 * Selection. [Video som beskriver hur urvalet går till](https://youtu.be/UXW2yZndl7U?si=0CVSD6abn7tXbdRQ)
-	* Det handlar om avvägning mellan framgångsrika drag och oprövade grenar.
+	* Det handlar om avvägning mellan framgångsrika drag och oprövade grenar. [Länk](https://en.wikipedia.org/wiki/Monte_Carlo_tree_search#Exploration_and_exploitation)
 * Expansion.
 * Simulation. Innebär att dragen väljs slumpvis till någon vunnit eller remi inträffat.
 * Backpropagation. Uppdatering från lövet till roten av bråken.
@@ -78,11 +78,11 @@ Svart är vid draget.
 
 Roten: Vit har vunnit 11 av 21
 
-7/10 väljs eftersom den noden är större än 3/8.
+7/10 väljs här, pga C=sqrt(2). (0/3 väljs om C=2)
 
-1/6 väljs eftersom den är mindre än 2/4
+1/6 väljs
 
-3/3 väljs eftersom den är större än 2/3
+3/3 väljs
 
 Simulering sker. Svart vann
 
@@ -94,9 +94,9 @@ Simulering sker. Svart vann
 
 11/21 uppdateras till 11/22
 
-Om tiden är ute, väljs 8/11 eftersom 11 är störst.
+Om tiden är ute, väljs 8/11 eftersom nämnaren 11 är störst.
 
-Störst antal partier avgör vilket drag som väljs.
+Störst antal partier avgör alltså vilket drag som väljs.
 
 ![MCTS](MCTS-steps.svg)
 
