@@ -1,7 +1,7 @@
 body {
 	color:black; 
 	background-color: darkgray; 
-	font-family:monospace; 
+	font-family:helvetica; 
 	font-size:24px;
 }
 
@@ -23,7 +23,7 @@ div {
 }
 
 table {
-	font-family:monospace;
+	/* font-family:monospace; */
 	font-size:24px;
 }
 

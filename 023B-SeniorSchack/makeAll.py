@@ -3,6 +3,17 @@ import time
 from markdown_it import MarkdownIt
 import json
 
+#####
+
+import subprocess
+
+# Skicka ett objekt som indata
+input_data = json.dumps({"message": "Hello", "count": 5})
+result = subprocess.run(["node", "script.js", input_data], capture_output=True, text=True)
+print(result.stdout)
+
+#####
+
 mdit = MarkdownIt('commonmark', {'breaks':True,'html':True}).enable('table')
 
 with open("settings.json","r") as f:
