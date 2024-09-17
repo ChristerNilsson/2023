@@ -8,7 +8,7 @@ Bygger på två principer:
 2. Partiresultatet viktas med motståndarens rating.
 	* Jmf Sonneborn-Berger
 
-Berger är den rättvisaste formen, helst dubbelrondig.  
+Berger är den rättvisaste formen, helst dubbelrondig.   
 Berger kan dock inte användas med många deltagare.  
 Då används Schweizer eller Bergergrupper.
 
@@ -16,7 +16,7 @@ Då används Schweizer eller Bergergrupper.
 
 1. De flesta partier har stor skillnad mellan spelarna
 	* Här missar man tillfällen att hämta viktig information
-2. Vinster mot starka och svaga spelare värderas exakt lika
+2. Vinster mot starka och svaga spelare värderas exakt lika 
 	* Här försvinner viktig information.
 
 Ju mer information man använder, desto bättre blir sorteringen. 
@@ -30,10 +30,10 @@ Ju mer information man använder, desto bättre blir sorteringen.
 
 Starkaste spelaren längst upp till vänster. Cellerna indikerar rondnummer.
 
-[Schweizer 78](_Schweizer_78.png)
+![Schweizer 78](_Schweizer_78.png)
 
 #### FairPair 78
 
 Hundbenet.
 
-[FairPair 78](_FairPair_78.png)
+![FairPair 78](_FairPair_78.png)
