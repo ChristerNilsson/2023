@@ -1,5 +1,6 @@
 | |
 |-|
+|[PairFair](PairFair/index.html)|
 |[FairPair](FairPair.html)|
 |[Ken Thompson](Ken_Thompson.html)|
 |[Utvärderingsfunktion](Utvärderingsfunktion.html)|
