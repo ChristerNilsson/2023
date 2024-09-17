@@ -30,10 +30,10 @@ Ju mer information man använder, desto bättre blir sorteringen.
 
 Starkaste spelaren längst upp till vänster. Cellerna indikerar rondnummer.
 
-![Schweizer 78](./_Schweizer_78.png)
+[Schweizer 78](_Schweizer_78.png)
 
 #### FairPair 78
 
 Hundbenet.
 
-![FairPair 78](./_FairPair_78.png)
+[FairPair 78](_FairPair_78.png)
