@@ -10,3 +10,5 @@ Ti 24 Bengt Hammar: Missade chanser - Skönhetspriserna som gick upp i rök
 
 Ti 01 Gunnar Hedin: Zandor Nilsson - Självförtroende i världsklass
 Ti 08 PO Hesselborn: Konsten att kalkylera, del 3
+Ti 15 Per Söderberg: Schackfilateli (Obs! Kl. 10-11)
+Ti 22 Christer Nilsson: Datorkalkylering

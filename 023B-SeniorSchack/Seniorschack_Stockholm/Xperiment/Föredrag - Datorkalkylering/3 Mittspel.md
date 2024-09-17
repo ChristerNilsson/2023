@@ -1,0 +1,5 @@
+Kalaha
+
+Minimax
+
+Utvärderingsfunktion 

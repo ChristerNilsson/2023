@@ -8,9 +8,37 @@ import json
 import subprocess
 
 # Skicka ett objekt som indata
-input_data = json.dumps({"message": "Hello", "count": 5})
-result = subprocess.run(["node", "script.js", input_data], capture_output=True, text=True)
+# input_data = json.dumps({"message": "Hello", "count": 5})
+# result = subprocess.run(["node", "script.js", input_data], capture_output=True, text=True)
+# print(result.stdout)
+
+# {div,dubbel,echo} = require './lib'
+
+# echo div div "pelle #{dubbel 7}"
+
+
+# 1 Läs adam.text
+with open("adam.text") as f:
+	t = f.read()
+	print(t)
+	
+# 2 Skriv adam.coffee
+with open("adam.coffee","w") as g:
+	s = '{div,dubbel,echo} = require "./lib"'
+	s += "\necho " + t
+	print(s)
+	g.write(s)
+
+# 3 Kör "coffee adam.coffee"
+# path = "coffee adam.coffee"
+
+result = subprocess.run(["cmd", "/c", "coffee adam.coffee"], capture_output=True, text=True)
+
 print(result.stdout)
+	
+# 4 Skriv adam.html
+with open("./adam.html","w") as g:
+	g.write(result.stdout)
 
 #####
 
@@ -166,7 +194,7 @@ def transpileDir(directory, level=0):
 	res = [f"\t<tr><td><a href='{href}'>{title}</a></td></tr>" for [title,href] in res]
 	res = "<table>\n" + "\n".join(res) + "\n</table>"
 
-	indexHtml = res if indexHtml == "" else indexHtml.replace("CONTENT",res)
+	indexHtml = res if indexHtml == "" else indexHtml.replace("AUTO",res)
 	if indexHtml: wrapHtml('directory ' + name, path + '/index.html', name, level+1, indexHtml)
 
 def writeMD(long):
