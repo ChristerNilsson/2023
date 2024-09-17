@@ -2,6 +2,7 @@ import os
 import time
 from markdown_it import MarkdownIt
 import json
+from datetime import datetime
 
 #####
 
@@ -145,7 +146,7 @@ def transpileDir(directory, level=0):
 
 	if name.endswith('.css'): return
 
-	name = name.replace("_", " ")
+	name = (name.replace("_", " "))
 
 	hash_html = []
 	hash_link = []
@@ -177,9 +178,11 @@ def transpileDir(directory, level=0):
 			if f.name.endswith('.md'): pass
 			elif f.name.endswith('.html'): hash_html.append(f)
 			elif f.name.endswith('.link'): hash_link.append(f)
-			elif f.name not in ['favicon.ico','style.css']: hash_others.append(f)
+			elif f.name not in ['favicon.ico','style.css']:
+				if not f.name.startswith("_"): hash_others.append(f)
 		else:
-			hash_directory.append(f)
+			print('f.name',f.name)
+			if not f.name.startswith("_"): hash_directory.append(f)
 
 	res = [[noExt(f.name), f.name] for f in hash_html if f.name != 'index.html'] 
 	res += [[noExt(f.name),getLink(f.path)] for f in hash_link] 
@@ -191,8 +194,10 @@ def transpileDir(directory, level=0):
 	res.sort()
 	if reverse: res.reverse()
 
-	res = [f"\t<tr><td><a href='{href}'>{title}</a></td></tr>" for [title,href] in res]
+	res = [f"\t<tr><td><a href='{href}'>{title.replace('_',' ')}</a></td></tr>" for [title,href] in res]
 	res = "<table>\n" + "\n".join(res) + "\n</table>"
+
+	if level == 0: res += f'<div style="font-size:16px">{str(datetime.now())[:16]}</div>'
 
 	indexHtml = res if indexHtml == "" else indexHtml.replace("AUTO",res)
 	if indexHtml: wrapHtml('directory ' + name, path + '/index.html', name, level+1, indexHtml)

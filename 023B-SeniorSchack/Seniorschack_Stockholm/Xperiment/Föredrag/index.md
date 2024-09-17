@@ -1,5 +1,6 @@
 | |
 |-|
+|[FairPair](FairPair)|
 |[Ken Thompson](Ken_Thompson.html)|
 |[Utvärderingsfunktion](Utvärderingsfunktion.html)|
 |[Minimax-algoritmen](Minimax-algoritmen.html)|

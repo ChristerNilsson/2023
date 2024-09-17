@@ -12,7 +12,7 @@ Vi kommer här att se närmare på KRK, dvs Kung och torn mot ensam Kung.
     * Söka upp dessa positioner i filen och få fram antal halvdrag till matt.
     * Välja det bästa draget. 
 
-Exempel 
+Exempel   
 
 [Ke5 Re6 Kh8](https://syzygy-tables.info/?fen=7k/8/4R3/4K3/8/8/8/8_w_-_-_0_1)
 
