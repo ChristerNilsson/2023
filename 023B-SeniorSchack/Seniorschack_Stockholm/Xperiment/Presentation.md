@@ -8,13 +8,13 @@ I Bildbanken 2 är det katalogstrukturen som styr allt.
 
 Med detta i bakhuvudet gör jag här ett försök att bygga upp en statisk hemsida utgående från katalogstrukturen.
 
-Några high lights:
+Några high lights: 
 
 * Baserad på [markdown](https://www.markdownguide.org/cheat-sheet/).
 * Anpassad för mobiler och äldre.
 * De senaste Nyheterna visas direkt på startsidan.
 * Markdown kan ses för en sida genom att klicka på rubriken.
-  * Ofta saknas .md, då är sidan skapad mha kataloger och filer.  
+  * Ofta saknas .md, då är sidan skapad mha kataloger och filer. 
 * Alfabetisk sortering av menyalternativen.
 * Kronologisk sortering av Nyheter.
 * Bakåt-knappen används alltid för att lämna en sida. (Alt + Left Arrow)
