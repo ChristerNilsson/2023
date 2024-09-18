@@ -8,6 +8,8 @@ from datetime import datetime
 
 import subprocess
 
+IGNORE = "X_" # dessa kataloger och filer ignoreras i AUTO
+
 # Skicka ett objekt som indata
 # input_data = json.dumps({"message": "Hello", "count": 5})
 # result = subprocess.run(["node", "script.js", input_data], capture_output=True, text=True)
@@ -179,10 +181,10 @@ def transpileDir(directory, level=0):
 			elif f.name.endswith('.html'): hash_html.append(f)
 			elif f.name.endswith('.link'): hash_link.append(f)
 			elif f.name not in ['favicon.ico','style.css']:
-				if not f.name.startswith("_"): hash_others.append(f)
+				if not f.name.startswith(IGNORE): hash_others.append(f)
 		else:
 			print('f.name',f.name)
-			if not f.name.startswith("_"): hash_directory.append(f)
+			if not f.name.startswith(IGNORE): hash_directory.append(f)
 
 	res = [[noExt(f.name), f.name] for f in hash_html if f.name != 'index.html'] 
 	res += [[noExt(f.name),getLink(f.path)] for f in hash_link] 

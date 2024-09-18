@@ -6,7 +6,7 @@ Minimaxfunktionen är dock densamma som i schack.*
 
 ## Kalaha
 
-![Kalaha](_kalaha.jpg)
+![Kalaha](X_kalaha.jpg)
 
 ### Regler
 
@@ -39,7 +39,7 @@ Datorns spelstyrka regleras så här:
 
 ### Minimax 
 
-![Minimax](_minimax.png)
+![Minimax](X_minimax.png)
 
 ### Evaluering i schack
 
