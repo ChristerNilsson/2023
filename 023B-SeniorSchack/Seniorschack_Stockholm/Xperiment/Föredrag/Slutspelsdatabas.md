@@ -6,7 +6,7 @@
 	* Rotation
 	* Övriga metoder
 * [KRk](KRk.txt) Textformat: 247 kB
-	* a1 a2 c1 7 innebär Ka1, Ra2, Kc1 sju drag till matt
+	* a1 a2 c1 7 innebär Ka1, Ra2, Kc1 sju drag till matt 
 	* [Matt i 16 drag](https://syzygy-tables.info/?fen=8/8/8/8/8/8/2Rk4/1K6_b_-_-_0_1)
 	* Syzygy: 7.7 kB (kräver komplex mjukvara för att läsas)
 	* Positioner: 28056

@@ -8,4 +8,4 @@
 * Dessa parametrar viktas och summeras med enheten *centipawn*
 	* Positiv: vit leder
 	* Negativ: svart leder 
-* Alternativ: [NNUE](https://www.chessprogramming.org/Stockfish_NNUE)
+* Alternativ: [NNUE](https://www.chessprogramming.org/Stockfish_NNUE) 

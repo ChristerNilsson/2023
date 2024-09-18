@@ -21,7 +21,9 @@ Minimaxfunktionen är dock densamma som i schack.*
 ### Draggenerering
 
 Följande tio drag kan utföras i utgångsläget:
-A B CA CB CD CE CF D E F 
+A B CA CB CD CE CF D E F  
+
+Uppgift: Givet att vit börjar med CF, vilka drag kan svart göra?
 
 ### Evaluering
 
@@ -50,13 +52,14 @@ Datorns spelstyrka regleras så här:
 * Bondestruktur
 	* Dubbelbönder
 	* Ensamma bönder
-	* Avancemang
+	* Avancemang 
 * osv.
 
 ### Länkar
 
 [Wikipedia](https://en.wikipedia.org/wiki/Kalah)
 [Spel](https://christernilsson.github.io/Lab/2019/118-Kalaha/)
+[Binärt Träd](tree.svg)
 [Nokia 3310](https://youtube.com/clip/Ugkxax12m2ISro9LvHjkgzt_ZY9GwCM0f3Vh?si=J4J9fmi1io-Wgexb)
 [Minimax - källkod](https://github.com/ChristerNilsson/Lab/blob/master/2019/118-Kalaha/coffee/minimax.coffee)
 [Chess Programming](https://www.chessprogramming.org/Main_Page)

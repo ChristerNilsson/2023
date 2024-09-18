@@ -1,5 +1,5 @@
 
-![Ken Thompson](Ken_Thompson.png)
+![Ken Thompson](Ken_Thompson.png) 
 
 * 1943: Föddes i New Orleans
 * 1968: [Reguljära uttryck](https://www.oilshell.org/archive/Thompson-1968.pdf)
