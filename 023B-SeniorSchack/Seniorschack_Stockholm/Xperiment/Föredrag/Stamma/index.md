@@ -33,11 +33,13 @@ Både versaler och gemener förekommer. Både för att indikera pjäs och kolumn
 K kan ses ibland som alternativ till e/E
 
 I Algebraisk notation ser man ibland Nbd2, vilket anger vilken springare som flyttas.  
-I Deskriptiv notation anges detta istället Bd2 eller Gd2 beroende på var springaren stod ursprungligen.  
+I Stammas notation anges detta istället Bd2 eller Gd2 beroende på var springaren stod ursprungligen.  
 Kan därför vara lämpligt att skriva denna bokstav på springare och torns undersida.  
 
-*Framgår inte hur Stamma hanterade bönder som förvandlades till springare eller torn. Akilleshäl här!  
-Man kan ha åtta springare eller åtta damer som kan gå till samma ruta. Stamma sänkt!*
+*Framgår inte hur Stamma hanterade bönder som förvandlades till springare eller torn.  
+Man kan ha åtta springare eller åtta damer som kan gå till samma ruta.  
+Praktiskt kan man kanske lösa detta genom att införa IJKL, RSTU, WXYZ för promoverade bönder.  
+T ex blir I tredje tornet, S fjärde springaren, Z fjärde damen*
 
 Asteriskerna är en hjälp för att veta vilken pjäs som ska flyttas i Nbd2-fallet. Asterisken till vänster innebär att springaren till vänster ska flyttas och vice versa.
 

@@ -17,7 +17,9 @@ Då används Schweizer eller Bergergrupper.
 1. De flesta partier har stor skillnad mellan spelarna
 	* Här missar man tillfällen att hämta viktig information
 2. Vinster mot starka och svaga spelare värderas exakt lika 
-	* Här försvinner viktig information.
+	* Här försvinner viktig information
+3. De svagaste spelarna får det hårdaste motståndet (relativt sett)
+	* Vore bra om nya schackspelare kunde få en mjukare start
 
 Ju mer information man använder, desto bättre blir sorteringen. 
 
@@ -25,6 +27,7 @@ Ju mer information man använder, desto bättre blir sorteringen.
 
 1. Hur vet man vem som vann? (SW)
 2. Många spelare vill möta spelare med olika spelstyrkor (POH)
+3. Om oratade bara spelar med andra oratade, får de aldrig någon rating. (CN)
 
 #### Schweizer 78
 

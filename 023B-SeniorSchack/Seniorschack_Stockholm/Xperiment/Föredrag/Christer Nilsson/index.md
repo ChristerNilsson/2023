@@ -6,23 +6,24 @@ Jag heter Christer Nilsson och har bl a utvecklat Monradprogrammet som användes
 Bildbanken 2 består enbart av statiska filer, dvs det finns inget program som körs på någon server.  
 I Bildbanken 2 är det katalogstrukturen som styr allt.
 
+Jag har även tagit fram ett nytt lottningssystem, FairPair, vars idé är att alla spelare ska möta spelare av sin egen spelstyrka.
+
 Med detta i bakhuvudet gör jag här ett försök att bygga upp en statisk hemsida utgående från katalogstrukturen.
 
 Några high lights: 
 
 * Baserad på [markdown](https://www.markdownguide.org/cheat-sheet/).
 * Anpassad för mobiler och äldre.
-* De senaste Nyheterna visas direkt på startsidan.
 * Markdown kan ses för en sida genom att klicka på rubriken.
-  * Ofta saknas .md, då är sidan skapad mha kataloger och filer. 
+  * Ofta saknas .md, då är sidan skapad automatiskt mha kataloger och filer.
 * Alfabetisk sortering av menyalternativen.
 * Kronologisk sortering av Nyheter.
 * Bakåt-knappen används alltid för att lämna en sida. (Alt + Left Arrow)
 * Nya flikar skapas aldrig.
-* [RSS](https://sv.wikipedia.org/wiki/RSS) på begäran.
+* [RSS](https://sv.wikipedia.org/wiki/RSS) implementeras på begäran.
 * Open Source på [Github](https://github.com/ChristerNilsson/2023/blob/main/023B-SeniorSchack/makeAll.py)
 
-## .md
+## .md 
 
 This is a **markdown** file and is translated by *makeAll.py* to an **.html** file with the same name.
 
