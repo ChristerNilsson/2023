@@ -1,0 +1,40 @@
+body {
+	color:black; 
+	background-color: darkgray; 
+	font-family:monospace;
+	font-size:24px;
+}
+
+a {
+	color:blue;
+	text-decoration: underline;
+	background-color: darkgray;
+}
+
+h1 {
+	background-color: darkgray;
+}
+
+div {
+	margin:5px
+}
+
+table {
+	font-size:24px;
+}
+
+th {
+	border: 1px solid darkgray; 
+	color:black;
+	padding-left:5px;
+	padding-right:5px;
+}
+
+td {
+	border: 1px solid darkgray;
+	background-color: darkgray;
+}
+
+sup {
+	font-size:16px;
+}

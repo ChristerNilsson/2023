@@ -19,7 +19,7 @@ Andra cellen: (1,3,50) osv.
 |9| | | | | | | | |*|1|2109
 |0| | | | | | | | |1|*|2108
 
-Blossom förslår att rond 1 spelas enligt ovan, eftersom totalsumman av de fem cellerna då blir så låg som möjligt. (3 + 94 + 22 + 28 + 1 = 148)
+Blossom föreslår att rond 1 spelas enligt ovan, eftersom totalsumman av de fem cellerna då blir så låg som möjligt. (3 + 94 + 22 + 28 + 1 = 148)
 
 Bordslista
 |Bord||diff|
