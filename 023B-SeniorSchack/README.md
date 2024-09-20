@@ -1,3 +1,8 @@
+DO NOT USE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+Moved to repo SeniorSchack
+
+
 [Try it!](https://christernilsson.github.io/2023/023B-SeniorSchack/Seniorschack_Stockholm)
 
 * This program produces html files
